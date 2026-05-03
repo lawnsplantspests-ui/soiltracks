@@ -696,8 +696,9 @@ function handleImage(file) {
       gasGet({ action: 'getApiKey' })
         .then(function(r){
           if (!r.success) { finish({ success:false, error: 'Could not get API key: ' + (r.error || 'GAS returned error') }); return; }
-          setStep('Sending to AI — this takes 10–20 seconds…');
-          callAnthropic(r.key, b64, finish);
+          var sizeKB = Math.round(b64.length / 1024);
+setStep('Sending ' + sizeKB + 'KB image to AI…');
+callAnthropic(r.key, b64, finish);
         })
         .catch(function(e){ finish({ success:false, error: 'Network error getting API key: ' + e.message }); });
     });
