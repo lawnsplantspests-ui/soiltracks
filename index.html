@@ -689,18 +689,14 @@ function handleImage(file) {
     }
   }
 
-  function runScan() {
+function runScan() {
     setStep('Compressing image…');
     compressImage(lastFile, 70000, function(b64) {
-      setStep('Fetching API key…');
-      gasGet({ action: 'getApiKey' })
-        .then(function(r){
-          if (!r.success) { finish({ success:false, error: 'Could not get API key: ' + (r.error || 'GAS returned error') }); return; }
-          var sizeKB = Math.round(b64.length / 1024);
-setStep('Sending ' + sizeKB + 'KB image to AI…');
-callAnthropic(r.key, b64, finish);
-        })
-        .catch(function(e){ finish({ success:false, error: 'Network error getting API key: ' + e.message }); });
+      var sizeKB = Math.round(b64.length / 1024);
+      setStep('Sending ' + sizeKB + 'KB image via Apps Script…');
+      gasPost({ action: 'extractImage', imageBase64: b64, mimeType: 'image/jpeg' })
+        .then(function(r){ finish(r); })
+        .catch(function(e){ finish({ success:false, error: 'Network error: ' + e.message }); });
     });
   }
   runScan();
