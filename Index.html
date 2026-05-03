@@ -4,164 +4,156 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>SoilTracks - Lawns Plants &amp; Pests</title>
+<title>SoilTracks - Lawns Plants & Pests</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: #0c0c0c; color: #e7e5e4; font-family: Georgia, serif; min-height: 100vh; }
+  body { background: #0c0c0c; color: #e7e5e4; font-family: Georgia, serif; min-height: 100vh; font-size: 16px; }
 
   /* ── Header ── */
-  .header { background: #111; border-bottom: 1px solid #292524; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; gap: 10px; }
-  .logo { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-  .logo-icon { width: 38px; height: 38px; border-radius: 8px; overflow: hidden; flex-shrink: 0; }
-  .logo-text { font-size: 18px; font-weight: 700; color: #f5f5f4; line-height: 1.1; }
-  .logo-sub { font-size: 10px; color: #78716c; font-family: monospace; }
-  .nav { display: flex; gap: 2px; flex-wrap: wrap; }
-  .nav-btn { min-height: 40px; padding: 0 12px; border-radius: 8px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; background: transparent; color: #a8a29e; font-family: sans-serif; white-space: nowrap; }
+  .header { background: #111; border-bottom: 1px solid #292524; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo-icon { width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; }
+  .logo-text { font-size: 18px; font-weight: 700; color: #f5f5f4; }
+  .logo-sub { font-size: 11px; color: #78716c; font-family: monospace; }
+  .nav { display: flex; gap: 6px; }
+  .nav-btn { min-height: 44px; padding: 0 14px; border-radius: 8px; border: none; cursor: pointer; font-size: 14px; font-weight: 600; background: transparent; color: #a8a29e; font-family: sans-serif; white-space: nowrap; }
   .nav-btn.active { background: #4ade8022; color: #4ade80; }
-  .nav-btn:hover { background: #1c1c1c; }
 
   /* ── Layout ── */
   .main { padding: 20px 16px; max-width: 900px; margin: 0 auto; }
-  .page-title { font-size: 22px; font-weight: 700; color: #f5f5f4; margin-bottom: 4px; }
-  .page-sub { color: #78716c; font-size: 13px; font-family: sans-serif; margin-bottom: 18px; line-height: 1.5; }
+  .page { display: none; }
+  .page.active { display: block; }
 
   /* ── Cards ── */
   .card { background: #161616; border: 1px solid #222; border-radius: 14px; padding: 20px; margin-bottom: 16px; }
   .sec-title { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #57534e; margin-bottom: 14px; font-family: sans-serif; }
-  .sub-head { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #4ade8077; margin: 20px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #1f1f1f; font-family: sans-serif; }
+  .sub-head { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #4ade8077; margin: 18px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #1f1f1f; font-family: sans-serif; }
 
   /* ── Stats ── */
-  .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
-  .stat-card { background: #161616; border: 1px solid #222; border-radius: 12px; padding: 14px; }
-  .stat-icon { font-size: 22px; margin-bottom: 4px; }
-  .stat-val { font-size: 30px; font-weight: 900; color: #4ade80; font-family: Georgia, serif; }
-  .stat-label { font-size: 11px; color: #78716c; font-family: sans-serif; }
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+  .stat-card { background: #161616; border: 1px solid #222; border-radius: 12px; padding: 16px; }
+  .stat-icon { font-size: 24px; margin-bottom: 6px; }
+  .stat-val { font-size: 32px; font-weight: 900; color: #4ade80; font-family: Georgia, serif; }
+  .stat-label { font-size: 12px; color: #78716c; font-family: sans-serif; margin-top: 2px; }
 
   /* ── Buttons ── */
-  .btn-green { background: linear-gradient(135deg,#16a34a,#15803d); color: #fff; border: none; border-radius: 10px; padding: 13px 22px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: sans-serif; min-height: 46px; display: inline-block; }
-  .btn-green:hover { opacity: .9; }
-  .btn-outline { background: transparent; border: 1px solid #333; border-radius: 8px; color: #a8a29e; padding: 10px 16px; cursor: pointer; font-size: 14px; font-family: sans-serif; min-height: 42px; }
-  .btn-outline:hover { border-color: #555; color: #e7e5e4; }
-  .btn-danger { background: #7f1d1d33; border: 1px solid #f8717133; border-radius: 8px; color: #f87171; padding: 10px 16px; cursor: pointer; font-size: 14px; font-family: sans-serif; min-height: 42px; }
-  .btn-danger:hover { background: #7f1d1d55; }
-  .btn-full { width: 100%; margin-top: 10px; padding: 15px 0; font-size: 15px; text-align: center; }
-  .btn-sm { padding: 8px 14px; font-size: 13px; min-height: 38px; }
-  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+  .btn-green { background: linear-gradient(135deg, #16a34a, #15803d); color: white; border: none; border-radius: 10px; padding: 13px 22px; font-size: 16px; font-weight: 700; cursor: pointer; font-family: sans-serif; min-height: 48px; }
+  .btn-green:active { opacity: 0.85; }
+  .btn-outline { background: transparent; border: 1px solid #333; border-radius: 8px; color: #a8a29e; padding: 10px 16px; cursor: pointer; font-size: 14px; font-family: sans-serif; min-height: 44px; }
+  .btn-danger { background: #7f1d1d33; border: 1px solid #f8717133; border-radius: 8px; color: #f87171; padding: 10px 16px; cursor: pointer; font-size: 14px; font-family: sans-serif; min-height: 44px; }
+  .btn-full { width: 100%; margin-top: 10px; padding: 15px 0; font-size: 16px; }
+  .btn-sm { padding: 8px 14px; font-size: 13px; min-height: 40px; }
 
   /* ── Forms ── */
   .form-group { margin-bottom: 14px; }
   .form-label { font-size: 13px; color: #a8a29e; margin-bottom: 5px; display: block; font-family: sans-serif; font-weight: 600; }
-  .form-input { width: 100%; background: #1a1a1a; border: 1px solid #333; border-radius: 8px; padding: 12px 14px; color: #e7e5e4; font-size: 16px; font-family: sans-serif; min-height: 46px; -webkit-appearance: none; }
+  .form-input { width: 100%; background: #1a1a1a; border: 1px solid #333; border-radius: 8px; padding: 12px 14px; color: #e7e5e4; font-size: 16px; font-family: sans-serif; min-height: 48px; -webkit-appearance: none; }
   .form-input:focus { outline: none; border-color: #4ade8055; }
   select.form-input { cursor: pointer; }
-  textarea.form-input { min-height: 76px; resize: vertical; }
   .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
 
-  /* ── Customer list ── */
-  .search-bar { display: flex; align-items: center; gap: 10px; padding: 11px 14px; background: #161616; border: 1px solid #222; border-radius: 10px; margin-bottom: 12px; }
-  .search-bar input { flex: 1; border: none; outline: none; font-size: 15px; background: transparent; color: #e7e5e4; font-family: sans-serif; min-height: 26px; }
-  .cust-row { padding: 13px 14px; border-radius: 10px; cursor: pointer; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; border: 1px solid transparent; transition: all .15s; min-height: 60px; }
-  .cust-row:hover { background: #1a1a1a; border-color: #2a2a2a; }
-  .cust-name { font-weight: 700; color: #f5f5f4; font-size: 16px; }
-  .cust-sub { font-size: 12px; color: #78716c; font-family: sans-serif; margin-top: 2px; }
+  /* ── Search & Customer list ── */
+  .search-bar { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: #161616; border: 1px solid #222; border-radius: 12px; margin-bottom: 14px; }
+  .search-bar input { flex: 1; border: none; outline: none; font-size: 16px; background: transparent; color: #e7e5e4; font-family: sans-serif; min-height: 28px; }
+  .customer-row { padding: 14px 16px; border-radius: 10px; cursor: pointer; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid transparent; transition: all 0.15s; min-height: 64px; }
+  .customer-row:active { background: #1a1a1a; border-color: #2a2a2a; }
+  .customer-name { font-weight: 700; color: #f5f5f4; font-size: 17px; }
+  .customer-sub { font-size: 13px; color: #78716c; font-family: sans-serif; margin-top: 3px; }
 
   /* ── Badges ── */
-  .badge { display: inline-block; padding: 3px 9px; border-radius: 5px; font-size: 12px; font-weight: 700; font-family: monospace; }
-  .b-green  { background: #4ade8018; color: #4ade80; border: 1px solid #4ade8033; }
-  .b-red    { background: #f8717118; color: #f87171; border: 1px solid #f8717133; }
-  .b-orange { background: #fb923c18; color: #fb923c; border: 1px solid #fb923c33; }
-  .b-gray   { color: #57534e; }
+  .badge { display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 13px; font-weight: 700; font-family: monospace; }
+  .badge-green { background: #4ade8018; color: #4ade80; border: 1px solid #4ade8033; }
+  .badge-red { background: #f8717118; color: #f87171; border: 1px solid #f8717133; }
+  .badge-orange { background: #fb923c18; color: #fb923c; border: 1px solid #fb923c33; }
+  .badge-gray { color: #57534e; }
 
   /* ── Tables ── */
-  .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  th { padding: 7px 9px; font-weight: 600; border-bottom: 1px solid #222; font-family: sans-serif; font-size: 11px; color: #57534e; text-align: left; white-space: nowrap; }
-  th.c { text-align: center; color: #a8a29e; font-family: monospace; font-size: 13px; }
-  td { padding: 8px 9px; border-bottom: 1px solid #1a1a1a; }
-  td.c { text-align: center; }
-  .sec-row td { padding: 10px 9px 4px; color: #4ade8077; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; font-family: sans-serif; border-bottom: 1px solid #1e1e1e; background: #0f0f0f; }
-  .m-lbl { font-weight: 600; color: #d6d3d1; font-family: sans-serif; cursor: pointer; text-decoration: underline dotted #444; }
-  .ideal { color: #57534e; font-size: 11px; font-family: monospace; white-space: nowrap; }
+  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th { padding: 8px 10px; font-weight: 600; border-bottom: 1px solid #222; font-family: sans-serif; font-size: 12px; color: #57534e; text-align: left; }
+  th.year-col { text-align: center; color: #a8a29e; font-family: monospace; font-size: 14px; }
+  td { padding: 9px 10px; border-bottom: 1px solid #161616; }
+  td.center { text-align: center; }
+  .section-row td { padding: 12px 10px 5px; color: #4ade8077; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; font-family: sans-serif; border-bottom: 1px solid #1e1e1e; }
+  .metric-label { font-weight: 600; color: #d6d3d1; font-family: sans-serif; font-size: 14px; }
+  .ideal-range { color: #57534e; font-size: 12px; font-family: monospace; white-space: nowrap; }
+
+  /* ── Score card ── */
+  .score-card { display: flex; align-items: center; gap: 14px; background: #111; border-radius: 12px; padding: 16px 18px; margin-bottom: 16px; }
+  .score-pct { font-size: 38px; font-weight: 900; font-family: Georgia, serif; line-height: 1; }
+  .score-label { color: #d6d3d1; font-weight: 700; font-size: 15px; font-family: sans-serif; }
+  .score-sub { color: #78716c; font-size: 13px; font-family: sans-serif; margin-top: 2px; }
 
   /* ── Scan options ── */
-  .scan-opt { display: flex; align-items: center; gap: 14px; padding: 18px; background: #161616; border: 1px solid #222; border-radius: 12px; cursor: pointer; margin-bottom: 12px; min-height: 76px; transition: border-color .15s; }
-  .scan-opt:hover { border-color: #4ade8044; background: #1a1a1a; }
-  .scan-opt.primary { background: linear-gradient(135deg,#16a34a,#15803d); border-color: #16a34a; color: #fff; }
-  .scan-opt .si { font-size: 30px; flex-shrink: 0; }
-  .scan-opt .st { font-size: 17px; font-weight: 700; margin-bottom: 2px; font-family: sans-serif; }
-  .scan-opt .sd { font-size: 13px; opacity: .75; font-family: sans-serif; line-height: 1.4; }
+  .scan-option { display: flex; align-items: center; gap: 16px; padding: 20px; background: #161616; border: 1px solid #222; border-radius: 14px; cursor: pointer; margin-bottom: 14px; transition: all 0.15s; min-height: 80px; }
+  .scan-option:active { border-color: #4ade8055; }
+  .scan-option.primary { background: linear-gradient(135deg, #16a34a, #15803d); color: #fff; border-color: #16a34a; }
+  .scan-option .icon { font-size: 32px; flex-shrink: 0; }
+  .scan-option .title { font-size: 18px; font-weight: 700; margin-bottom: 4px; font-family: sans-serif; }
+  .scan-option .desc { font-size: 14px; opacity: 0.75; line-height: 1.4; font-family: sans-serif; }
 
   /* ── Modal ── */
-  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.65); z-index: 200; display: none; align-items: flex-end; justify-content: center; }
-  .modal-overlay.open { display: flex; }
-  .modal { background: #1a1a1a; border: 1px solid #333; border-radius: 18px 18px 0 0; padding: 26px 22px; width: 100%; max-width: 520px; max-height: 75vh; overflow-y: auto; }
-  .modal h2 { font-size: 19px; font-weight: 700; color: #f5f5f4; margin-bottom: 4px; }
-  .modal-rng { font-size: 13px; color: #4ade80; margin-bottom: 14px; font-family: monospace; }
-  .modal-close { float: right; background: none; border: none; font-size: 26px; cursor: pointer; color: #78716c; min-width: 40px; min-height: 40px; line-height: 1; }
-  .modal-sec-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #4ade80; margin: 12px 0 5px; font-family: sans-serif; }
-  .modal-body { font-size: 14px; line-height: 1.65; color: #a8a29e; }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 200; display: none; align-items: flex-end; justify-content: center; }
+  .modal-overlay.visible { display: flex; }
+  .modal { background: #1a1a1a; border: 1px solid #333; border-radius: 20px 20px 0 0; padding: 28px 24px; width: 100%; max-width: 540px; max-height: 75vh; overflow-y: auto; }
+  .modal h2 { font-size: 20px; font-weight: 700; color: #f5f5f4; margin-bottom: 6px; }
+  .modal-range { font-size: 14px; color: #4ade80; margin-bottom: 16px; font-family: monospace; }
+  .modal-section { margin-bottom: 16px; }
+  .modal-section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #4ade80; margin-bottom: 6px; font-family: sans-serif; }
+  .modal-body { font-size: 15px; line-height: 1.65; color: #a8a29e; }
+  .modal-close { float: right; background: none; border: none; font-size: 28px; cursor: pointer; color: #78716c; min-width: 44px; min-height: 44px; }
 
   /* ── Notifications ── */
-  .notif { position: fixed; top: 14px; left: 10px; right: 10px; max-width: 480px; margin: 0 auto; border-radius: 10px; padding: 13px 16px; font-size: 14px; font-weight: 600; z-index: 999; box-shadow: 0 8px 24px #00000088; font-family: sans-serif; display: none; }
-  .notif.ok  { background: #14532d; border: 1px solid #4ade80; color: #bbf7d0; }
-  .notif.err { background: #7f1d1d; border: 1px solid #f87171; color: #fca5a5; }
-  .notif.inf { background: #1e3a5f; border: 1px solid #60a5fa; color: #bfdbfe; }
+  .notification { position: fixed; top: 16px; left: 12px; right: 12px; border-radius: 10px; padding: 14px 18px; font-size: 15px; font-weight: 600; z-index: 999; box-shadow: 0 8px 32px #00000088; font-family: sans-serif; display: none; }
+  .notification.success { background: #14532d; border: 1px solid #4ade80; color: #bbf7d0; }
+  .notification.error { background: #7f1d1d; border: 1px solid #f87171; color: #fca5a5; }
 
-  /* ── Loading / empty ── */
-  .loading { text-align: center; padding: 60px 20px; color: #78716c; font-family: sans-serif; }
-  .spin { display: inline-block; width: 34px; height: 34px; border: 3px solid #333; border-top-color: #4ade80; border-radius: 50%; animation: spin .7s linear infinite; }
+  /* ── Print / Report ── */
+  .report-paper { background: white; color: #1a1a1a; border-radius: 12px; padding: 28px; font-family: sans-serif; }
+  .report-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; border-bottom: 3px solid #2d5a1b; padding-bottom: 16px; flex-wrap: wrap; gap: 12px; }
+  .report-logo { font-size: 20px; font-weight: 900; color: #2d5a1b; letter-spacing: -1px; line-height: 1.1; }
+  .report-logo span { display: block; }
+  .report-customer { text-align: right; }
+  .report-customer-name { font-size: 18px; font-weight: 700; color: #2d5a1b; }
+  .report-customer-sub { font-size: 12px; color: #666; margin-top: 3px; }
+  .report-section-title { font-size: 12px; font-weight: 700; color: #2d5a1b; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+  .report-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 20px; }
+  .report-table th { background: #f0f7ee; padding: 7px 10px; text-align: left; color: #2d5a1b; font-weight: 600; }
+  .report-table th.center { text-align: center; }
+  .report-table td { padding: 7px 10px; border-bottom: 1px solid #eee; }
+  .report-table td.center { text-align: center; font-weight: 700; font-family: monospace; }
+  .report-table tr:nth-child(even) td { background: #f9f9f9; }
+  .report-footer { margin-top: 24px; padding-top: 16px; border-top: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+
+  /* ── Loading / Empty ── */
+  .loading { text-align: center; padding: 70px 20px; color: #78716c; font-family: sans-serif; }
+  .spinner { display: inline-block; width: 32px; height: 32px; border: 3px solid #333; border-top-color: #4ade80; border-radius: 50%; animation: spin 0.7s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
-  .empty { text-align: center; padding: 44px 20px; color: #78716c; font-family: sans-serif; }
-  .empty-icon { font-size: 40px; margin-bottom: 10px; }
-  .empty-title { font-size: 15px; font-weight: 700; color: #f5f5f4; margin-bottom: 4px; }
+  .empty { text-align: center; padding: 48px 20px; color: #78716c; font-family: sans-serif; }
+  .empty-icon { font-size: 44px; margin-bottom: 12px; }
 
-  /* ── Back ── */
-  .back { display: inline-flex; align-items: center; gap: 6px; color: #78716c; font-family: sans-serif; font-size: 14px; cursor: pointer; margin-bottom: 16px; background: none; border: none; padding: 0; }
-  .back:hover { color: #a8a29e; }
-
-  /* ── Banners ── */
-  .banner-ok   { background: #0a1f0f; border: 1px solid #4ade8033; border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; font-family: sans-serif; font-size: 13px; color: #4ade80; }
-  .banner-warn { background: #1a1200; border: 1px solid #fb923c33; border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; font-family: sans-serif; font-size: 13px; color: #fb923c; }
-  .banner-err  { background: #1a0000; border: 1px solid #f8717133; border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; font-family: sans-serif; font-size: 13px; color: #f87171; }
-
-  /* ── Print ── */
+  /* ── Responsive ── */
   @media print {
     .header, .no-print { display: none !important; }
-    body { background: #fff; }
-    .main { padding: 0; max-width: none; }
+    body { background: white; }
+    .main { padding: 0; }
+    .report-paper { border-radius: 0; }
   }
-
-  /* ── Mobile ── */
   @media (max-width: 600px) {
-    .stats-grid { grid-template-columns: 1fr 1fr; }
+    .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
     .grid-2 { grid-template-columns: 1fr; }
     .grid-3 { grid-template-columns: 1fr 1fr; }
-    .nav-btn { padding: 0 8px; font-size: 12px; }
+    .nav-btn { padding: 0 10px; font-size: 13px; }
     .logo-sub { display: none; }
-    .main { padding: 14px 12px; }
-    .card { padding: 14px; }
+    .main { padding: 16px 12px; }
+    .card { padding: 16px; }
   }
 </style>
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════════════════════════
-  STEP 1: Paste your Google Apps Script deployment URL below.
-  It looks like: https://script.google.com/macros/s/ABC.../exec
-════════════════════════════════════════════════════════════ -->
-<script>
-  var GAS_URL = "https://script.google.com/macros/s/AKfycbwSkko8qLeF1NZqkLqaLjzDoCbwuW7Zfx_1UOxk9CwV1vwYsVdLyxUuHEryiD9an6mWcg/exec";
-</script>
-
-<div class="notif" id="notif"></div>
-
-<div class="modal-overlay" id="info-modal" onclick="if(event.target===this)closeModal()">
-  <div class="modal" id="info-modal-body"></div>
-</div>
-
-<input type="file" accept="image/*" id="file-input" style="display:none">
-<input type="file" accept="image/*" capture="environment" id="cam-input" style="display:none">
+<div class="notification" id="notification"></div>
 
 <div class="header">
   <div class="logo">
@@ -172,6 +164,7 @@
         <path d="M6 30c3-2 5-1 8-3s4-4 7-3 3 3 6 2 5-2 5-2v6H6z" fill="#5c3d2e"/>
         <circle cx="12" cy="24" r="1.2" fill="#78716c" opacity="0.5"/>
         <circle cx="22" cy="26" r="0.8" fill="#78716c" opacity="0.4"/>
+        <circle cx="28" cy="25" r="1" fill="#78716c" opacity="0.3"/>
         <path d="M19 8v12" stroke="#4ade80" stroke-width="1.8" stroke-linecap="round"/>
         <path d="M19 8c0 0-4 3-5 6" stroke="#4ade80" stroke-width="1.5" stroke-linecap="round" fill="none"/>
         <path d="M19 10c0 0 3 2 4 5" stroke="#4ade80" stroke-width="1.5" stroke-linecap="round" fill="none"/>
@@ -182,552 +175,505 @@
     </div>
     <div>
       <div class="logo-text">SoilTracks</div>
-      <div class="logo-sub">Lawns Plants &amp; Pests LLC</div>
+      <div class="logo-sub">Lawns Plants & Pests LLC</div>
     </div>
   </div>
   <div class="nav">
-    <button class="nav-btn active" id="nb-dash"   onclick="showPage('dash')">Dashboard</button>
-    <button class="nav-btn"        id="nb-add"    onclick="showPage('add')">+ Add</button>
-    <button class="nav-btn"        id="nb-report" onclick="showPage('report')">Reports</button>
+    <button class="nav-btn active" onclick="showTab('dashboard')">Dashboard</button>
+    <button class="nav-btn" onclick="showTab('add')">+ Add</button>
+    <button class="nav-btn" onclick="showTab('report')">Reports</button>
   </div>
 </div>
 
-<div class="main" id="app"></div>
+<div class="main" id="content">
+  <div class="loading"><div class="spinner"></div><p style="margin-top:12px">Loading...</p></div>
+</div>
+
+<div class="modal-overlay" id="info-modal" onclick="closeModal(event)">
+  <div class="modal" id="info-modal-body"></div>
+</div>
+
+<input type="file" accept="image/*" id="file-input" style="display:none" onchange="handleFileUpload(event)">
+<input type="file" accept="image/*" capture="environment" id="camera-input" style="display:none" onchange="handleFileUpload(event)">
 
 <script>
-// ══════════════════════════════════════════════════════════════
-// CONFIG CHECK
-// ══════════════════════════════════════════════════════════════
-if (!GAS_URL || GAS_URL.indexOf("PASTE_YOUR") !== -1) {
-  document.getElementById('app').innerHTML =
-    '<div class="card" style="border-color:#fb923c;background:#1a1200;margin-top:10px">'
-    + '<div style="font-size:16px;font-weight:700;color:#fb923c;margin-bottom:10px;font-family:sans-serif">⚙️ One more step</div>'
-    + '<p style="font-family:sans-serif;font-size:14px;color:#a8a29e;line-height:1.8">'
-    + '1. Deploy your <b>Code.gs</b> in Google Apps Script<br>'
-    + '2. Copy the deployment URL (ends in <code>/exec</code>)<br>'
-    + '3. Open <b>index.html</b> in a text editor<br>'
-    + '4. Replace <code>PASTE_YOUR_GAS_DEPLOYMENT_URL_HERE</code> with that URL<br>'
-    + '5. Save and re-upload to GitHub</p></div>';
-  throw new Error("GAS_URL not configured.");
-}
+var customers = [];
+var samples = [];
+var currentView = 'dashboard';
+var selectedCustomer = null;
+var prefillData = null;
 
-// ══════════════════════════════════════════════════════════════
-// State
-// ══════════════════════════════════════════════════════════════
-var customers   = [];
-var samples     = [];
-var activeCust  = null;
-var prefill     = null;
-
-// ══════════════════════════════════════════════════════════════
-// Metric definitions
-// ══════════════════════════════════════════════════════════════
 var METRICS = [
-  { key:'pH',            label:'Soil pH',          unit:'',         min:6.0,  max:7.0,  sec:'Lab Results',
-    about:'Measures soil acidity or alkalinity. Most nutrients are best available between 6.0–7.0.',
-    fix:'If too low, apply limestone. If too high, apply elemental sulfur.' },
-  { key:'phosphorus',    label:'Phosphorus (P)',    unit:'lb/A',     min:50,   max:100,  sec:'Lab Results',
-    about:'Drives root development. High levels can block zinc and iron.',
-    fix:'If deficient, apply phosphate fertilizer. Avoid excess — runoff harms waterways.' },
-  { key:'organicMatter', label:'Organic Matter',    unit:'%',        min:3,    max:6,    sec:'Lab Results',
-    about:'Improves water retention, feeds soil biology, and buffers pH swings.',
-    fix:'Top-dress with compost and minimize soil disturbance.' },
-  { key:'acidity',       label:'Buffer Acidity',    unit:'meq/100g', min:0,    max:2,    sec:'Exchangeable Cations',
-    about:'Reserve acidity. Higher values mean more limestone is needed.',
-    fix:'This value determines your limestone application rate.' },
-  { key:'potassium',     label:'Potassium (K)',      unit:'meq/100g', min:0.15, max:0.40, sec:'Exchangeable Cations',
-    about:'Essential for water regulation, disease resistance, and winter hardiness.',
-    fix:'If deficient, apply potash (K₂O).' },
-  { key:'magnesium',     label:'Magnesium (Mg)',     unit:'meq/100g', min:0.5,  max:2.5,  sec:'Exchangeable Cations',
-    about:'The central atom in every chlorophyll molecule — critical for photosynthesis.',
-    fix:'If deficient, apply dolomitic limestone or Epsom salt.' },
-  { key:'calcium',       label:'Calcium (Ca)',       unit:'meq/100g', min:5,    max:15,   sec:'Exchangeable Cations',
-    about:'Builds strong cell walls. Primary component of limestone.',
-    fix:'If deficient, apply calcitic or dolomitic limestone.' },
-  { key:'cec',           label:'CEC',                unit:'meq/100g', min:10,   max:20,   sec:'Exchangeable Cations', info:true,
-    about:'Total ability of soil to hold nutrient ions. Higher = less leaching.',
-    fix:'Informational only. Improve long-term by adding organic matter.' },
-  { key:'satK',          label:'K Saturation',       unit:'%',        min:2,    max:5,    sec:'% Saturation of CEC',
-    about:'Potassium as % of CEC. Too high blocks magnesium and calcium.',
-    fix:'If low, apply potassium. Balance with Ca and Mg if high.' },
-  { key:'satMg',         label:'Mg Saturation',      unit:'%',        min:10,   max:20,   sec:'% Saturation of CEC',
-    about:'Magnesium as % of CEC. Low levels cause chlorophyll deficiency.',
-    fix:'If deficient, apply dolomitic limestone or Epsom salt.' },
-  { key:'satCa',         label:'Ca Saturation',      unit:'%',        min:60,   max:80,   sec:'% Saturation of CEC',
-    about:'Calcium as % of CEC. Low Ca usually means acidic soil needing lime.',
-    fix:'If deficient, apply limestone. Closely linked to pH.' }
+  { key:'pH', label:'Soil pH', unit:'', min:6.0, max:7.0, section:'Lab Results',
+    desc:'Measures soil acidity or alkalinity. Most nutrients are best available between 6.0–7.0.',
+    rec:'If too low, apply limestone. If too high, apply sulfur.' },
+  { key:'phosphorus', label:'Phosphorus (P)', unit:'lb/A', min:50, max:100, section:'Lab Results',
+    desc:'Drives root development and early establishment. High levels can interfere with zinc and iron uptake.',
+    rec:'If deficient, apply phosphate fertilizer. Avoid excess — runoff harms waterways.' },
+  { key:'organicMatter', label:'Organic Matter', unit:'%', min:3, max:6, section:'Lab Results',
+    desc:'Improves water retention, feeds soil biology, and buffers pH swings.',
+    rec:'Top-dress with compost, use organic fertilizers, minimize soil disturbance.' },
+  { key:'acidity', label:'Buffer Acidity', unit:'meq/100g', min:0, max:2, section:'Exchangeable Cations',
+    desc:'Reserve acidity in soil. Higher values mean more limestone is needed to raise pH.',
+    rec:'This value determines your limestone application rate.' },
+  { key:'potassium', label:'Potassium (K)', unit:'meq/100g', min:0.15, max:0.40, section:'Exchangeable Cations',
+    desc:'Essential for water regulation, disease resistance, and winter hardiness.',
+    rec:'If deficient, apply potash (K₂O). Important for stress tolerance.' },
+  { key:'magnesium', label:'Magnesium (Mg)', unit:'meq/100g', min:0.5, max:2.5, section:'Exchangeable Cations',
+    desc:'The central atom in every chlorophyll molecule. Plants cannot photosynthesize without it.',
+    rec:'If deficient, apply dolomitic limestone or Epsom salt.' },
+  { key:'calcium', label:'Calcium (Ca)', unit:'meq/100g', min:5, max:15, section:'Exchangeable Cations',
+    desc:'Builds strong cell walls and improves soil structure. Primary component of limestone.',
+    rec:'If deficient, apply calcitic or dolomitic limestone.' },
+  { key:'cec', label:'CEC', unit:'meq/100g', min:10, max:20, section:'Exchangeable Cations', infoOnly:true,
+    desc:'Total ability of soil to hold nutrient ions. Higher means less leaching risk.',
+    rec:'CEC is informational. Improve it by adding organic matter like compost.' },
+  { key:'satK', label:'K Saturation', unit:'%', min:2, max:5, section:'% Saturation of CEC',
+    desc:'Percentage of CEC occupied by potassium. Too high blocks magnesium and calcium uptake.',
+    rec:'If too low, apply potassium. If too high relative to Mg, focus on balancing.' },
+  { key:'satMg', label:'Mg Saturation', unit:'%', min:10, max:20, section:'% Saturation of CEC',
+    desc:'Percentage of CEC occupied by magnesium. Low levels cause chlorophyll deficiency.',
+    rec:'If deficient, apply dolomitic limestone or Epsom salt.' },
+  { key:'satCa', label:'Ca Saturation', unit:'%', min:60, max:80, section:'% Saturation of CEC',
+    desc:'Percentage of CEC occupied by calcium. Low Ca usually signals acidic soil needing lime.',
+    rec:'If deficient, apply limestone. Calcium and pH are closely linked.' }
 ];
 
-var SECTIONS = ['Lab Results', 'Exchangeable Cations', '% Saturation of CEC'];
+var LAB_SECTIONS = {
+  'Lab Results': ['pH','phosphorus','organicMatter'],
+  'Exchangeable Cations': ['acidity','potassium','magnesium','calcium','cec'],
+  '% Saturation of CEC': ['satK','satMg','satCa']
+};
 
-var RECS = [
-  { key:'limestoneLbs', label:'Limestone (lb/1000 ft²)', note:'Raises pH. Split if >100 lb. Aerate first.' },
-  { key:'recN',         label:'Nitrogen (N)',              note:'Split into multiple apps through the season.' },
-  { key:'recP',         label:'Phosphorus (P₂O₅)',         note:'Only apply what the test recommends.' },
-  { key:'recK',         label:'Potassium (K₂O)',            note:'Important for winter hardiness.' }
+var REC_ROWS = [
+  { key:'limestoneLbs', label:'🪨 Limestone', note:'Raises pH. Split if over 100 lb. Aerate first.' },
+  { key:'recN', label:'🌿 Nitrogen (N)', note:'Split into multiple apps through the season.' },
+  { key:'recP', label:'🌱 Phosphorus (P₂O₅)', note:'Only apply what the test recommends.' },
+  { key:'recK', label:'💧 Potassium (K₂O)', note:'Important for winter hardiness.' }
 ];
 
-// ══════════════════════════════════════════════════════════════
-// Utilities
-// ══════════════════════════════════════════════════════════════
-function esc(s) {
-  return String(s == null ? '' : s)
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
+// ══════════════════════════════════════════════════════
+// Init
+// ══════════════════════════════════════════════════════
+window.onload = function() {
+  var timeout = setTimeout(function() {
+    setContent('<div class="card" style="background:#1a1000;border-color:#fb923c;padding:20px;line-height:1.7;font-family:sans-serif">'
+      + '<div style="font-size:16px;font-weight:700;color:#fb923c;margin-bottom:10px">⚠️ Could not connect</div>'
+      + '<p style="font-size:13px;color:#a8a29e;margin-bottom:12px">This is usually an authorization issue. In the Apps Script editor, select <b>testConnection</b> from the function dropdown and click Run. Approve permissions, then refresh this page.</p>'
+      + '<button class="btn-green" onclick="location.reload()">↺ Retry</button></div>');
+  }, 12000);
 
-function fmtNum(v) {
-  if (v === undefined || v === null || v === '') return '<span class="b-gray">—</span>';
-  var n = parseFloat(v);
-  return isNaN(n) ? esc(v) : (n % 1 === 0 ? n : parseFloat(n.toFixed(2)));
-}
-
-function statusBadge(m, v) {
-  if (m.info || v === undefined || v === null || v === '') return fmtNum(v);
-  var n = parseFloat(v);
-  if (isNaN(n)) return '<span class="b-gray">—</span>';
-  if (n >= m.min && n <= m.max) return '<span class="badge b-green">'  + fmtNum(v) + '</span>';
-  if (n > m.max)                return '<span class="badge b-orange">' + fmtNum(v) + '</span>';
-  return '<span class="badge b-red">' + fmtNum(v) + '</span>';
-}
-
-function setApp(html) { document.getElementById('app').innerHTML = html; }
-
-function notify(msg, type, ms) {
-  var el = document.getElementById('notif');
-  el.textContent = msg;
-  el.className = 'notif ' + (type || 'ok');
-  el.style.display = 'block';
-  clearTimeout(el._t);
-  el._t = setTimeout(function(){ el.style.display = 'none'; }, ms || 4000);
-}
-
-function navActive(id) {
-  ['nb-dash','nb-add','nb-report'].forEach(function(n){
-    var el = document.getElementById(n);
-    if (el) el.classList.remove('active');
-  });
-  var target = document.getElementById('nb-' + id);
-  if (target) target.classList.add('active');
-}
-
-// ══════════════════════════════════════════════════════════════
-// GAS API — GET for reads, POST for writes
-// ══════════════════════════════════════════════════════════════
-function gasGet(params) {
-  var qs = Object.keys(params).map(function(k){
-    return encodeURIComponent(k) + '=' + encodeURIComponent(params[k]);
-  }).join('&');
-  return fetch(GAS_URL + '?' + qs).then(function(r){ return r.json(); });
-}
-
-function gasPost(body) {
-  return fetch(GAS_URL, {
-    method: 'POST',
-    body: JSON.stringify(body)
-  }).then(function(r){ return r.json(); });
-}
-
-// ══════════════════════════════════════════════════════════════
-// Boot
-// ══════════════════════════════════════════════════════════════
-window.addEventListener('load', function() {
-  document.getElementById('file-input').addEventListener('change', function(e){
-    if (e.target.files[0]) handleImage(e.target.files[0]);
-    e.target.value = '';
-  });
-  document.getElementById('cam-input').addEventListener('change', function(e){
-    if (e.target.files[0]) handleImage(e.target.files[0]);
-    e.target.value = '';
-  });
-  loadAndShow();
-});
-
-function loadAndShow() {
-  setApp('<div class="loading"><div class="spin"></div>'
-    + '<p style="margin-top:14px;font-family:sans-serif;font-size:14px">Loading from Google Sheets...</p></div>');
-
-  var timed = setTimeout(function(){
-    setApp('<div class="banner-err"><b>Could not reach Google Apps Script.</b><br><br>'
-      + 'Check that:<br>'
-      + '• <code>GAS_URL</code> in index.html is your full /exec URL<br>'
-      + '• Deployed with <b>Who has access: Anyone</b><br>'
-      + '• SPREADSHEET_ID is correct in Code.gs<br><br>'
-      + '<button class="btn-green btn-sm" onclick="loadAndShow()">↺ Retry</button></div>');
-  }, 15000);
-
-  gasGet({ action: 'getData' })
-    .then(function(d) {
-      clearTimeout(timed);
-      if (!d.success) {
-        setApp('<div class="banner-err"><b>Error from Apps Script:</b> ' + esc(d.error)
-          + '<br><br><button class="btn-green btn-sm" onclick="loadAndShow()">↺ Retry</button></div>');
-        return;
-      }
-      customers = d.customers || [];
-      samples   = d.samples   || [];
-      showPage('dash');
+  google.script.run
+    .withSuccessHandler(function(result) {
+      clearTimeout(timeout);
+      if (!result.success) {
+        setContent('<div class="card" style="color:#f87171;font-family:sans-serif;padding:20px"><b>Error:</b> ' + esc(result.error) + '</div>');
+      } else { loadDashboard(); }
     })
-    .catch(function(err) {
-      clearTimeout(timed);
-      setApp('<div class="banner-err"><b>Network error:</b> ' + esc(err.message || String(err))
-        + '<br><br>Make sure your GAS_URL is correct and the deployment allows <b>Anyone</b> access.<br><br>'
-        + '<button class="btn-green btn-sm" onclick="loadAndShow()">↺ Retry</button></div>');
-    });
+    .withFailureHandler(function(err) {
+      clearTimeout(timeout);
+      setContent('<div class="card" style="color:#f87171;font-family:sans-serif;padding:20px"><b>Script error:</b> ' + esc(err.message || String(err))
+        + '<br><button class="btn-green" style="margin-top:12px" onclick="location.reload()">↺ Retry</button></div>');
+    })
+    .testConnection();
+};
+
+// ══════════════════════════════════════════════════════
+// Data
+// ══════════════════════════════════════════════════════
+function loadDashboard() {
+  setContent('<div class="loading"><div class="spinner"></div><p style="margin-top:12px">Loading...</p></div>');
+  google.script.run
+    .withSuccessHandler(function(data) {
+      customers = data.customers || [];
+      samples = data.samples || [];
+      renderDashboard(data);
+    })
+    .withFailureHandler(function(err) { showError(err); })
+    .getDashboardData();
 }
 
-function showPage(page) {
-  navActive(page);
-  if (page === 'dash')        { activeCust = null; renderDashboard(); }
-  else if (page === 'add')    { prefill = null; renderAddPage(); }
-  else if (page === 'report') renderReportPage();
-}
-
-// ══════════════════════════════════════════════════════════════
-// Dashboard
-// ══════════════════════════════════════════════════════════════
-function renderDashboard() {
-  var years = {};
-  samples.forEach(function(s){ if (s.year) years[s.year] = true; });
-
-  var counts = {};
-  samples.forEach(function(s){
-    METRICS.forEach(function(m){
-      if (m.info) return;
-      var n = parseFloat(s[m.key]);
-      if (!isNaN(n) && (n < m.min || n > m.max)) counts[m.key] = (counts[m.key] || 0) + 1;
-    });
+// ══════════════════════════════════════════════════════
+// Nav
+// ══════════════════════════════════════════════════════
+function showTab(tab) {
+  currentView = tab;
+  selectedCustomer = null;
+  document.querySelectorAll('.nav-btn').forEach(function(b, i) {
+    b.classList.toggle('active', ['dashboard','add','report'][i] === tab);
   });
-  var topIssues = Object.keys(counts)
-    .sort(function(a,b){ return counts[b] - counts[a]; }).slice(0, 4);
+  if (tab === 'dashboard') loadDashboard();
+  else if (tab === 'add') renderAddSample();
+  else if (tab === 'report') renderReportPage();
+}
 
-  var html = '<div class="page-title">Soil Data Overview</div>'
-    + '<div class="page-sub">' + customers.length + ' customers · ' + samples.length
-    + ' samples · ' + Object.keys(years).length + ' seasons tracked</div>';
+function setContent(html) { document.getElementById('content').innerHTML = html; }
+
+// ══════════════════════════════════════════════════════
+// Dashboard
+// ══════════════════════════════════════════════════════
+function renderDashboard(data) {
+  var d = data || {};
+  var html = '<div style="margin-bottom:20px">'
+    + '<div style="font-size:22px;font-weight:700;color:#f5f5f4;margin-bottom:4px">Soil Data Overview</div>'
+    + '<div style="color:#78716c;font-size:13px;font-family:sans-serif">'
+    + (d.customerCount||0)+' customers · '+(d.sampleCount||0)+' samples · '+(d.yearsCount||0)+' years of data</div></div>';
 
   html += '<div class="stats-grid">'
-    + '<div class="stat-card"><div class="stat-icon">👨‍🌾</div><div class="stat-val">' + customers.length + '</div><div class="stat-label">Customers</div></div>'
-    + '<div class="stat-card"><div class="stat-icon">🧪</div><div class="stat-val">' + samples.length + '</div><div class="stat-label">Samples</div></div>'
-    + '<div class="stat-card"><div class="stat-icon">📅</div><div class="stat-val">' + Object.keys(years).length + '</div><div class="stat-label">Seasons</div></div>'
+    + '<div class="stat-card"><div class="stat-icon">👨‍🌾</div><div class="stat-val">'+(d.customerCount||0)+'</div><div class="stat-label">Customers</div></div>'
+    + '<div class="stat-card"><div class="stat-icon">🧪</div><div class="stat-val">'+(d.sampleCount||0)+'</div><div class="stat-label">Total Samples</div></div>'
+    + '<div class="stat-card"><div class="stat-icon">📅</div><div class="stat-val">'+(d.yearsCount||0)+'</div><div class="stat-label">Years of Data</div></div>'
     + '</div>';
 
-  if (topIssues.length) {
+  if (d.improvementScore !== null && d.improvementScore !== undefined) {
+    var color = d.improvementScore >= 70 ? '#4ade80' : d.improvementScore >= 40 ? '#fb923c' : '#f87171';
+    html += '<div class="score-card" style="border:1px solid '+color+'33">'
+      + '<div class="score-pct" style="color:'+color+'">'+d.improvementScore+'%</div>'
+      + '<div><div class="score-label">Average Improvement</div><div class="score-sub">Year-over-year soil health trend</div></div></div>';
+  }
+
+  if (d.topIssues && d.topIssues.length > 0) {
     html += '<div class="card"><div class="sec-title">Common Issues</div>';
-    topIssues.forEach(function(k){
-      var m = METRICS.find(function(x){ return x.key === k; });
-      html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #1e1e1e">'
-        + '<span style="font-family:sans-serif;font-size:13px;color:#d6d3d1">' + esc(m ? m.label : k) + '</span>'
-        + '<span class="badge b-red">' + counts[k] + ' out of range</span></div>';
+    d.topIssues.forEach(function(issue) {
+      html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #1e1e1e">'
+        + '<span style="font-family:sans-serif;font-size:13px;color:#d6d3d1">'+esc(issue.label)+'</span>'
+        + '<span class="badge badge-red">'+issue.count+' out of range</span></div>';
     });
     html += '</div>';
   }
 
-  html += '<div class="card no-print">';
-  html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">'
-    + '<div class="sec-title" style="margin:0">Customers</div>'
-    + '<button class="btn-green btn-sm" onclick="renderCustForm(null)">+ New Customer</button></div>';
-  html += '<div class="search-bar"><span style="color:#57534e">🔍</span>'
-    + '<input id="csearch" placeholder="Search customers..." oninput="filterCustomers()" '
-    + 'style="flex:1;border:none;outline:none;font-size:15px;background:transparent;color:#e7e5e4;font-family:sans-serif"></div>';
-  html += '<div id="clist">' + buildCustList(customers) + '</div></div>';
-
-  setApp(html);
+  html += '<div class="card"><div class="sec-title">Customers</div>';
+  html += '<div class="search-bar no-print"><span style="color:#57534e">🔍</span><input id="cust-search" placeholder="Search customers..." oninput="filterCustomers()"></div>';
+  html += '<div id="customer-list">' + renderCustomerList(customers) + '</div></div>';
+  setContent(html);
 }
 
-function buildCustList(list) {
-  if (!list.length) return '<div class="empty"><div class="empty-icon">🌱</div>'
-    + '<div class="empty-title">No customers yet</div><div>Tap + New Customer to add one.</div></div>';
-  return list.map(function(c){
-    var cs = samples.filter(function(s){ return String(s.customerId) === String(c.id); });
-    var yrs = cs.map(function(s){ return s.year; }).filter(Boolean).sort();
-    var uniq = yrs.filter(function(v,i,a){ return a.indexOf(v) === i; });
-    return '<div class="cust-row" onclick="openCust(\'' + c.id + '\')">'
-      + '<div><div class="cust-name">' + esc(c.name) + '</div>'
-      + '<div class="cust-sub">' + (c.field ? esc(c.field) + ' · ' : '')
-      + cs.length + ' sample' + (cs.length !== 1 ? 's' : '')
-      + (uniq.length ? ' · ' + uniq.join(', ') : '') + '</div></div>'
-      + '<span style="color:#57534e;font-size:20px">›</span></div>';
-  }).join('');
+function renderCustomerList(list) {
+  if (list.length === 0) return '<div class="empty"><div class="empty-icon">🌱</div><div style="font-size:15px;font-weight:700;color:#f5f5f4;margin-bottom:4px">No customers yet</div><div style="font-size:13px">Add your first sample to get started.</div></div>';
+  var html = '';
+  list.forEach(function(c) {
+    var count = samples.filter(function(s){ return s.customerId === c.id; }).length;
+    var yrs = [... new Set(samples.filter(function(s){ return s.customerId === c.id; }).map(function(s){ return s.year; }))].sort().join(', ');
+    html += '<div class="customer-row" onclick="openCustomer(\''+c.id+'\')">'
+      + '<div><div class="customer-name">'+esc(c.name)+'</div>'
+      + '<div class="customer-sub">'+(c.field?esc(c.field)+' · ':'')+count+' sample'+(count!==1?'s':'')+(yrs?' · '+yrs:'')+'</div></div>'
+      + '<div style="color:#78716c;font-size:20px">›</div></div>';
+  });
+  return html;
 }
 
 function filterCustomers() {
-  var q = (document.getElementById('csearch').value || '').toLowerCase();
-  var list = q ? customers.filter(function(c){
-    return c.name.toLowerCase().includes(q) || (c.field || '').toLowerCase().includes(q);
-  }) : customers;
-  var el = document.getElementById('clist');
-  if (el) el.innerHTML = buildCustList(list);
+  var q = document.getElementById('cust-search').value.toLowerCase();
+  var filtered = customers.filter(function(c) {
+    return c.name.toLowerCase().includes(q) || (c.field||'').toLowerCase().includes(q);
+  });
+  document.getElementById('customer-list').innerHTML = renderCustomerList(filtered);
 }
 
-// ══════════════════════════════════════════════════════════════
-// Customer detail
-// ══════════════════════════════════════════════════════════════
-function openCust(id) {
-  activeCust = customers.find(function(c){ return String(c.id) === String(id); });
-  if (!activeCust) return;
-  navActive('');
+// ══════════════════════════════════════════════════════
+// Customer Detail
+// ══════════════════════════════════════════════════════
+function openCustomer(id) {
+  selectedCustomer = customers.find(function(c){ return c.id === id; });
+  if (!selectedCustomer) return;
+  currentView = 'customer';
+  document.querySelectorAll('.nav-btn').forEach(function(b){ b.classList.remove('active'); });
 
-  var c  = activeCust;
-  var cs = samples.filter(function(s){ return String(s.customerId) === String(c.id); })
-                  .sort(function(a,b){ return b.year - a.year; });
+  var c = selectedCustomer;
+  var sorted = samples.filter(function(s){ return s.customerId === c.id; }).sort(function(a,b){ return a.year - b.year; });
 
-  var html = '<button class="back no-print" onclick="showPage(\'dash\')">&larr; Back</button>';
-  html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:6px">'
-    + '<div class="page-title">' + esc(c.name) + '</div>'
-    + '<div class="btn-row no-print" style="margin:0">'
-    + '<button class="btn-green btn-sm" onclick="startSampleFor(\'' + c.id + '\')">+ Sample</button>'
-    + '<button class="btn-outline btn-sm" onclick="renderCustForm(\'' + c.id + '\')">Edit</button>'
-    + '<button class="btn-danger btn-sm" onclick="doDeleteCust(\'' + c.id + '\')">Delete</button>'
-    + '</div></div>';
-
-  var info = [];
-  if (c.field)   info.push(esc(c.field));
-  if (c.address) info.push(esc(c.address) + (c.city ? ', ' + esc(c.city) : ''));
-  if (c.phone)   info.push(esc(c.phone));
-  if (c.email)   info.push(esc(c.email));
-  if (info.length) html += '<div class="page-sub">' + info.join(' · ') + '</div>';
-
-  if (!cs.length) {
-    html += '<div class="empty"><div class="empty-icon">🧪</div><div class="empty-title">No samples yet</div>'
-      + '<button class="btn-green btn-full no-print" onclick="startSampleFor(\'' + c.id + '\')">+ Add First Sample</button></div>';
-    setApp(html); return;
+  var imp = 0, total = 0;
+  if (sorted.length >= 2) {
+    var prev = sorted[sorted.length - 2], curr = sorted[sorted.length - 1];
+    METRICS.forEach(function(m) {
+      if (m.infoOnly) return;
+      var pv = parseFloat(prev[m.key]), cv = parseFloat(curr[m.key]);
+      if (isNaN(pv) || isNaN(cv)) return;
+      total++;
+      var mid = (m.min + m.max) / 2;
+      var cs = cv >= m.min && cv <= m.max;
+      var ps = pv >= m.min && pv <= m.max;
+      if (cs) { imp++; } else if (!ps && Math.abs(cv-mid) < Math.abs(pv-mid)) { imp++; }
+    });
   }
 
-  var years = cs.map(function(s){ return s.year; });
+  var html = '<div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap" class="no-print">'
+    + '<button class="btn-outline" onclick="showTab(\'dashboard\')">← Back</button>'
+    + '<div style="font-size:20px;font-weight:700;color:#f5f5f4;flex:1">'+esc(c.name)+'</div>'
+    + '<button class="btn-outline btn-sm" onclick="showReportFor(\''+c.id+'\')">📄 Report</button>'
+    + '<button class="btn-outline btn-sm" onclick="addSampleFor(\''+c.id+'\')">+ Sample</button>'
+    + '<button class="btn-danger btn-sm" onclick="deleteCustomer(\''+c.id+'\')">Delete</button></div>';
 
-  html += '<div class="card"><div class="sec-title">Recommendations</div><div class="tbl-wrap"><table>'
-    + '<thead><tr><th>Item</th>';
-  years.forEach(function(y){ html += '<th class="c">' + y + '</th>'; });
+  if (c.field || c.address || c.email || c.phone) {
+    html += '<div class="card" style="padding:12px 16px;margin-bottom:12px">';
+    if (c.field)   html += '<div style="font-size:13px;color:#a8a29e;font-family:sans-serif">'+esc(c.field)+'</div>';
+    if (c.address) html += '<div style="font-size:12px;color:#57534e;font-family:sans-serif">'+esc(c.address)+(c.city?', '+esc(c.city):'')+'</div>';
+    if (c.email)   html += '<div style="font-size:12px;color:#57534e;font-family:sans-serif">'+esc(c.email)+'</div>';
+    if (c.phone)   html += '<div style="font-size:12px;color:#57534e;font-family:sans-serif">'+esc(c.phone)+'</div>';
+    html += '</div>';
+  }
+
+  if (total > 0) {
+    var pct = Math.round((imp/total)*100);
+    var clr = pct >= 70 ? '#4ade80' : pct >= 40 ? '#fb923c' : '#f87171';
+    html += '<div class="score-card" style="border:1px solid '+clr+'33;margin-bottom:12px">'
+      + '<div class="score-pct" style="color:'+clr+'">'+pct+'%</div>'
+      + '<div><div class="score-label">Year-over-Year Improvement</div>'
+      + '<div class="score-sub">Based on last two samples</div></div></div>';
+  }
+
+  if (sorted.length === 0) {
+    html += '<div class="empty"><div class="empty-icon">🧪</div><div style="font-size:15px;font-weight:700;color:#f5f5f4;margin-bottom:4px">No samples yet</div>'
+      + '<div style="font-size:13px;margin-bottom:16px">Add a soil sample to start tracking.</div>'
+      + '<button class="btn-green" onclick="addSampleFor(\''+c.id+'\')">+ Add Sample</button></div>';
+    setContent(html);
+    return;
+  }
+
+  html += '<div class="card"><div class="sec-title">Limestone & Nutrient Recommendations</div><div class="table-wrap"><table>';
+  html += '<thead><tr><th>Item</th>';
+  sorted.forEach(function(s){ html += '<th class="year-col">'+s.year+'</th>'; });
   html += '<th>Notes</th></tr></thead><tbody>';
-  RECS.forEach(function(r){
-    html += '<tr><td style="font-family:sans-serif;font-size:13px;font-weight:600;color:#d6d3d1;white-space:nowrap">' + r.label + '</td>';
-    cs.forEach(function(s){
-      var v = s[r.key], none = !v || String(v).toLowerCase() === 'none' || v === '0';
-      html += '<td class="c"><span class="badge ' + (none ? 'b-green' : 'b-orange') + '">' + (v || 'None') + '</span></td>';
-    });
-    html += '<td style="color:#57534e;font-size:11px;font-family:sans-serif">' + r.note + '</td></tr>';
+  REC_ROWS.forEach(function(row) {
+    html += '<tr><td style="font-weight:600;color:#d6d3d1;white-space:nowrap;font-family:sans-serif;font-size:13px">'+row.label+'</td>';
+    sorted.forEach(function(s) { html += '<td class="center">'+recBadge(s[row.key])+'</td>'; });
+    html += '<td style="color:#78716c;font-size:11px;font-family:sans-serif;max-width:180px;line-height:1.5">'+row.note+'</td></tr>';
   });
   html += '</tbody></table></div></div>';
 
-  html += '<div class="card"><div class="sec-title">Lab Results — Year over Year</div><div class="tbl-wrap"><table>'
-    + '<thead><tr><th>Metric</th>';
-  years.forEach(function(y){ html += '<th class="c">' + y + '</th>'; });
+  html += '<div class="card"><div class="sec-title">Lab Results — Year over Year</div><div class="table-wrap"><table>';
+  html += '<thead><tr><th>Metric</th>';
+  sorted.forEach(function(s){ html += '<th class="year-col">'+s.year+'</th>'; });
   html += '<th>Ideal</th></tr></thead><tbody>';
-  SECTIONS.forEach(function(sec){
-    html += '<tr class="sec-row"><td colspan="' + (2 + years.length) + '">' + sec + '</td></tr>';
-    METRICS.filter(function(m){ return m.sec === sec; }).forEach(function(m){
-      html += '<tr><td><span class="m-lbl" onclick="showMetricInfo(\'' + m.key + '\')">' + m.label + '</span></td>';
-      cs.forEach(function(s){ html += '<td class="c">' + statusBadge(m, s[m.key]) + '</td>'; });
-      html += '<td class="ideal">' + (m.info ? 'info' : m.min + '–' + m.max + (m.unit ? ' ' + m.unit : '')) + '</td></tr>';
+  Object.entries(LAB_SECTIONS).forEach(function(entry) {
+    var section = entry[0], keys = entry[1];
+    html += '<tr class="section-row"><td colspan="'+(sorted.length+2)+'">'+section+'</td></tr>';
+    keys.forEach(function(key) {
+      var m = METRICS.find(function(x){ return x.key === key; });
+      if (!m) return;
+      html += '<tr><td style="min-width:130px"><div class="metric-label">'+m.label+'</div>'
+        + '<button style="font-size:10px;color:#4ade8066;cursor:pointer;font-family:sans-serif;text-decoration:underline dotted;border:none;background:none;padding:0" onclick="showInfoModal(\''+m.key+'\')">what is this?</button></td>';
+      sorted.forEach(function(s) { html += '<td class="center">'+statusBadge(s[key], m)+'</td>'; });
+      html += '<td class="ideal-range">'+m.min+'–'+m.max+(m.unit?' '+m.unit:'')+'</td></tr>';
     });
   });
-  html += '</tbody></table>';
+  html += '</tbody></table></div></div>';
 
-  html += '<div class="btn-row no-print" style="margin-top:12px">';
-  cs.forEach(function(s){
-    html += '<button class="btn-danger btn-sm" onclick="doDeleteSample(\'' + s.id + '\',' + s.year + ')">Delete ' + s.year + '</button>';
+  html += '<div class="card no-print"><div class="sec-title">Sample History</div>';
+  sorted.slice().reverse().forEach(function(s) {
+    html += '<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #1e1e1e">'
+      + '<span style="background:#4ade8018;color:#4ade80;padding:4px 10px;border-radius:6px;font-weight:700;font-size:13px;font-family:monospace">'+s.year+'</span>'
+      + '<span style="flex:1;font-size:12px;color:#78716c;font-family:sans-serif">'+formatDate(s.createdAt)+'</span>'
+      + '<button class="btn-danger btn-sm" onclick="deleteSample(\''+s.id+'\','+s.year+')">Delete</button></div>';
   });
-  html += '</div></div>';
-  html += '<button class="btn-outline no-print" onclick="openReport(\'' + c.id + '\')">🖨 Print Report</button>';
-
-  setApp(html);
-}
-
-// ══════════════════════════════════════════════════════════════
-// Add / Edit customer
-// ══════════════════════════════════════════════════════════════
-function renderCustForm(id) {
-  var c = id ? customers.find(function(x){ return String(x.id) === String(id); }) : null;
-  var v = function(k){ return c ? esc(c[k] || '') : ''; };
-
-  var html = '<button class="back" onclick="showPage(\'dash\')">&larr; Back</button>'
-    + '<div class="page-title">' + (c ? 'Edit Customer' : 'New Customer') + '</div>'
-    + '<div class="card">'
-    + '<div class="form-group"><label class="form-label">Name *</label>'
-    + '<input class="form-input" id="cf-name" value="' + v('name') + '" placeholder="John Smith"></div>'
-    + '<div class="grid-2">'
-    + '<div class="form-group"><label class="form-label">Field / Property</label>'
-    + '<input class="form-input" id="cf-field" value="' + v('field') + '" placeholder="Front lawn"></div>'
-    + '<div class="form-group"><label class="form-label">City</label>'
-    + '<input class="form-input" id="cf-city" value="' + v('city') + '" placeholder="State College"></div></div>'
-    + '<div class="form-group"><label class="form-label">Address</label>'
-    + '<input class="form-input" id="cf-addr" value="' + v('address') + '" placeholder="123 Creek Rd"></div>'
-    + '<div class="grid-2">'
-    + '<div class="form-group"><label class="form-label">Phone</label>'
-    + '<input class="form-input" id="cf-phone" type="tel" value="' + v('phone') + '" placeholder="814-555-0101"></div>'
-    + '<div class="form-group"><label class="form-label">Email</label>'
-    + '<input class="form-input" id="cf-email" type="email" value="' + v('email') + '" placeholder="name@email.com"></div></div>'
-    + '<button class="btn-green btn-full" onclick="saveCustForm(\'' + (id || '') + '\')">'
-    + (c ? 'Save Changes' : 'Add Customer') + '</button>';
-  if (c) html += '<button class="btn-danger btn-full" onclick="doDeleteCust(\'' + c.id + '\')">Delete Customer</button>';
   html += '</div>';
-  setApp(html);
+  setContent(html);
 }
 
-function saveCustForm(existingId) {
-  var name = (document.getElementById('cf-name').value || '').trim();
-  if (!name) { notify('Name is required.', 'err'); return; }
-  var data = {
-    id:      existingId || undefined,
-    name:    name,
-    field:   (document.getElementById('cf-field').value || '').trim(),
-    city:    (document.getElementById('cf-city').value || '').trim(),
-    address: (document.getElementById('cf-addr').value || '').trim(),
-    phone:   (document.getElementById('cf-phone').value || '').trim(),
-    email:   (document.getElementById('cf-email').value || '').trim()
-  };
-  gasPost({ action: 'saveCustomer', data: data })
-    .then(function(r){
-      if (!r.success) { notify('Error: ' + (r.error || 'unknown'), 'err'); return; }
-      data.id = r.id;
-      if (!existingId) { customers.push(data); }
-      else {
-        var i = customers.findIndex(function(c){ return String(c.id) === String(existingId); });
-        if (i !== -1) customers[i] = Object.assign(customers[i], data);
-      }
-      notify(existingId ? 'Customer updated.' : 'Customer added.');
-      if (existingId) openCust(existingId); else showPage('dash');
-    })
-    .catch(function(err){ notify('Save error: ' + (err.message || err), 'err'); });
+function addSampleFor(customerId) {
+  prefillData = { customerId: customerId };
+  renderSampleForm();
 }
 
-// ══════════════════════════════════════════════════════════════
-// Add sample flow
-// ══════════════════════════════════════════════════════════════
-function renderAddPage() {
-  if (!customers.length) {
-    setApp('<div class="page-title">Add Sample</div>'
-      + '<div class="banner-warn">No customers yet — add one first.</div>'
-      + '<button class="btn-green" onclick="renderCustForm(null)">+ New Customer</button>');
-    return;
+// ══════════════════════════════════════════════════════
+// Add Sample
+// ══════════════════════════════════════════════════════
+function renderAddSample() {
+  var html = '<div style="font-size:22px;font-weight:700;color:#f5f5f4;margin-bottom:20px">Add Soil Sample</div>';
+
+  if (customers.length === 0) {
+    html += '<div class="card" style="border-color:#fb923c33;padding:14px;margin-bottom:16px;color:#fb923c;font-size:13px;font-family:sans-serif">⚠ Add a customer first before recording a sample.</div>';
   }
-  var html = '<div class="page-title">Add Sample</div>'
-    + '<div class="page-sub">Select the customer to log a soil test for.</div>'
-    + '<div class="card"><div class="sec-title">Select Customer</div>';
-  customers.forEach(function(c){
-    html += '<div class="cust-row" onclick="startSampleFor(\'' + c.id + '\')">'
-      + '<div><div class="cust-name">' + esc(c.name) + '</div>'
-      + '<div class="cust-sub">' + (c.field ? esc(c.field) : '') + '</div></div>'
-      + '<span style="color:#57534e;font-size:20px">›</span></div>';
+
+  html += '<div class="scan-option primary" onclick="document.getElementById(\'camera-input\').click()">'
+    + '<div class="icon">📷</div><div><div class="title">Scan Report</div>'
+    + '<div class="desc">Photograph a Penn State soil test — AI fills in all values</div></div></div>';
+
+  html += '<div class="scan-option" onclick="document.getElementById(\'file-input\').click()">'
+    + '<div class="icon">🖼</div><div><div class="title">Upload Photo</div>'
+    + '<div class="desc">Choose an existing photo from your device</div></div></div>';
+
+  html += '<div class="scan-option" onclick="prefillData=null;renderSampleForm()">'
+    + '<div class="icon">✏️</div><div><div class="title">Enter Manually</div>'
+    + '<div class="desc">Type in all soil lab values by hand</div></div></div>';
+
+  html += '<div class="card" style="margin-top:16px"><div class="sec-title">Add New Customer</div>'
+    + '<div class="grid-2">'
+    + '<div class="form-group"><label class="form-label">Name *</label><input class="form-input" id="nc-name" placeholder="John Smith"></div>'
+    + '<div class="form-group"><label class="form-label">Field / Property</label><input class="form-input" id="nc-field" placeholder="Front lawn"></div>'
+    + '<div class="form-group"><label class="form-label">Email</label><input class="form-input" id="nc-email" type="email"></div>'
+    + '<div class="form-group"><label class="form-label">Phone</label><input class="form-input" id="nc-phone" type="tel"></div>'
+    + '<div class="form-group"><label class="form-label">Address</label><input class="form-input" id="nc-address"></div>'
+    + '<div class="form-group"><label class="form-label">City</label><input class="form-input" id="nc-city"></div>'
+    + '</div><button class="btn-green btn-full" onclick="saveCustomer()">Save Customer</button></div>';
+  setContent(html);
+}
+
+// ══════════════════════════════════════════════════════
+// Photo Upload → Claude Extraction
+// ══════════════════════════════════════════════════════
+function handleFileUpload(event) {
+  var file = event.target.files[0];
+  if (!file) return;
+  event.target.value = '';
+
+  setContent('<div class="loading"><div class="spinner"></div><p style="margin-top:12px;font-size:15px">🤖 Reading soil report...</p><p style="color:#57534e;font-size:12px;margin-top:6px">Step 1 of 2 — Compressing image...</p></div>');
+
+  compressToLimit(file, 65000, function(base64) {
+    sendToExtraction(base64, 'image/jpeg');
   });
-  html += '</div>';
-  setApp(html);
 }
 
-function startSampleFor(id) {
-  activeCust = customers.find(function(c){ return String(c.id) === String(id); });
-  prefill = null;
-  renderScanStep();
+// Compress image to a base64 string under maxBase64Chars.
+// Uses larger sizes than before so the AI can actually read the report text.
+function compressToLimit(file, maxBase64Chars, callback) {
+  var attempts = [
+    { size: 1800, quality: 0.85 },
+    { size: 1600, quality: 0.78 },
+    { size: 1400, quality: 0.70 },
+    { size: 1200, quality: 0.63 },
+    { size: 1000, quality: 0.58 },
+    { size: 900,  quality: 0.52 },
+    { size: 800,  quality: 0.46 }
+  ];
+  var canvas = document.createElement('canvas');
+  var ctx = canvas.getContext('2d');
+  var img = new Image();
+  var objectUrl = URL.createObjectURL(file);
+  img.onload = function() {
+    URL.revokeObjectURL(objectUrl);
+    var idx = 0;
+    function tryNext() {
+      if (idx >= attempts.length) { doStep(attempts[attempts.length - 1]); return; }
+      doStep(attempts[idx++]);
+    }
+    function doStep(a) {
+      var scale = Math.min(1, a.size / Math.max(img.width, img.height));
+      canvas.width  = Math.round(img.width  * scale);
+      canvas.height = Math.round(img.height * scale);
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      var b64 = canvas.toDataURL('image/jpeg', a.quality).split(',')[1];
+      if (b64.length <= maxBase64Chars || idx >= attempts.length) { callback(b64); }
+      else { tryNext(); }
+    }
+    tryNext();
+  };
+  img.onerror = function() {
+    var reader = new FileReader();
+    reader.onload = function(e) { callback(e.target.result.split(',')[1]); };
+    reader.readAsDataURL(file);
+  };
+  img.src = objectUrl;
 }
 
-function renderScanStep() {
-  var c = activeCust;
-  var html = '<button class="back" onclick="showPage(\'add\')">&larr; Back</button>'
-    + '<div class="page-title">Add Sample' + (c ? ' — ' + esc(c.name) : '') + '</div>'
-    + '<div class="page-sub">Scan a soil report photo or enter values by hand.</div>'
-    + '<div class="scan-opt primary" onclick="document.getElementById(\'cam-input\').click()">'
-    + '<div class="si">📷</div><div><div class="st">Take Photo</div>'
-    + '<div class="sd">Photograph a Penn State soil report — AI reads all values automatically.</div></div></div>'
-    + '<div class="scan-opt" onclick="document.getElementById(\'file-input\').click()">'
-    + '<div class="si">🖼</div><div><div class="st">Upload Image</div>'
-    + '<div class="sd">Choose an existing photo from your device.</div></div></div>'
-    + '<div class="scan-opt" onclick="renderSampleForm(null)">'
-    + '<div class="si">✏️</div><div><div class="st">Enter Manually</div>'
-    + '<div class="sd">Type in all soil lab values by hand.</div></div></div>';
-  setApp(html);
-}
+// Call Anthropic directly from the browser using the key retrieved from GAS Script Properties.
+// This avoids the 30-second GAS execution timeout entirely.
+function sendToExtraction(base64, mimeType) {
+  var startTime = Date.now();
+  var done = false;
 
-// ══════════════════════════════════════════════════════════════
-// Image → AI extraction
-// ══════════════════════════════════════════════════════════════
-function handleImage(file) {
-  if (!file.type.startsWith('image/')) { notify('Please choose an image file.', 'err'); return; }
-  var start = Date.now(); var done = false;
+  function elapsedSec() { return Math.floor((Date.now() - startTime) / 1000); }
 
-  setApp('<button class="back" onclick="renderScanStep()">&larr; Back</button>'
-    + '<div class="page-title">Scanning Report' + (activeCust ? ' — ' + esc(activeCust.name) : '') + '</div>'
-    + '<div class="loading">'
-    + '<div class="spin" style="width:40px;height:40px;border-width:4px"></div>'
-    + '<p style="margin-top:14px;font-size:17px;font-weight:700;color:#f5f5f4">🤖 Reading Soil Report</p>'
-    + '<p style="color:#78716c;font-size:13px;margin-top:6px;font-family:sans-serif">AI is analyzing your image...</p>'
-    + '<p style="color:#3d3d3d;font-size:12px;margin-top:6px;font-family:monospace"><span id="ai-t">0</span>s elapsed</p>'
-    + '<div style="margin-top:20px"><button class="btn-outline" onclick="skipScan()">✏️ Enter Manually Instead</button></div>'
-    + '</div>');
+  function updateTimer() {
+    var el = document.getElementById('ai-timer');
+    if (el) el.textContent = elapsedSec() + 's';
+  }
 
-  var tick = setInterval(function(){
-    var el = document.getElementById('ai-t');
-    if (el) el.textContent = Math.floor((Date.now() - start) / 1000);
-  }, 1000);
+  setContent(
+    '<div class="loading">' +
+      '<div class="spinner" style="width:40px;height:40px;border-width:4px"></div>' +
+      '<p style="margin-top:16px;font-size:20px;font-weight:700;color:#f5f5f4">🤖 Reading Soil Report</p>' +
+      '<p style="color:#78716c;font-size:14px;margin-top:8px;font-family:sans-serif">AI is analyzing your image...</p>' +
+      '<p style="color:#3d3d3d;font-size:13px;margin-top:6px;font-family:monospace"><span id="ai-timer">0s</span> elapsed — usually 10–25 sec</p>' +
+      '<div style="margin-top:28px">' +
+        '<button class="btn-outline" style="font-size:15px;padding:12px 24px" onclick="skipExtraction()">✏️ Skip — Enter Manually</button>' +
+      '</div>' +
+    '</div>'
+  );
 
-  window.skipScan = function(){
-    if (done) return; done = true; clearInterval(tick); prefill = null; renderSampleForm(null);
+  var timerInterval = setInterval(updateTimer, 1000);
+
+  window.skipExtraction = function() {
+    if (done) return;
+    done = true;
+    clearInterval(timerInterval);
+    prefillData = null;
+    renderSampleForm();
   };
 
   function finish(result) {
-    if (done) return; done = true; clearInterval(tick);
+    if (done) return;
+    done = true;
+    clearInterval(timerInterval);
     if (result && result.success && result.data) {
-      prefill = result.data;
-      prefill._ai = true;
-      notify('✅ Extracted in ' + Math.floor((Date.now()-start)/1000) + 's — review below.');
+      prefillData = result.data;
+      prefillData._aiExtracted = true;
+      if (prefillData.CustomerName) {
+        var aiName = prefillData.CustomerName.toLowerCase().trim();
+        var match = customers.find(function(c) {
+          return c.name.toLowerCase().trim() === aiName
+            || c.name.toLowerCase().includes(aiName)
+            || aiName.includes(c.name.toLowerCase().trim());
+        });
+        if (match) {
+          prefillData.customerId = match.id;
+          prefillData._matchedCustomer = match.name;
+        }
+      }
+      notify('✅ Data extracted in ' + elapsedSec() + 's! Review and save below.');
     } else {
-      notify('Could not extract: ' + ((result && result.error) || 'unknown') + ' — fill in manually.', 'err', 7000);
-      prefill = null;
+      notify('Could not extract: ' + ((result && result.error) || 'Unknown error') + ' — fill in manually.', 'error');
+      prefillData = null;
     }
-    renderSampleForm(prefill);
+    renderSampleForm();
   }
 
-  compressImage(file, 65000, function(b64) {
-    gasGet({ action: 'getApiKey' })
-      .then(function(r){
-        if (!r.success) { finish({ success:false, error: r.error }); return; }
-        callAnthropic(r.key, b64, finish);
-      })
-      .catch(function(e){ finish({ success:false, error: e.message }); });
-  });
+  // Step 1: get the API key from Script Properties (fast — no timeout risk)
+  google.script.run
+    .withSuccessHandler(function(keyResult) {
+      if (!keyResult || !keyResult.success) {
+        finish({ success: false, error: keyResult ? keyResult.error : 'Could not retrieve API key.' });
+        return;
+      }
+      // Step 2: call Anthropic directly from the browser
+      callAnthropicFromBrowser(keyResult.key, base64, mimeType || 'image/jpeg', finish);
+    })
+    .withFailureHandler(function(err) {
+      finish({ success: false, error: err.message || String(err) });
+    })
+    .getApiKey();
 }
 
-function compressImage(file, maxChars, cb) {
-  var steps = [{s:1800,q:.85},{s:1600,q:.78},{s:1400,q:.70},{s:1200,q:.63},{s:1000,q:.58},{s:800,q:.46}];
-  var canvas = document.createElement('canvas'), ctx = canvas.getContext('2d'), img = new Image();
-  var url = URL.createObjectURL(file);
-  img.onload = function(){
-    URL.revokeObjectURL(url);
-    var i = 0;
-    (function next(){
-      var st = steps[i] || steps[steps.length-1];
-      var sc = Math.min(1, st.s / Math.max(img.width, img.height));
-      canvas.width = Math.round(img.width * sc);
-      canvas.height = Math.round(img.height * sc);
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      var b64 = canvas.toDataURL('image/jpeg', st.q).split(',')[1];
-      if (b64.length <= maxChars || i >= steps.length - 1) { cb(b64); }
-      else { i++; next(); }
-    })();
-  };
-  img.onerror = function(){
-    var r = new FileReader();
-    r.onload = function(e){ cb(e.target.result.split(',')[1]); };
-    r.readAsDataURL(file);
-  };
-  img.src = url;
-}
-
-var PROMPT = 'Extract soil test data from this Penn State Extension soil report image. '
-  + 'Return ONLY valid JSON with these exact keys (null for anything not found):\n'
+var EXTRACT_PROMPT = 'Extract soil test data from this Penn State Extension soil report image. '
+  + 'Return ONLY valid JSON with these exact keys:\n'
   + '{"CustomerName":"","Field":"","Year":"","pH":null,"phosphorus":null,"organicMatter":null,'
   + '"acidity":null,"potassium":null,"magnesium":null,"calcium":null,"cec":null,'
-  + '"satK":null,"satMg":null,"satCa":null,"limestoneLbs":null,"recN":null,"recP":null,"recK":null}\n'
-  + 'CustomerName=name on SOIL TEST REPORT FOR line. Field=FIELD ID. Year=4-digit year from DATE.\n'
-  + 'pH=soil pH. phosphorus=P lb/A. organicMatter=OM%. acidity=Buffer Acidity meq/100g.\n'
-  + 'potassium=K meq/100g. magnesium=Mg meq/100g. calcium=Ca meq/100g. cec=CEC meq/100g.\n'
-  + 'satK=K%. satMg=Mg%. satCa=Ca%.\n'
-  + 'limestoneLbs=limestone rec as number only. recN/recP/recK=as written on report.\n'
-  + 'Return ONLY the JSON object.';
+  + '"satK":null,"satMg":null,"satCa":null,"limestoneLbs":null,"recN":null,"recP":null,"recK":null}\n\n'
+  + 'CustomerName = name from SOIL TEST REPORT FOR line.\n'
+  + 'Field = FIELD ID value.\n'
+  + 'Year = 4-digit year from DATE field.\n'
+  + 'pH = soil pH number.\n'
+  + 'phosphorus = P in lb/A.\n'
+  + 'organicMatter = Organic Matter %.\n'
+  + 'acidity = Buffer Acidity in meq/100g.\n'
+  + 'potassium = K in meq/100g.\n'
+  + 'magnesium = Mg in meq/100g.\n'
+  + 'calcium = Ca in meq/100g.\n'
+  + 'cec = CEC in meq/100g.\n'
+  + 'satK = K Saturation %.\n'
+  + 'satMg = Mg Saturation %.\n'
+  + 'satCa = Ca Saturation %.\n'
+  + 'limestoneLbs = Limestone rec as number (lb/1000 sq ft) or null.\n'
+  + 'recN = Nitrogen rec as written (e.g. "1.5 lb") or null.\n'
+  + 'recP = Phosphorus rec as written or null.\n'
+  + 'recK = Potassium rec as written or null.\n'
+  + 'Use null for any field not found. Return ONLY the JSON object, nothing else.';
 
-function callAnthropic(key, b64, cb) {
+function callAnthropicFromBrowser(apiKey, base64, mimeType, cb) {
   fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
-      'x-api-key': key,
+      'x-api-key': apiKey,
       'anthropic-version': '2023-06-01',
       'content-type': 'application/json',
       'anthropic-dangerous-direct-browser-access': 'true'
@@ -735,248 +681,332 @@ function callAnthropic(key, b64, cb) {
     body: JSON.stringify({
       model: 'claude-haiku-4-5-20251001',
       max_tokens: 1024,
-      messages: [{ role: 'user', content: [
-        { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: b64 } },
-        { type: 'text',  text: PROMPT }
-      ]}]
+      messages: [{
+        role: 'user',
+        content: [
+          { type: 'image', source: { type: 'base64', media_type: mimeType, data: base64 } },
+          { type: 'text', text: EXTRACT_PROMPT }
+        ]
+      }]
     })
   })
-  .then(function(r){
-    if (!r.ok) return r.text().then(function(t){ cb({success:false, error:'API '+r.status+': '+t.substring(0,200)}); });
-    return r.json().then(function(j){
-      var txt = ((j.content||[]).find(function(c){ return c.type==='text'; })||{}).text || '';
-      var m   = txt.match(/\{[\s\S]*\}/);
-      try { cb({ success:true, data: JSON.parse(m ? m[0] : txt) }); }
-      catch(e) { cb({ success:false, error:'Parse error: '+e.message }); }
+  .then(function(r) {
+    if (!r.ok) {
+      return r.text().then(function(t) {
+        cb({ success: false, error: 'Anthropic API error ' + r.status + ': ' + t.substring(0, 200) });
+      });
+    }
+    return r.json().then(function(json) {
+      var textContent = (json.content || []).find(function(c) { return c.type === 'text'; });
+      if (!textContent) { cb({ success: false, error: 'No text in AI response.' }); return; }
+      var raw = textContent.text.trim();
+      var match = raw.match(/\{[\s\S]*\}/);
+      try {
+        cb({ success: true, data: JSON.parse(match ? match[0] : raw) });
+      } catch(e) {
+        cb({ success: false, error: 'Could not parse AI response: ' + e.message });
+      }
     });
   })
-  .catch(function(e){ cb({ success:false, error: e.message||String(e) }); });
+  .catch(function(e) {
+    cb({ success: false, error: e.message || String(e) });
+  });
 }
 
-// ══════════════════════════════════════════════════════════════
-// Sample form
-// ══════════════════════════════════════════════════════════════
-function renderSampleForm(p) {
-  var c = activeCust; p = p || {};
-  function gv(k){ var v = p[k]; return (v !== null && v !== undefined && v !== '') ? String(v) : ''; }
+// ══════════════════════════════════════════════════════
+// Sample Form
+// ══════════════════════════════════════════════════════
+function renderSampleForm() {
+  currentView = 'sample-form';
+  var p = prefillData || {};
+  var selectedCustId = p.customerId || '';
 
-  var html = '<button class="back" onclick="renderScanStep()">&larr; Back</button>'
-    + '<div class="page-title">' + (p._ai ? 'Review Extracted Data' : 'Enter Sample Data')
-    + (c ? ' — ' + esc(c.name) : '') + '</div>';
-  if (p._ai) html += '<div class="banner-ok">✅ AI extracted values — review and correct before saving.</div>';
+  var html = '<div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">'
+    + '<button class="btn-outline" onclick="showTab(\'add\')">← Back</button>'
+    + '<div style="font-size:20px;font-weight:700;color:#f5f5f4">Add Soil Sample</div></div>';
 
-  html += '<div class="card">';
-  if (!c) {
-    html += '<div class="form-group"><label class="form-label">Customer *</label>'
-      + '<select class="form-input" id="sf-cust"><option value="">— Select —</option>';
-    customers.forEach(function(x){
-      html += '<option value="' + x.id + '">' + esc(x.name) + (x.field ? ' (' + esc(x.field) + ')' : '') + '</option>';
-    });
-    html += '</select></div>';
+  if (p._aiExtracted) {
+    html += '<div class="card" style="background:#14532d44;border-color:#4ade8044;color:#4ade80;font-size:13px;font-family:sans-serif;padding:12px">✅ Values extracted from photo — review and confirm below</div>';
   }
 
-  html += '<div class="form-group"><label class="form-label">Year *</label>'
-    + '<input class="form-input" id="sf-year" type="number" value="' + (gv('Year') || new Date().getFullYear()) + '" min="1990" max="2099"></div>';
+  html += '<div class="card"><div class="sec-title">Details</div><div class="grid-2">'
+    + '<div class="form-group"><label class="form-label">Customer *</label>'
+    + '<select class="form-input" id="s-customer"><option value="">— Select —</option>';
+  customers.forEach(function(c) {
+    html += '<option value="'+c.id+'"'+(c.id===selectedCustId?' selected':'')+'>'+esc(c.name)+(c.field?' ('+esc(c.field)+')':'')+'</option>';
+  });
+  html += '</select></div>'
+    + '<div class="form-group"><label class="form-label">Year *</label>'
+    + '<input class="form-input" id="s-year" type="number" value="'+getVal(p,'Year',new Date().getFullYear())+'"></div></div>';
 
-  html += '<div class="sub-head">Recommendations</div><div class="grid-2">';
-  html += '<div class="form-group"><label class="form-label">Limestone (lb/1000 ft²)</label>'
-    + '<select class="form-input" id="sf-lime"><option value="">None</option>';
-  [25,50,75,100,125,150,175,200,225,250].forEach(function(n){
-    html += '<option value="' + n + '"' + (String(gv('limestoneLbs')) === String(n) ? ' selected' : '') + '>' + n + '</option>';
-  });
-  html += '</select></div>';
-  [{k:'recN',l:'Nitrogen (N)'},{k:'recP',l:'Phosphorus (P₂O₅)'},{k:'recK',l:'Potassium (K₂O)'}].forEach(function(r){
-    html += '<div class="form-group"><label class="form-label">' + r.l + '</label>'
-      + '<input class="form-input" id="sf-' + r.k + '" value="' + gv(r.k) + '" placeholder="—"></div>';
-  });
+  if (p._matchedCustomer) {
+    html += '<div style="font-size:12px;color:#4ade80;font-family:sans-serif;margin-top:-4px;margin-bottom:8px">✅ Matched to customer: "'+esc(p._matchedCustomer)+'"</div>';
+  } else if (p.CustomerName && !selectedCustId) {
+    html += '<div style="font-size:12px;color:#fb923c;font-family:sans-serif;margin-top:-4px;margin-bottom:8px">AI found: "'+esc(p.CustomerName)+'" — select matching customer above</div>';
+  }
   html += '</div>';
 
-  SECTIONS.forEach(function(sec){
-    html += '<div class="sub-head">' + sec + '</div><div class="grid-3">';
-    METRICS.filter(function(m){ return m.sec === sec; }).forEach(function(m){
-      html += '<div class="form-group"><label class="form-label">' + m.label
-        + (m.unit ? ' <span style="color:#57534e;font-size:10px">' + m.unit + '</span>' : '') + '</label>'
-        + '<input class="form-input" id="sf-' + m.key + '" type="number" step="any" value="' + gv(m.key)
-        + '" placeholder="' + m.min + '–' + m.max + '"></div>';
+  html += '<div class="card"><div class="sec-title">Limestone & Nutrient Recommendations</div>'
+    + '<div class="form-group"><label class="form-label">Limestone (lb/1000 ft²)</label>'
+    + '<select class="form-input" id="s-limestoneLbs"><option value="">None</option>';
+  [25,50,75,100,125,150,175,200,225,250].forEach(function(v) {
+    html += '<option value="'+v+'"'+(String(p.limestoneLbs)===String(v)?' selected':'')+'>'+v+' lb/1000 ft²</option>';
+  });
+  html += '</select></div><div class="grid-3">'
+    + formField('s-recN', 'Nitrogen (N)', p.recN)
+    + formField('s-recP', 'Phosphorus (P₂O₅)', p.recP)
+    + formField('s-recK', 'Potassium (K₂O)', p.recK)
+    + '</div></div>';
+
+  html += '<div class="card"><div class="sec-title">Lab Results</div>';
+  Object.entries(LAB_SECTIONS).forEach(function(entry) {
+    html += '<div class="sub-head">'+entry[0]+'</div><div class="grid-2">';
+    entry[1].forEach(function(key) {
+      var m = METRICS.find(function(x){ return x.key === key; });
+      if (!m) return;
+      html += '<div class="form-group"><label class="form-label">'+m.label+(m.unit?' ('+m.unit+')':'')
+        + ' <button style="font-size:10px;color:#4ade8066;cursor:pointer;border:none;background:none;padding:0" onclick="showInfoModal(\''+m.key+'\')">ⓘ</button></label>'
+        + '<input class="form-input" id="s-'+m.key+'" type="number" step="any" placeholder="'+m.min+'–'+m.max+'" value="'+getVal(p, m.key)+'"></div>';
     });
     html += '</div>';
   });
+  html += '</div>';
 
-  html += '<div class="form-group"><label class="form-label">Notes</label>'
-    + '<textarea class="form-input" id="sf-notes" placeholder="Any observations...">' + gv('notes') + '</textarea></div>'
-    + '<button class="btn-green btn-full" onclick="saveSample()">💾 Save to Google Sheets</button></div>';
-  setApp(html);
+  html += '<button class="btn-green btn-full" onclick="saveSampleForm()">💾 Save to Google Sheets</button>';
+  setContent(html);
 }
 
-function saveSample() {
-  var custId = activeCust ? activeCust.id : ((document.getElementById('sf-cust') || {}).value || '');
-  if (!custId) { notify('Select a customer.', 'err'); return; }
-  var year = parseInt((document.getElementById('sf-year') || {}).value, 10);
-  if (!year || year < 1990 || year > 2099) { notify('Enter a valid year.', 'err'); return; }
+function formField(id, label, val) {
+  return '<div class="form-group"><label class="form-label">'+label+'</label>'
+    + '<input class="form-input" id="'+id+'" placeholder="None" value="'+(val!=null&&val!=='null'?val:'')+'"></div>';
+}
+
+function saveSampleForm() {
+  var custId = document.getElementById('s-customer').value;
+  var year = parseInt(document.getElementById('s-year').value, 10);
+  if (!custId) { notify('Please select a customer.', 'error'); return; }
+  if (isNaN(year)) { notify('Please enter a valid year.', 'error'); return; }
 
   var data = { customerId: custId, year: year };
-  METRICS.forEach(function(m){
-    var raw = ((document.getElementById('sf-' + m.key) || {}).value || '').trim();
-    if (raw !== '') data[m.key] = parseFloat(raw);
+  METRICS.forEach(function(m) {
+    var v = document.getElementById('s-'+m.key).value.trim();
+    data[m.key] = v === '' ? undefined : parseFloat(v);
   });
-  var lime = ((document.getElementById('sf-lime') || {}).value || '');
-  if (lime) data.limestoneLbs = lime;
-  ['recN','recP','recK'].forEach(function(k){
-    var v = ((document.getElementById('sf-' + k) || {}).value || '').trim();
-    if (v) data[k] = v;
-  });
-  var notes = ((document.getElementById('sf-notes') || {}).value || '').trim();
-  if (notes) data.notes = notes;
+  data.limestoneLbs = document.getElementById('s-limestoneLbs').value || undefined;
+  data.recN = document.getElementById('s-recN').value.trim() || undefined;
+  data.recP = document.getElementById('s-recP').value.trim() || undefined;
+  data.recK = document.getElementById('s-recK').value.trim() || undefined;
 
-  gasPost({ action: 'saveSample', data: data })
-    .then(function(r){
-      if (!r.success) { notify('Error: ' + (r.error || 'unknown'), 'err'); return; }
-      data.id = r.id;
+  google.script.run
+    .withSuccessHandler(function(result) {
+      data.id = result.id;
       data.createdAt = new Date().toISOString();
       samples.push(data);
-      notify('✅ Sample saved to Google Sheets!');
-      if (activeCust) openCust(activeCust.id); else showPage('dash');
+      prefillData = null;
+      notify('Sample saved!');
+      if (selectedCustomer) { openCustomer(selectedCustomer.id); }
+      else { showTab('dashboard'); }
     })
-    .catch(function(err){ notify('Save error: ' + (err.message || err), 'err'); });
+    .withFailureHandler(function(err) { notify('Could not save: '+(err.message||err), 'error'); })
+    .saveSample(data);
 }
 
-// ══════════════════════════════════════════════════════════════
-// Delete
-// ══════════════════════════════════════════════════════════════
-function doDeleteCust(id) {
-  var c  = customers.find(function(x){ return String(x.id) === String(id); });
-  var ct = samples.filter(function(s){ return String(s.customerId) === String(id); }).length;
-  if (!confirm('Delete ' + (c ? c.name : 'customer') + ' and all ' + ct + ' sample' + (ct !== 1 ? 's' : '') + ' from Google Sheets? Cannot be undone.')) return;
-  gasPost({ action: 'deleteCustomer', id: id })
-    .then(function(r){
-      if (!r.success) { notify('Error: ' + (r.error || 'unknown'), 'err'); return; }
-      customers = customers.filter(function(x){ return String(x.id) !== String(id); });
-      samples   = samples.filter(function(s){ return String(s.customerId) !== String(id); });
-      notify('Customer deleted.', 'inf');
-      showPage('dash');
+// ══════════════════════════════════════════════════════
+// Save / Delete
+// ══════════════════════════════════════════════════════
+function saveCustomer() {
+  var name = document.getElementById('nc-name').value.trim();
+  if (!name) { notify('Please enter a name.', 'error'); return; }
+  var data = {
+    name: name,
+    field: document.getElementById('nc-field').value.trim(),
+    email: document.getElementById('nc-email').value.trim(),
+    phone: document.getElementById('nc-phone').value.trim(),
+    address: document.getElementById('nc-address').value.trim(),
+    city: document.getElementById('nc-city').value.trim()
+  };
+  google.script.run
+    .withSuccessHandler(function(result) {
+      data.id = result.id;
+      customers.push(data);
+      notify('Customer saved!');
+      ['nc-name','nc-field','nc-email','nc-phone','nc-address','nc-city'].forEach(function(id){ document.getElementById(id).value = ''; });
     })
-    .catch(function(err){ notify('Delete error: ' + (err.message || err), 'err'); });
+    .withFailureHandler(function(err) { notify('Could not save: '+(err.message||err), 'error'); })
+    .saveCustomer(data);
 }
 
-function doDeleteSample(id, year) {
-  if (!confirm('Delete the ' + year + ' sample? Cannot be undone.')) return;
-  var cid = activeCust ? activeCust.id : null;
-  gasPost({ action: 'deleteSample', id: id })
-    .then(function(r){
-      if (!r.success) { notify('Error: ' + (r.error || 'unknown'), 'err'); return; }
-      samples = samples.filter(function(s){ return String(s.id) !== String(id); });
-      notify('Sample deleted.', 'inf');
-      if (cid) openCust(cid); else showPage('dash');
+function deleteCustomer(id) {
+  if (!confirm('Delete this customer and all their samples? This cannot be undone.')) return;
+  google.script.run
+    .withSuccessHandler(function() {
+      customers = customers.filter(function(c){ return c.id !== id; });
+      samples = samples.filter(function(s){ return s.customerId !== id; });
+      notify('Customer deleted.');
+      showTab('dashboard');
     })
-    .catch(function(err){ notify('Delete error: ' + (err.message || err), 'err'); });
+    .withFailureHandler(function(err) { notify('Error: '+(err.message||err), 'error'); })
+    .deleteCustomer(id);
 }
 
-// ══════════════════════════════════════════════════════════════
+function deleteSample(id, year) {
+  if (!confirm('Delete the '+year+' sample? This cannot be undone.')) return;
+  google.script.run
+    .withSuccessHandler(function() {
+      samples = samples.filter(function(s){ return s.id !== id; });
+      notify('Sample deleted.');
+      if (selectedCustomer) openCustomer(selectedCustomer.id);
+    })
+    .withFailureHandler(function(err) { notify('Error: '+(err.message||err), 'error'); })
+    .deleteSample(id);
+}
+
+// ══════════════════════════════════════════════════════
 // Reports
-// ══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 function renderReportPage() {
-  var html = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:10px" class="no-print">'
-    + '<div class="page-title">Customer Reports</div>'
-    + '<button class="btn-green btn-sm" onclick="window.print()">🖨️ Print / Save PDF</button></div>'
-    + '<div class="card no-print"><div class="sec-title">Select Customer</div>'
-    + '<select class="form-input" id="rpt-cust" onchange="renderReport()">'
-    + '<option value="">— Select a customer —</option>';
-  customers.forEach(function(c){ html += '<option value="' + c.id + '">' + esc(c.name) + '</option>'; });
-  html += '</select></div><div id="rpt-out"></div>';
-  setApp(html);
+  var html = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px" class="no-print">'
+    + '<div style="font-size:22px;font-weight:700;color:#f5f5f4">Generate Customer Report</div>'
+    + '<button class="btn-green" onclick="window.print()">🖨️ Print / Save PDF</button></div>';
+
+  html += '<div class="card no-print"><div class="sec-title">Select Customer</div>'
+    + '<select class="form-input" id="report-select" onchange="renderReport()"><option value="">-- Select a customer --</option>';
+  customers.forEach(function(c) { html += '<option value="'+c.id+'">'+esc(c.name)+'</option>'; });
+  html += '</select></div><div id="report-output"></div>';
+  setContent(html);
 }
 
-function openReport(id) {
-  showPage('report');
-  setTimeout(function(){
-    var el = document.getElementById('rpt-cust');
-    if (el) { el.value = id; renderReport(); }
-  }, 80);
+function showReportFor(id) {
+  showTab('report');
+  setTimeout(function() {
+    var sel = document.getElementById('report-select');
+    if (sel) { sel.value = id; renderReport(); }
+  }, 100);
 }
 
 function renderReport() {
-  var id  = (document.getElementById('rpt-cust') || {}).value;
-  var out = document.getElementById('rpt-out');
-  if (!out || !id) { if (out) out.innerHTML = ''; return; }
+  var id = document.getElementById('report-select').value;
+  var output = document.getElementById('report-output');
+  if (!id) { output.innerHTML = ''; return; }
 
-  var c  = customers.find(function(x){ return String(x.id) === String(id); });
-  var cs = samples.filter(function(s){ return String(s.customerId) === String(id); })
-                  .sort(function(a,b){ return a.year - b.year; });
-  if (!c || !cs.length) {
-    out.innerHTML = '<div style="color:#78716c;font-family:sans-serif;padding:16px">No samples for this customer yet.</div>';
+  var c = customers.find(function(x){ return x.id === id; });
+  var sorted = samples.filter(function(s){ return s.customerId === id; }).sort(function(a,b){ return a.year - b.year; });
+  if (!c || sorted.length === 0) {
+    output.innerHTML = '<div class="card" style="color:#78716c;font-family:sans-serif">No samples found.</div>';
     return;
   }
 
-  var today = new Date().toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'});
-  var years = cs.map(function(s){ return s.year; });
+  var html = '<div class="report-paper">'
+    + '<div class="report-header"><div>'
+    + '<div class="report-logo"><span>LAWNS</span><span>PLANTS</span><span>&amp; PESTS</span></div>'
+    + '<div style="font-size:11px;color:#666;margin-top:6px">Soil Health Report</div></div>'
+    + '<div class="report-customer"><div class="report-customer-name">'+esc(c.name)+'</div>'
+    + (c.field?'<div class="report-customer-sub">'+esc(c.field)+'</div>':'')
+    + (c.address?'<div class="report-customer-sub">'+esc(c.address)+(c.city?', '+esc(c.city):'')+'</div>':'')
+    + '<div class="report-customer-sub" style="margin-top:4px;color:#999">Generated: '+new Date().toLocaleDateString()+'</div>'
+    + '</div></div>';
 
-  var h = '<div style="background:white;color:#1a1a1a;border-radius:12px;padding:24px;font-family:sans-serif">';
-  h += '<div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #2d5a1b;padding-bottom:14px;margin-bottom:18px;flex-wrap:wrap;gap:10px">'
-    + '<div style="font-size:18px;font-weight:900;color:#2d5a1b;line-height:1.2">LAWNS PLANTS<br>&amp; PESTS LLC<br>'
-    + '<span style="font-size:11px;font-weight:400;color:#666">Soil Health Report</span></div>'
-    + '<div style="text-align:right"><div style="font-size:16px;font-weight:700;color:#2d5a1b">' + esc(c.name) + '</div>'
-    + (c.field ? '<div style="font-size:11px;color:#666">' + esc(c.field) + '</div>' : '')
-    + (c.address ? '<div style="font-size:11px;color:#666">' + esc(c.address) + (c.city ? ', ' + esc(c.city) : '') + '</div>' : '')
-    + '<div style="font-size:11px;color:#666">Generated ' + today + '</div></div></div>';
-
-  var TH = 'style="background:#f0f7ee;padding:6px 8px;text-align:left;color:#2d5a1b;font-weight:600"';
-  var THC = 'style="background:#f0f7ee;padding:6px 8px;text-align:center;color:#2d5a1b;font-weight:600"';
-  var TD  = 'style="padding:6px 8px;border-bottom:1px solid #eee"';
-  var TDC = 'style="padding:6px 8px;border-bottom:1px solid #eee;text-align:center;font-weight:700;font-family:monospace"';
-
-  h += '<div style="font-size:11px;font-weight:700;color:#2d5a1b;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Recommendations</div>';
-  h += '<table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:18px"><thead><tr><th ' + TH + '>Item</th>';
-  years.forEach(function(y){ h += '<th ' + THC + '>' + y + '</th>'; });
-  h += '</tr></thead><tbody>';
-  RECS.forEach(function(r){
-    h += '<tr><td ' + TD + ' style="padding:6px 8px;border-bottom:1px solid #eee;font-weight:600">' + r.label + '</td>';
-    cs.forEach(function(s){
-      var v = s[r.key], none = !v || String(v).toLowerCase() === 'none' || v === '0';
-      h += '<td ' + TDC + ' style="padding:6px 8px;border-bottom:1px solid #eee;text-align:center;font-weight:700;color:' + (none ? '#16a34a' : '#d97706') + '">' + (v || 'None') + '</td>';
+  html += '<div style="margin-bottom:20px"><div class="report-section-title">Limestone & Nutrient Recommendations</div>'
+    + '<table class="report-table"><thead><tr><th>Item</th>';
+  sorted.forEach(function(s){ html += '<th class="center">'+s.year+'</th>'; });
+  html += '</tr></thead><tbody>';
+  [{key:'limestoneLbs',label:'Limestone (lb/1000 ft²)'},{key:'recN',label:'Nitrogen (N)'},{key:'recP',label:'Phosphorus (P₂O₅)'},{key:'recK',label:'Potassium (K₂O)'}].forEach(function(row) {
+    html += '<tr><td style="font-weight:600">'+row.label+'</td>';
+    sorted.forEach(function(s) {
+      var v = s[row.key];
+      var isNone = !v || String(v).toLowerCase() === 'none' || v === '0';
+      html += '<td class="center" style="color:'+(isNone?'#16a34a':'#d97706')+'">'+(v||'None')+'</td>';
     });
-    h += '</tr>';
+    html += '</tr>';
   });
-  h += '</tbody></table>';
+  html += '</tbody></table></div>';
 
-  h += '<div style="font-size:11px;font-weight:700;color:#2d5a1b;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Soil Test Results</div>';
-  h += '<table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr>'
-    + '<th ' + TH + '>Metric</th><th ' + TH + '>Ideal</th>';
-  years.forEach(function(y){ h += '<th ' + THC + '>' + y + '</th>'; });
-  h += '</tr></thead><tbody>';
-  METRICS.forEach(function(m){
-    h += '<tr><td ' + TD + ' style="padding:6px 8px;border-bottom:1px solid #eee;font-weight:600">' + m.label + '</td>'
-      + '<td ' + TD + ' style="padding:6px 8px;border-bottom:1px solid #eee;color:#999;font-family:monospace;font-size:10px">' + (m.info ? 'info' : m.min + '–' + m.max) + '</td>';
-    cs.forEach(function(s){
-      var n   = parseFloat(s[m.key]);
-      var clr = isNaN(n) ? '#999' : (!m.info && n >= m.min && n <= m.max ? '#16a34a' : (!m.info && n < m.min ? '#dc2626' : (!m.info ? '#d97706' : '#333')));
-      h += '<td style="padding:6px 8px;border-bottom:1px solid #eee;text-align:center;font-weight:700;color:' + clr + '">'
-        + (s[m.key] !== undefined && s[m.key] !== null && s[m.key] !== '' ? s[m.key] : '—') + '</td>';
+  html += '<div><div class="report-section-title">Soil Test Results</div>'
+    + '<table class="report-table"><thead><tr><th>Metric</th><th>Ideal Range</th>';
+  sorted.forEach(function(s){ html += '<th class="center">'+s.year+'</th>'; });
+  html += '</tr></thead><tbody>';
+  METRICS.forEach(function(m) {
+    html += '<tr><td style="font-weight:600">'+m.label+'</td>'
+      + '<td style="color:#666;font-family:monospace;font-size:11px">'+m.min+'–'+m.max+(m.unit?' '+m.unit:'')+'</td>';
+    sorted.forEach(function(s) {
+      var v = parseFloat(s[m.key]);
+      var clr = isNaN(v) ? '#999' : (v >= m.min && v <= m.max) ? '#16a34a' : v < m.min ? '#dc2626' : '#d97706';
+      html += '<td class="center" style="color:'+clr+'">'+(s[m.key]||'—')+'</td>';
     });
-    h += '</tr>';
+    html += '</tr>';
   });
-  h += '</tbody></table>';
-  h += '<div style="margin-top:14px;padding-top:12px;border-top:1px solid #eee;display:flex;justify-content:space-between;font-size:10px;color:#999;flex-wrap:wrap;gap:4px">'
-    + '<span>🟢 Optimal &nbsp; 🟠 Above range &nbsp; 🔴 Below range</span>'
-    + '<span style="color:#2d5a1b;font-weight:700">Lawns Plants &amp; Pests LLC</span></div></div>';
+  html += '</tbody></table></div>';
 
-  out.innerHTML = h;
+  html += '<div class="report-footer">'
+    + '<div style="font-size:11px;color:#999">🟢 Optimal &nbsp; 🟠 Above optimal &nbsp; 🔴 Below optimal</div>'
+    + '<div style="font-size:12px;color:#2d5a1b;font-weight:700">Lawns Plants & Pests LLC</div></div></div>';
+  output.innerHTML = html;
 }
 
-// ══════════════════════════════════════════════════════════════
-// Metric info modal
-// ══════════════════════════════════════════════════════════════
-function showMetricInfo(key) {
+// ══════════════════════════════════════════════════════
+// Info Modal
+// ══════════════════════════════════════════════════════
+function showInfoModal(key) {
   var m = METRICS.find(function(x){ return x.key === key; });
   if (!m) return;
-  document.getElementById('info-modal-body').innerHTML =
-    '<button class="modal-close" onclick="closeModal()">×</button>'
-    + '<h2>' + m.label + '</h2>'
-    + '<div class="modal-rng">' + (m.info ? 'Informational only' : 'Ideal: ' + m.min + ' – ' + m.max + (m.unit ? ' ' + m.unit : '')) + '</div>'
-    + '<div class="modal-sec-title">About</div><div class="modal-body">' + m.about + '</div>'
-    + '<div class="modal-sec-title" style="margin-top:12px">What to do</div><div class="modal-body">' + m.fix + '</div>';
-  document.getElementById('info-modal').classList.add('open');
+  var html = '<button class="modal-close" onclick="document.getElementById(\'info-modal\').classList.remove(\'visible\')">×</button>'
+    + '<h2>'+m.label+'</h2>'
+    + '<div class="modal-range">Optimal: '+m.min+'–'+m.max+(m.unit?' '+m.unit:'')+'</div>'
+    + '<div class="modal-section"><div class="modal-section-title">What is it?</div><div class="modal-body">'+m.desc+'</div></div>'
+    + '<div class="modal-section"><div class="modal-section-title">What to do</div><div class="modal-body">'+m.rec+'</div></div>';
+  document.getElementById('info-modal-body').innerHTML = html;
+  document.getElementById('info-modal').classList.add('visible');
 }
-function closeModal() { document.getElementById('info-modal').classList.remove('open'); }
+
+function closeModal(event) {
+  if (event.target === document.getElementById('info-modal')) {
+    document.getElementById('info-modal').classList.remove('visible');
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// Helpers
+// ══════════════════════════════════════════════════════
+function statusBadge(value, m) {
+  if (value == null || value === '' || value === undefined) return '<span class="badge-gray">—</span>';
+  var v = parseFloat(value);
+  if (isNaN(v)) return '<span class="badge-gray">—</span>';
+  var cls = (v >= m.min && v <= m.max) ? 'badge-green' : v < m.min ? 'badge-red' : 'badge-orange';
+  return '<span class="badge '+cls+'">'+value+(m.unit?' '+m.unit:'')+'</span>';
+}
+
+function recBadge(val) {
+  if (!val || val === undefined) return '<span class="badge-gray">—</span>';
+  var isNone = String(val).toLowerCase() === 'none' || val === '0' || val === '';
+  return '<span class="badge '+(isNone?'badge-green':'badge-orange')+'">'+(isNone?'None':val)+'</span>';
+}
+
+function notify(msg, type) {
+  var el = document.getElementById('notification');
+  el.textContent = msg;
+  el.className = 'notification ' + (type || 'success');
+  el.style.display = 'block';
+  setTimeout(function(){ el.style.display = 'none'; }, 5000);
+}
+
+function showError(err) {
+  setContent('<div class="card" style="color:#f87171;font-family:sans-serif"><b>Error:</b> '+(err.message||err)+'</div>');
+}
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function formatDate(iso) {
+  if (!iso) return '';
+  try { return new Date(iso).toLocaleDateString(); } catch(e) { return iso; }
+}
+
+function getVal(obj, key, fallback) {
+  var v = obj[key];
+  if (v === null || v === undefined || v === '' || v === 'null') return fallback !== undefined ? fallback : '';
+  return String(v);
+}
 </script>
 </body>
 </html>
