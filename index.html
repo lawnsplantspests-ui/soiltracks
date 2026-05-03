@@ -591,26 +591,12 @@ function saveCustForm(existingId) {
 }
 
 // ══════════════════════════════════════════════════════════════
-// Add sample flow
+// Add sample flow — no customer required upfront
 // ══════════════════════════════════════════════════════════════
 function renderAddPage() {
-  if (!customers.length) {
-    setApp('<div class="page-title">Add Sample</div>'
-      + '<div class="banner-warn">No customers yet — add one first.</div>'
-      + '<button class="btn-green" onclick="renderCustForm(null)">+ New Customer</button>');
-    return;
-  }
-  var html = '<div class="page-title">Add Sample</div>'
-    + '<div class="page-sub">Select the customer to log a soil test for.</div>'
-    + '<div class="card"><div class="sec-title">Select Customer</div>';
-  customers.forEach(function(c){
-    html += '<div class="cust-row" onclick="startSampleFor(\'' + c.id + '\')">'
-      + '<div><div class="cust-name">' + esc(c.name) + '</div>'
-      + '<div class="cust-sub">' + (c.field ? esc(c.field) : '') + '</div></div>'
-      + '<span style="color:#57534e;font-size:20px">›</span></div>';
-  });
-  html += '</div>';
-  setApp(html);
+  activeCust = null;
+  prefill = null;
+  renderScanStep();
 }
 
 function startSampleFor(id) {
@@ -621,15 +607,16 @@ function startSampleFor(id) {
 
 function renderScanStep() {
   var c = activeCust;
-  var html = '<button class="back" onclick="showPage(\'add\')">&larr; Back</button>'
-    + '<div class="page-title">Add Sample' + (c ? ' — ' + esc(c.name) : '') + '</div>'
-    + '<div class="page-sub">Scan a soil report photo or enter values by hand.</div>'
+  var backTarget = c ? 'openCust(\'' + c.id + '\')' : 'showPage(\'dash\')';
+  var html = '<button class="back" onclick="' + backTarget + '">&larr; Back</button>'
+    + '<div class="page-title">Add Soil Sample' + (c ? ' — ' + esc(c.name) : '') + '</div>'
+    + '<div class="page-sub">Photograph or upload a Penn State soil report — the AI will read every value exactly. Or enter by hand.</div>'
     + '<div class="scan-opt primary" onclick="document.getElementById(\'cam-input\').click()">'
-    + '<div class="si">📷</div><div><div class="st">Take Photo</div>'
-    + '<div class="sd">Photograph a Penn State soil report — AI reads all values automatically.</div></div></div>'
+    + '<div class="si">📷</div><div><div class="st">Take Photo of Report</div>'
+    + '<div class="sd">Point camera at your Penn State soil test report. AI extracts all values automatically.</div></div></div>'
     + '<div class="scan-opt" onclick="document.getElementById(\'file-input\').click()">'
-    + '<div class="si">🖼</div><div><div class="st">Upload Image</div>'
-    + '<div class="sd">Choose an existing photo from your device.</div></div></div>'
+    + '<div class="si">🖼</div><div><div class="st">Upload Report Image</div>'
+    + '<div class="sd">Choose a photo from your device. Works best with clear, flat, well-lit shots.</div></div></div>'
     + '<div class="scan-opt" onclick="renderSampleForm(null)">'
     + '<div class="si">✏️</div><div><div class="st">Enter Manually</div>'
     + '<div class="sd">Type in all soil lab values by hand.</div></div></div>';
@@ -667,7 +654,22 @@ function handleImage(file) {
     if (result && result.success && result.data) {
       prefill = result.data;
       prefill._ai = true;
-      notify('✅ Extracted in ' + Math.floor((Date.now()-start)/1000) + 's — review below.');
+      // Auto-match customer by name from the report
+      if (!activeCust && prefill.CustomerName) {
+        var needle = String(prefill.CustomerName).trim().toLowerCase();
+        var match = customers.find(function(c){
+          var hay = c.name.toLowerCase();
+          return hay === needle || hay.includes(needle) || needle.includes(hay);
+        });
+        if (match) {
+          activeCust = match;
+          notify('✅ Matched customer: ' + match.name + ' — extracted in ' + Math.floor((Date.now()-start)/1000) + 's.');
+        } else {
+          notify('✅ Extracted in ' + Math.floor((Date.now()-start)/1000) + 's — review customer name below.');
+        }
+      } else {
+        notify('✅ Extracted in ' + Math.floor((Date.now()-start)/1000) + 's — review below.');
+      }
     } else {
       notify('Could not extract: ' + ((result && result.error) || 'unknown') + ' — fill in manually.', 'err', 7000);
       prefill = null;
@@ -675,7 +677,7 @@ function handleImage(file) {
     renderSampleForm(prefill);
   }
 
-  compressImage(file, 65000, function(b64) {
+  compressImage(file, 100000, function(b64) {
     gasGet({ action: 'getApiKey' })
       .then(function(r){
         if (!r.success) { finish({ success:false, error: r.error }); return; }
@@ -711,17 +713,31 @@ function compressImage(file, maxChars, cb) {
   img.src = url;
 }
 
-var PROMPT = 'Extract soil test data from this Penn State Extension soil report image. '
-  + 'Return ONLY valid JSON with these exact keys (null for anything not found):\n'
-  + '{"CustomerName":"","Field":"","Year":"","pH":null,"phosphorus":null,"organicMatter":null,'
+var PROMPT = 'This image is a Penn State Extension Soil Test Report. Read every printed number EXACTLY as it appears — do not estimate, round, or guess.\n\n'
+  + 'Return ONLY this JSON object (use null for any field you cannot clearly read):\n'
+  + '{"CustomerName":"","Field":"","Year":null,"pH":null,"phosphorus":null,"organicMatter":null,'
   + '"acidity":null,"potassium":null,"magnesium":null,"calcium":null,"cec":null,'
-  + '"satK":null,"satMg":null,"satCa":null,"limestoneLbs":null,"recN":null,"recP":null,"recK":null}\n'
-  + 'CustomerName=name on SOIL TEST REPORT FOR line. Field=FIELD ID. Year=4-digit year from DATE.\n'
-  + 'pH=soil pH. phosphorus=P lb/A. organicMatter=OM%. acidity=Buffer Acidity meq/100g.\n'
-  + 'potassium=K meq/100g. magnesium=Mg meq/100g. calcium=Ca meq/100g. cec=CEC meq/100g.\n'
-  + 'satK=K%. satMg=Mg%. satCa=Ca%.\n'
-  + 'limestoneLbs=limestone rec as number only. recN/recP/recK=as written on report.\n'
-  + 'Return ONLY the JSON object.';
+  + '"satK":null,"satMg":null,"satCa":null,"limestoneLbs":null,"recN":"","recP":"","recK":""}\n\n'
+  + 'WHERE TO FIND EACH VALUE:\n'
+  + '• CustomerName — the name printed after "SOIL TEST REPORT FOR:" or "NAME:"\n'
+  + '• Field — the text after "FIELD ID:" or "FIELD:"\n'
+  + '• Year — the 4-digit year in the DATE field\n'
+  + '• pH — the Soil pH number (a decimal like 6.3 — NOT Buffer pH)\n'
+  + '• phosphorus — the P value in lb/A (a whole number like 47)\n'
+  + '• organicMatter — the Organic Matter % (OM%) decimal like 3.8\n'
+  + '• acidity — the Buffer Acidity in meq/100g (a decimal like 2.4 — this is NOT the same as pH)\n'
+  + '• potassium — the K value in meq/100g from the Exchangeable Cations table (decimal like 0.31)\n'
+  + '• magnesium — the Mg value in meq/100g (decimal like 1.2)\n'
+  + '• calcium — the Ca value in meq/100g (decimal like 7.8)\n'
+  + '• cec — the CEC (Cation Exchange Capacity) in meq/100g (decimal like 11.7)\n'
+  + '• satK — K% saturation of CEC (a percentage like 2.7)\n'
+  + '• satMg — Mg% saturation of CEC (a percentage like 10.4)\n'
+  + '• satCa — Ca% saturation of CEC (a percentage like 66.7)\n'
+  + '• limestoneLbs — the limestone recommendation number in lb/1000 sq ft (number only, no units)\n'
+  + '• recN — the Nitrogen recommendation EXACTLY as printed on the report (e.g. "3.0 lb N/1000 sq ft")\n'
+  + '• recP — the Phosphate (P2O5) recommendation EXACTLY as printed\n'
+  + '• recK — the Potash (K2O) recommendation EXACTLY as printed\n\n'
+  + 'CRITICAL: Copy every number character-for-character from the printed report. Do not convert units. Do not calculate. Return ONLY the JSON.';
 
 function callAnthropic(key, b64, cb) {
   fetch('https://api.anthropic.com/v1/messages', {
@@ -760,19 +776,42 @@ function renderSampleForm(p) {
   var c = activeCust; p = p || {};
   function gv(k){ var v = p[k]; return (v !== null && v !== undefined && v !== '') ? String(v) : ''; }
 
+  var aiName = gv('CustomerName');  // name extracted from report
+
   var html = '<button class="back" onclick="renderScanStep()">&larr; Back</button>'
     + '<div class="page-title">' + (p._ai ? 'Review Extracted Data' : 'Enter Sample Data')
     + (c ? ' — ' + esc(c.name) : '') + '</div>';
   if (p._ai) html += '<div class="banner-ok">✅ AI extracted values — review and correct before saving.</div>';
 
   html += '<div class="card">';
+
+  // Customer section — always show if no activeCust
   if (!c) {
-    html += '<div class="form-group"><label class="form-label">Customer *</label>'
-      + '<select class="form-input" id="sf-cust"><option value="">— Select —</option>';
-    customers.forEach(function(x){
-      html += '<option value="' + x.id + '">' + esc(x.name) + (x.field ? ' (' + esc(x.field) + ')' : '') + '</option>';
-    });
-    html += '</select></div>';
+    html += '<div class="sub-head">Customer</div>';
+    if (customers.length) {
+      // Pre-select if AI name was close to an existing customer
+      var presel = '';
+      if (aiName) {
+        var needle = aiName.toLowerCase();
+        var m2 = customers.find(function(x){ var h=x.name.toLowerCase(); return h===needle||h.includes(needle)||needle.includes(h); });
+        if (m2) presel = String(m2.id);
+      }
+      html += '<div class="form-group"><label class="form-label">Select existing customer</label>'
+        + '<select class="form-input" id="sf-cust" onchange="sfCustChange(this.value)">'
+        + '<option value="">— New customer —</option>';
+      customers.forEach(function(x){
+        html += '<option value="' + x.id + '"' + (presel === String(x.id) ? ' selected' : '') + '>'
+          + esc(x.name) + (x.field ? ' (' + esc(x.field) + ')' : '') + '</option>';
+      });
+      html += '</select></div>';
+      html += '<div id="sf-newcust-wrap"' + (presel ? ' style="display:none"' : '') + '>'
+        + '<div class="form-group"><label class="form-label">Or create new — Customer name *</label>'
+        + '<input class="form-input" id="sf-newcust" placeholder="Full name" value="' + esc(aiName) + '"></div>'
+        + '</div>';
+    } else {
+      html += '<div class="form-group"><label class="form-label">Customer name *</label>'
+        + '<input class="form-input" id="sf-newcust" placeholder="Full name" value="' + esc(aiName) + '"></div>';
+    }
   }
 
   html += '<div class="form-group"><label class="form-label">Year *</label>'
@@ -808,36 +847,70 @@ function renderSampleForm(p) {
   setApp(html);
 }
 
+function sfCustChange(val) {
+  var wrap = document.getElementById('sf-newcust-wrap');
+  if (wrap) wrap.style.display = val ? 'none' : '';
+}
+
 function saveSample() {
-  var custId = activeCust ? activeCust.id : ((document.getElementById('sf-cust') || {}).value || '');
-  if (!custId) { notify('Select a customer.', 'err'); return; }
   var year = parseInt((document.getElementById('sf-year') || {}).value, 10);
   if (!year || year < 1990 || year > 2099) { notify('Enter a valid year.', 'err'); return; }
 
-  var data = { customerId: custId, year: year };
-  METRICS.forEach(function(m){
-    var raw = ((document.getElementById('sf-' + m.key) || {}).value || '').trim();
-    if (raw !== '') data[m.key] = parseFloat(raw);
-  });
-  var lime = ((document.getElementById('sf-lime') || {}).value || '');
-  if (lime) data.limestoneLbs = lime;
-  ['recN','recP','recK'].forEach(function(k){
-    var v = ((document.getElementById('sf-' + k) || {}).value || '').trim();
-    if (v) data[k] = v;
-  });
-  var notes = ((document.getElementById('sf-notes') || {}).value || '').trim();
-  if (notes) data.notes = notes;
+  function doSave(custId) {
+    var data = { customerId: custId, year: year };
+    METRICS.forEach(function(m){
+      var raw = ((document.getElementById('sf-' + m.key) || {}).value || '').trim();
+      if (raw !== '') data[m.key] = parseFloat(raw);
+    });
+    var lime = ((document.getElementById('sf-lime') || {}).value || '');
+    if (lime) data.limestoneLbs = lime;
+    ['recN','recP','recK'].forEach(function(k){
+      var v = ((document.getElementById('sf-' + k) || {}).value || '').trim();
+      if (v) data[k] = v;
+    });
+    var notes = ((document.getElementById('sf-notes') || {}).value || '').trim();
+    if (notes) data.notes = notes;
 
-  gasPost({ action: 'saveSample', data: data })
+    gasPost({ action: 'saveSample', data: data })
+      .then(function(r){
+        if (!r.success) { notify('Error: ' + (r.error || 'unknown'), 'err'); return; }
+        data.id = r.id;
+        data.createdAt = new Date().toISOString();
+        samples.push(data);
+        notify('✅ Sample saved to Google Sheets!');
+        if (activeCust) openCust(activeCust.id); else showPage('dash');
+      })
+      .catch(function(err){ notify('Save error: ' + (err.message || err), 'err'); });
+  }
+
+  if (activeCust) {
+    doSave(activeCust.id);
+    return;
+  }
+
+  // No activeCust — check if existing customer was selected from dropdown
+  var selEl = document.getElementById('sf-cust');
+  var selId = selEl ? selEl.value : '';
+  if (selId) {
+    activeCust = customers.find(function(c){ return String(c.id) === String(selId); });
+    doSave(selId);
+    return;
+  }
+
+  // Create new customer first
+  var newName = ((document.getElementById('sf-newcust') || {}).value || '').trim();
+  if (!newName) { notify('Enter a customer name.', 'err'); return; }
+
+  notify('Creating customer…');
+  gasPost({ action: 'saveCustomer', data: { name: newName } })
     .then(function(r){
-      if (!r.success) { notify('Error: ' + (r.error || 'unknown'), 'err'); return; }
-      data.id = r.id;
-      data.createdAt = new Date().toISOString();
-      samples.push(data);
-      notify('✅ Sample saved to Google Sheets!');
-      if (activeCust) openCust(activeCust.id); else showPage('dash');
+      if (!r.success) { notify('Error creating customer: ' + (r.error || 'unknown'), 'err'); return; }
+      var newCust = { id: r.id, name: newName, field: '', createdAt: new Date().toISOString() };
+      customers.push(newCust);
+      activeCust = newCust;
+      doSave(r.id);
     })
-    .catch(function(err){ notify('Save error: ' + (err.message || err), 'err'); });
+    .catch(function(err){ notify('Error creating customer: ' + (err.message || err), 'err'); });
 }
 
 // ══════════════════════════════════════════════════════════════
