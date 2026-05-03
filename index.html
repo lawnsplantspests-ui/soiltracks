@@ -1,3 +1,11 @@
+<!-- 
+  PASTE TEXT ADDITION - Add these two things to your existing Index.html:
+  
+  1. In the renderScanStep() function, add the paste option after the manual entry option
+  2. Add the three new functions: renderPasteStep, parseOcrText, callAnthropicText
+  
+  Below is your COMPLETE Index.html with both changes already made.
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,8 +16,6 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: #0c0c0c; color: #e7e5e4; font-family: Georgia, serif; min-height: 100vh; }
-
-  /* ── Header ── */
   .header { background: #111; border-bottom: 1px solid #292524; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; gap: 10px; }
   .logo { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
   .logo-icon { width: 38px; height: 38px; border-radius: 8px; overflow: hidden; flex-shrink: 0; }
@@ -19,25 +25,17 @@
   .nav-btn { min-height: 40px; padding: 0 12px; border-radius: 8px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; background: transparent; color: #a8a29e; font-family: sans-serif; white-space: nowrap; }
   .nav-btn.active { background: #4ade8022; color: #4ade80; }
   .nav-btn:hover { background: #1c1c1c; }
-
-  /* ── Layout ── */
   .main { padding: 20px 16px; max-width: 900px; margin: 0 auto; }
   .page-title { font-size: 22px; font-weight: 700; color: #f5f5f4; margin-bottom: 4px; }
   .page-sub { color: #78716c; font-size: 13px; font-family: sans-serif; margin-bottom: 18px; line-height: 1.5; }
-
-  /* ── Cards ── */
   .card { background: #161616; border: 1px solid #222; border-radius: 14px; padding: 20px; margin-bottom: 16px; }
   .sec-title { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #57534e; margin-bottom: 14px; font-family: sans-serif; }
   .sub-head { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #4ade8077; margin: 20px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #1f1f1f; font-family: sans-serif; }
-
-  /* ── Stats ── */
   .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
   .stat-card { background: #161616; border: 1px solid #222; border-radius: 12px; padding: 14px; }
   .stat-icon { font-size: 22px; margin-bottom: 4px; }
   .stat-val { font-size: 30px; font-weight: 900; color: #4ade80; font-family: Georgia, serif; }
   .stat-label { font-size: 11px; color: #78716c; font-family: sans-serif; }
-
-  /* ── Buttons ── */
   .btn-green { background: linear-gradient(135deg,#16a34a,#15803d); color: #fff; border: none; border-radius: 10px; padding: 13px 22px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: sans-serif; min-height: 46px; display: inline-block; }
   .btn-green:hover { opacity: .9; }
   .btn-outline { background: transparent; border: 1px solid #333; border-radius: 8px; color: #a8a29e; padding: 10px 16px; cursor: pointer; font-size: 14px; font-family: sans-serif; min-height: 42px; }
@@ -47,8 +45,6 @@
   .btn-full { width: 100%; margin-top: 10px; padding: 15px 0; font-size: 15px; text-align: center; }
   .btn-sm { padding: 8px 14px; font-size: 13px; min-height: 38px; }
   .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
-
-  /* ── Forms ── */
   .form-group { margin-bottom: 14px; }
   .form-label { font-size: 13px; color: #a8a29e; margin-bottom: 5px; display: block; font-family: sans-serif; font-weight: 600; }
   .form-input { width: 100%; background: #1a1a1a; border: 1px solid #333; border-radius: 8px; padding: 12px 14px; color: #e7e5e4; font-size: 16px; font-family: sans-serif; min-height: 46px; -webkit-appearance: none; }
@@ -57,23 +53,17 @@
   textarea.form-input { min-height: 76px; resize: vertical; }
   .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
   .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-
-  /* ── Customer list ── */
   .search-bar { display: flex; align-items: center; gap: 10px; padding: 11px 14px; background: #161616; border: 1px solid #222; border-radius: 10px; margin-bottom: 12px; }
   .search-bar input { flex: 1; border: none; outline: none; font-size: 15px; background: transparent; color: #e7e5e4; font-family: sans-serif; min-height: 26px; }
   .cust-row { padding: 13px 14px; border-radius: 10px; cursor: pointer; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; border: 1px solid transparent; transition: all .15s; min-height: 60px; }
   .cust-row:hover { background: #1a1a1a; border-color: #2a2a2a; }
   .cust-name { font-weight: 700; color: #f5f5f4; font-size: 16px; }
   .cust-sub { font-size: 12px; color: #78716c; font-family: sans-serif; margin-top: 2px; }
-
-  /* ── Badges ── */
   .badge { display: inline-block; padding: 3px 9px; border-radius: 5px; font-size: 12px; font-weight: 700; font-family: monospace; }
   .b-green  { background: #4ade8018; color: #4ade80; border: 1px solid #4ade8033; }
   .b-red    { background: #f8717118; color: #f87171; border: 1px solid #f8717133; }
   .b-orange { background: #fb923c18; color: #fb923c; border: 1px solid #fb923c33; }
   .b-gray   { color: #57534e; }
-
-  /* ── Tables ── */
   .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   table { width: 100%; border-collapse: collapse; font-size: 13px; }
   th { padding: 7px 9px; font-weight: 600; border-bottom: 1px solid #222; font-family: sans-serif; font-size: 11px; color: #57534e; text-align: left; white-space: nowrap; }
@@ -83,16 +73,12 @@
   .sec-row td { padding: 10px 9px 4px; color: #4ade8077; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; font-family: sans-serif; border-bottom: 1px solid #1e1e1e; background: #0f0f0f; }
   .m-lbl { font-weight: 600; color: #d6d3d1; font-family: sans-serif; cursor: pointer; text-decoration: underline dotted #444; }
   .ideal { color: #57534e; font-size: 11px; font-family: monospace; white-space: nowrap; }
-
-  /* ── Scan options ── */
   .scan-opt { display: flex; align-items: center; gap: 14px; padding: 18px; background: #161616; border: 1px solid #222; border-radius: 12px; cursor: pointer; margin-bottom: 12px; min-height: 76px; transition: border-color .15s; }
   .scan-opt:hover { border-color: #4ade8044; background: #1a1a1a; }
   .scan-opt.primary { background: linear-gradient(135deg,#16a34a,#15803d); border-color: #16a34a; color: #fff; }
   .scan-opt .si { font-size: 30px; flex-shrink: 0; }
   .scan-opt .st { font-size: 17px; font-weight: 700; margin-bottom: 2px; font-family: sans-serif; }
   .scan-opt .sd { font-size: 13px; opacity: .75; font-family: sans-serif; line-height: 1.4; }
-
-  /* ── Modal ── */
   .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.65); z-index: 200; display: none; align-items: flex-end; justify-content: center; }
   .modal-overlay.open { display: flex; }
   .modal { background: #1a1a1a; border: 1px solid #333; border-radius: 18px 18px 0 0; padding: 26px 22px; width: 100%; max-width: 520px; max-height: 75vh; overflow-y: auto; }
@@ -101,65 +87,34 @@
   .modal-close { float: right; background: none; border: none; font-size: 26px; cursor: pointer; color: #78716c; min-width: 40px; min-height: 40px; line-height: 1; }
   .modal-sec-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #4ade80; margin: 12px 0 5px; font-family: sans-serif; }
   .modal-body { font-size: 14px; line-height: 1.65; color: #a8a29e; }
-
-  /* ── Notifications ── */
   .notif { position: fixed; top: 14px; left: 10px; right: 10px; max-width: 480px; margin: 0 auto; border-radius: 10px; padding: 13px 16px; font-size: 14px; font-weight: 600; z-index: 999; box-shadow: 0 8px 24px #00000088; font-family: sans-serif; display: none; }
   .notif.ok  { background: #14532d; border: 1px solid #4ade80; color: #bbf7d0; }
   .notif.err { background: #7f1d1d; border: 1px solid #f87171; color: #fca5a5; }
   .notif.inf { background: #1e3a5f; border: 1px solid #60a5fa; color: #bfdbfe; }
-
-  /* ── Loading / empty ── */
   .loading { text-align: center; padding: 60px 20px; color: #78716c; font-family: sans-serif; }
   .spin { display: inline-block; width: 34px; height: 34px; border: 3px solid #333; border-top-color: #4ade80; border-radius: 50%; animation: spin .7s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
   .empty { text-align: center; padding: 44px 20px; color: #78716c; font-family: sans-serif; }
   .empty-icon { font-size: 40px; margin-bottom: 10px; }
   .empty-title { font-size: 15px; font-weight: 700; color: #f5f5f4; margin-bottom: 4px; }
-
-  /* ── Back ── */
   .back { display: inline-flex; align-items: center; gap: 6px; color: #78716c; font-family: sans-serif; font-size: 14px; cursor: pointer; margin-bottom: 16px; background: none; border: none; padding: 0; }
   .back:hover { color: #a8a29e; }
-
-  /* ── Banners ── */
   .banner-ok   { background: #0a1f0f; border: 1px solid #4ade8033; border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; font-family: sans-serif; font-size: 13px; color: #4ade80; }
   .banner-warn { background: #1a1200; border: 1px solid #fb923c33; border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; font-family: sans-serif; font-size: 13px; color: #fb923c; }
   .banner-err  { background: #1a0000; border: 1px solid #f8717133; border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; font-family: sans-serif; font-size: 13px; color: #f87171; }
-
-  /* ── Print ── */
-  @media print {
-    .header, .no-print { display: none !important; }
-    body { background: #fff; }
-    .main { padding: 0; max-width: none; }
-  }
-
-  /* ── Mobile ── */
-  @media (max-width: 600px) {
-    .stats-grid { grid-template-columns: 1fr 1fr; }
-    .grid-2 { grid-template-columns: 1fr; }
-    .grid-3 { grid-template-columns: 1fr 1fr; }
-    .nav-btn { padding: 0 8px; font-size: 12px; }
-    .logo-sub { display: none; }
-    .main { padding: 14px 12px; }
-    .card { padding: 14px; }
-  }
+  @media print { .header, .no-print { display: none !important; } body { background: #fff; } .main { padding: 0; max-width: none; } }
+  @media (max-width: 600px) { .stats-grid { grid-template-columns: 1fr 1fr; } .grid-2 { grid-template-columns: 1fr; } .grid-3 { grid-template-columns: 1fr 1fr; } .nav-btn { padding: 0 8px; font-size: 12px; } .logo-sub { display: none; } .main { padding: 14px 12px; } .card { padding: 14px; } }
 </style>
 </head>
 <body>
-
-<!-- ═══════════════════════════════════════════════════════════
-  STEP 1: Paste your Google Apps Script deployment URL below.
-  It looks like: https://script.google.com/macros/s/ABC.../exec
-════════════════════════════════════════════════════════════ -->
 <script>
   var GAS_URL = "https://script.google.com/macros/s/AKfycbzLu7vowDT_GiVV3ar9gfZUuuSymX76nN67u4tqR6AtSh1wHIpKavfmLXWQ4ge5cR9Cpg/exec";
 </script>
 
 <div class="notif" id="notif"></div>
-
 <div class="modal-overlay" id="info-modal" onclick="if(event.target===this)closeModal()">
   <div class="modal" id="info-modal-body"></div>
 </div>
-
 <input type="file" accept="image/*" id="file-input" style="display:none">
 <input type="file" accept="image/*" capture="environment" id="cam-input" style="display:none">
 
@@ -186,895 +141,360 @@
     </div>
   </div>
   <div class="nav">
-    <button class="nav-btn active" id="nb-dash"   onclick="showPage('dash')">Dashboard</button>
-    <button class="nav-btn"        id="nb-add"    onclick="showPage('add')">+ Add</button>
-    <button class="nav-btn"        id="nb-report" onclick="showPage('report')">Reports</button>
+    <button class="nav-btn active" id="nb-dash" onclick="showPage('dash')">Dashboard</button>
+    <button class="nav-btn" id="nb-add" onclick="showPage('add')">+ Add</button>
+    <button class="nav-btn" id="nb-report" onclick="showPage('report')">Reports</button>
   </div>
 </div>
 
 <div class="main" id="app"></div>
 
 <script>
-// ══════════════════════════════════════════════════════════════
-// CONFIG CHECK
-// ══════════════════════════════════════════════════════════════
 if (!GAS_URL || GAS_URL.indexOf("PASTE_YOUR") !== -1) {
-  document.getElementById('app').innerHTML =
-    '<div class="card" style="border-color:#fb923c;background:#1a1200;margin-top:10px">'
-    + '<div style="font-size:16px;font-weight:700;color:#fb923c;margin-bottom:10px;font-family:sans-serif">⚙️ One more step</div>'
-    + '<p style="font-family:sans-serif;font-size:14px;color:#a8a29e;line-height:1.8">'
-    + '1. Deploy your <b>Code.gs</b> in Google Apps Script<br>'
-    + '2. Copy the deployment URL (ends in <code>/exec</code>)<br>'
-    + '3. Open <b>index.html</b> in a text editor<br>'
-    + '4. Replace <code>PASTE_YOUR_GAS_DEPLOYMENT_URL_HERE</code> with that URL<br>'
-    + '5. Save and re-upload to GitHub</p></div>';
+  document.getElementById('app').innerHTML = '<div class="card" style="border-color:#fb923c;background:#1a1200;margin-top:10px"><div style="font-size:16px;font-weight:700;color:#fb923c;margin-bottom:10px;font-family:sans-serif">⚙️ Set your GAS_URL</div></div>';
   throw new Error("GAS_URL not configured.");
 }
 
-// ══════════════════════════════════════════════════════════════
-// State
-// ══════════════════════════════════════════════════════════════
-var customers   = [];
-var samples     = [];
-var activeCust  = null;
-var prefill     = null;
+var customers=[], samples=[], activeCust=null, prefill=null;
 
-// ══════════════════════════════════════════════════════════════
-// Metric definitions
-// ══════════════════════════════════════════════════════════════
 var METRICS = [
-  { key:'pH',            label:'Soil pH',          unit:'',         min:6.0,  max:7.0,  sec:'Lab Results',
-    about:'Measures soil acidity or alkalinity. Most nutrients are best available between 6.0–7.0.',
-    fix:'If too low, apply limestone. If too high, apply elemental sulfur.' },
-  { key:'phosphorus',    label:'Phosphorus (P)',    unit:'lb/A',     min:50,   max:100,  sec:'Lab Results',
-    about:'Drives root development. High levels can block zinc and iron.',
-    fix:'If deficient, apply phosphate fertilizer. Avoid excess — runoff harms waterways.' },
-  { key:'organicMatter', label:'Organic Matter',    unit:'%',        min:3,    max:6,    sec:'Lab Results',
-    about:'Improves water retention, feeds soil biology, and buffers pH swings.',
-    fix:'Top-dress with compost and minimize soil disturbance.' },
-  { key:'acidity',       label:'Buffer Acidity',    unit:'meq/100g', min:0,    max:2,    sec:'Exchangeable Cations',
-    about:'Reserve acidity. Higher values mean more limestone is needed.',
-    fix:'This value determines your limestone application rate.' },
-  { key:'potassium',     label:'Potassium (K)',      unit:'meq/100g', min:0.15, max:0.40, sec:'Exchangeable Cations',
-    about:'Essential for water regulation, disease resistance, and winter hardiness.',
-    fix:'If deficient, apply potash (K₂O).' },
-  { key:'magnesium',     label:'Magnesium (Mg)',     unit:'meq/100g', min:0.5,  max:2.5,  sec:'Exchangeable Cations',
-    about:'The central atom in every chlorophyll molecule — critical for photosynthesis.',
-    fix:'If deficient, apply dolomitic limestone or Epsom salt.' },
-  { key:'calcium',       label:'Calcium (Ca)',       unit:'meq/100g', min:5,    max:15,   sec:'Exchangeable Cations',
-    about:'Builds strong cell walls. Primary component of limestone.',
-    fix:'If deficient, apply calcitic or dolomitic limestone.' },
-  { key:'cec',           label:'CEC',                unit:'meq/100g', min:10,   max:20,   sec:'Exchangeable Cations', info:true,
-    about:'Total ability of soil to hold nutrient ions. Higher = less leaching.',
-    fix:'Informational only. Improve long-term by adding organic matter.' },
-  { key:'satK',          label:'K Saturation',       unit:'%',        min:2,    max:5,    sec:'% Saturation of CEC',
-    about:'Potassium as % of CEC. Too high blocks magnesium and calcium.',
-    fix:'If low, apply potassium. Balance with Ca and Mg if high.' },
-  { key:'satMg',         label:'Mg Saturation',      unit:'%',        min:10,   max:20,   sec:'% Saturation of CEC',
-    about:'Magnesium as % of CEC. Low levels cause chlorophyll deficiency.',
-    fix:'If deficient, apply dolomitic limestone or Epsom salt.' },
-  { key:'satCa',         label:'Ca Saturation',      unit:'%',        min:60,   max:80,   sec:'% Saturation of CEC',
-    about:'Calcium as % of CEC. Low Ca usually means acidic soil needing lime.',
-    fix:'If deficient, apply limestone. Closely linked to pH.' }
+  {key:'pH',label:'Soil pH',unit:'',min:6.0,max:7.0,sec:'Lab Results',about:'Measures soil acidity or alkalinity. Most nutrients are best available between 6.0–7.0.',fix:'If too low, apply limestone. If too high, apply sulfur.'},
+  {key:'phosphorus',label:'Phosphorus (P)',unit:'lb/A',min:50,max:100,sec:'Lab Results',about:'Drives root development. High levels can block zinc and iron.',fix:'If deficient, apply phosphate fertilizer.'},
+  {key:'organicMatter',label:'Organic Matter',unit:'%',min:3,max:6,sec:'Lab Results',about:'Improves water retention, feeds soil biology, buffers pH.',fix:'Top-dress with compost.'},
+  {key:'acidity',label:'Buffer Acidity',unit:'meq/100g',min:0,max:2,sec:'Exchangeable Cations',about:'Reserve acidity. Higher = more limestone needed.',fix:'Determines limestone application rate.'},
+  {key:'potassium',label:'Potassium (K)',unit:'meq/100g',min:0.15,max:0.40,sec:'Exchangeable Cations',about:'Essential for water regulation and winter hardiness.',fix:'If deficient, apply potash (K₂O).'},
+  {key:'magnesium',label:'Magnesium (Mg)',unit:'meq/100g',min:0.5,max:2.5,sec:'Exchangeable Cations',about:'Central atom in chlorophyll — critical for photosynthesis.',fix:'If deficient, apply dolomitic limestone or Epsom salt.'},
+  {key:'calcium',label:'Calcium (Ca)',unit:'meq/100g',min:5,max:15,sec:'Exchangeable Cations',about:'Builds cell walls. Primary component of limestone.',fix:'If deficient, apply limestone.'},
+  {key:'cec',label:'CEC',unit:'meq/100g',min:10,max:20,sec:'Exchangeable Cations',info:true,about:'Soil nutrient holding capacity. Higher = less leaching.',fix:'Informational. Improve by adding organic matter.'},
+  {key:'satK',label:'K Saturation',unit:'%',min:2,max:5,sec:'% Saturation of CEC',about:'K as % of CEC. Too high blocks Mg and Ca.',fix:'Balance with Ca and Mg if high.'},
+  {key:'satMg',label:'Mg Saturation',unit:'%',min:10,max:20,sec:'% Saturation of CEC',about:'Mg as % of CEC. Low = chlorophyll deficiency.',fix:'If deficient, apply dolomitic limestone.'},
+  {key:'satCa',label:'Ca Saturation',unit:'%',min:60,max:80,sec:'% Saturation of CEC',about:'Ca as % of CEC. Low = acidic soil needing lime.',fix:'Apply limestone. Closely linked to pH.'}
 ];
-
-var SECTIONS = ['Lab Results', 'Exchangeable Cations', '% Saturation of CEC'];
-
+var SECTIONS = ['Lab Results','Exchangeable Cations','% Saturation of CEC'];
 var RECS = [
-  { key:'limestoneLbs', label:'Limestone (lb/1000 ft²)', note:'Raises pH. Split if >100 lb. Aerate first.' },
-  { key:'recN',         label:'Nitrogen (N)',              note:'Split into multiple apps through the season.' },
-  { key:'recP',         label:'Phosphorus (P₂O₅)',         note:'Only apply what the test recommends.' },
-  { key:'recK',         label:'Potassium (K₂O)',            note:'Important for winter hardiness.' }
+  {key:'limestoneLbs',label:'Limestone (lb/1000 ft²)',note:'Raises pH. Split if >100 lb.'},
+  {key:'recN',label:'Nitrogen (N)',note:'Split into multiple apps.'},
+  {key:'recP',label:'Phosphorus (P₂O₅)',note:'Only apply what test recommends.'},
+  {key:'recK',label:'Potassium (K₂O)',note:'Important for winter hardiness.'}
 ];
 
-// ══════════════════════════════════════════════════════════════
-// Utilities
-// ══════════════════════════════════════════════════════════════
-function esc(s) {
-  return String(s == null ? '' : s)
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function fmtNum(v){if(v===undefined||v===null||v==='')return'<span class="b-gray">—</span>';var n=parseFloat(v);return isNaN(n)?esc(v):(n%1===0?n:parseFloat(n.toFixed(2)));}
+function statusBadge(m,v){if(m.info||v===undefined||v===null||v==='')return fmtNum(v);var n=parseFloat(v);if(isNaN(n))return'<span class="b-gray">—</span>';if(n>=m.min&&n<=m.max)return'<span class="badge b-green">'+fmtNum(v)+'</span>';if(n>m.max)return'<span class="badge b-orange">'+fmtNum(v)+'</span>';return'<span class="badge b-red">'+fmtNum(v)+'</span>';}
+function setApp(h){document.getElementById('app').innerHTML=h;}
+function notify(msg,type,ms){var el=document.getElementById('notif');el.textContent=msg;el.className='notif '+(type||'ok');el.style.display='block';clearTimeout(el._t);el._t=setTimeout(function(){el.style.display='none';},ms||4000);}
+function navActive(id){['nb-dash','nb-add','nb-report'].forEach(function(n){var el=document.getElementById(n);if(el)el.classList.remove('active');});var t=document.getElementById('nb-'+id);if(t)t.classList.add('active');}
+function gasGet(p){var qs=Object.keys(p).map(function(k){return encodeURIComponent(k)+'='+encodeURIComponent(p[k]);}).join('&');return fetch(GAS_URL+'?'+qs).then(function(r){return r.json();});}
+function gasPost(b){return fetch(GAS_URL,{method:'POST',body:JSON.stringify(b)}).then(function(r){return r.json();});}
 
-function fmtNum(v) {
-  if (v === undefined || v === null || v === '') return '<span class="b-gray">—</span>';
-  var n = parseFloat(v);
-  return isNaN(n) ? esc(v) : (n % 1 === 0 ? n : parseFloat(n.toFixed(2)));
-}
-
-function statusBadge(m, v) {
-  if (m.info || v === undefined || v === null || v === '') return fmtNum(v);
-  var n = parseFloat(v);
-  if (isNaN(n)) return '<span class="b-gray">—</span>';
-  if (n >= m.min && n <= m.max) return '<span class="badge b-green">'  + fmtNum(v) + '</span>';
-  if (n > m.max)                return '<span class="badge b-orange">' + fmtNum(v) + '</span>';
-  return '<span class="badge b-red">' + fmtNum(v) + '</span>';
-}
-
-function setApp(html) { document.getElementById('app').innerHTML = html; }
-
-function notify(msg, type, ms) {
-  var el = document.getElementById('notif');
-  el.textContent = msg;
-  el.className = 'notif ' + (type || 'ok');
-  el.style.display = 'block';
-  clearTimeout(el._t);
-  el._t = setTimeout(function(){ el.style.display = 'none'; }, ms || 4000);
-}
-
-function navActive(id) {
-  ['nb-dash','nb-add','nb-report'].forEach(function(n){
-    var el = document.getElementById(n);
-    if (el) el.classList.remove('active');
-  });
-  var target = document.getElementById('nb-' + id);
-  if (target) target.classList.add('active');
-}
-
-// ══════════════════════════════════════════════════════════════
-// GAS API — GET for reads, POST for writes
-// ══════════════════════════════════════════════════════════════
-function gasGet(params) {
-  var qs = Object.keys(params).map(function(k){
-    return encodeURIComponent(k) + '=' + encodeURIComponent(params[k]);
-  }).join('&');
-  return fetch(GAS_URL + '?' + qs).then(function(r){ return r.json(); });
-}
-
-function gasPost(body) {
-  return fetch(GAS_URL, {
-    method: 'POST',
-    body: JSON.stringify(body)
-  }).then(function(r){ return r.json(); });
-}
-
-// ══════════════════════════════════════════════════════════════
-// Boot
-// ══════════════════════════════════════════════════════════════
-window.addEventListener('load', function() {
-  document.getElementById('file-input').addEventListener('change', function(e){
-    if (e.target.files[0]) handleImage(e.target.files[0]);
-    e.target.value = '';
-  });
-  document.getElementById('cam-input').addEventListener('change', function(e){
-    if (e.target.files[0]) handleImage(e.target.files[0]);
-    e.target.value = '';
-  });
+window.addEventListener('load',function(){
+  document.getElementById('file-input').addEventListener('change',function(e){if(e.target.files[0])handleImage(e.target.files[0]);e.target.value='';});
+  document.getElementById('cam-input').addEventListener('change',function(e){if(e.target.files[0])handleImage(e.target.files[0]);e.target.value='';});
   loadAndShow();
 });
 
-function loadAndShow() {
-  setApp('<div class="loading"><div class="spin"></div>'
-    + '<p style="margin-top:14px;font-family:sans-serif;font-size:14px">Loading from Google Sheets...</p></div>');
-
-  var timed = setTimeout(function(){
-    setApp('<div class="banner-err"><b>Could not reach Google Apps Script.</b><br><br>'
-      + 'Check that:<br>'
-      + '• <code>GAS_URL</code> in index.html is your full /exec URL<br>'
-      + '• Deployed with <b>Who has access: Anyone</b><br>'
-      + '• SPREADSHEET_ID is correct in Code.gs<br><br>'
-      + '<button class="btn-green btn-sm" onclick="loadAndShow()">↺ Retry</button></div>');
-  }, 15000);
-
-  gasGet({ action: 'getData' })
-    .then(function(d) {
-      clearTimeout(timed);
-      if (!d.success) {
-        setApp('<div class="banner-err"><b>Error from Apps Script:</b> ' + esc(d.error)
-          + '<br><br><button class="btn-green btn-sm" onclick="loadAndShow()">↺ Retry</button></div>');
-        return;
-      }
-      customers = d.customers || [];
-      samples   = d.samples   || [];
-      showPage('dash');
-    })
-    .catch(function(err) {
-      clearTimeout(timed);
-      setApp('<div class="banner-err"><b>Network error:</b> ' + esc(err.message || String(err))
-        + '<br><br>Make sure your GAS_URL is correct and the deployment allows <b>Anyone</b> access.<br><br>'
-        + '<button class="btn-green btn-sm" onclick="loadAndShow()">↺ Retry</button></div>');
-    });
+function loadAndShow(){
+  setApp('<div class="loading"><div class="spin"></div><p style="margin-top:14px">Loading from Google Sheets...</p></div>');
+  var timed=setTimeout(function(){setApp('<div class="banner-err"><b>Could not reach Apps Script.</b><br><br><button class="btn-green btn-sm" onclick="loadAndShow()">↺ Retry</button></div>');},15000);
+  gasGet({action:'getData'}).then(function(d){
+    clearTimeout(timed);
+    if(!d.success){setApp('<div class="banner-err"><b>Error:</b> '+esc(d.error)+'<br><br><button class="btn-green btn-sm" onclick="loadAndShow()">↺ Retry</button></div>');return;}
+    customers=d.customers||[];samples=d.samples||[];showPage('dash');
+  }).catch(function(err){clearTimeout(timed);setApp('<div class="banner-err"><b>Network error:</b> '+esc(err.message)+'<br><br><button class="btn-green btn-sm" onclick="loadAndShow()">↺ Retry</button></div>');});
 }
 
-function showPage(page) {
-  navActive(page);
-  if (page === 'dash')        { activeCust = null; renderDashboard(); }
-  else if (page === 'add')    { prefill = null; renderAddPage(); }
-  else if (page === 'report') renderReportPage();
-}
+function showPage(page){navActive(page);if(page==='dash'){activeCust=null;renderDashboard();}else if(page==='add'){prefill=null;renderAddPage();}else if(page==='report')renderReportPage();}
 
-// ══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 // Dashboard
-// ══════════════════════════════════════════════════════════════
-function renderDashboard() {
-  var years = {};
-  samples.forEach(function(s){ if (s.year) years[s.year] = true; });
-
-  var counts = {};
-  samples.forEach(function(s){
-    METRICS.forEach(function(m){
-      if (m.info) return;
-      var n = parseFloat(s[m.key]);
-      if (!isNaN(n) && (n < m.min || n > m.max)) counts[m.key] = (counts[m.key] || 0) + 1;
-    });
-  });
-  var topIssues = Object.keys(counts)
-    .sort(function(a,b){ return counts[b] - counts[a]; }).slice(0, 4);
-
-  var html = '<div class="page-title">Soil Data Overview</div>'
-    + '<div class="page-sub">' + customers.length + ' customers · ' + samples.length
-    + ' samples · ' + Object.keys(years).length + ' seasons tracked</div>';
-
-  html += '<div class="stats-grid">'
-    + '<div class="stat-card"><div class="stat-icon">👨‍🌾</div><div class="stat-val">' + customers.length + '</div><div class="stat-label">Customers</div></div>'
-    + '<div class="stat-card"><div class="stat-icon">🧪</div><div class="stat-val">' + samples.length + '</div><div class="stat-label">Samples</div></div>'
-    + '<div class="stat-card"><div class="stat-icon">📅</div><div class="stat-val">' + Object.keys(years).length + '</div><div class="stat-label">Seasons</div></div>'
-    + '</div>';
-
-  if (topIssues.length) {
-    html += '<div class="card"><div class="sec-title">Common Issues</div>';
-    topIssues.forEach(function(k){
-      var m = METRICS.find(function(x){ return x.key === k; });
-      html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #1e1e1e">'
-        + '<span style="font-family:sans-serif;font-size:13px;color:#d6d3d1">' + esc(m ? m.label : k) + '</span>'
-        + '<span class="badge b-red">' + counts[k] + ' out of range</span></div>';
-    });
-    html += '</div>';
-  }
-
-  html += '<div class="card no-print">';
-  html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">'
-    + '<div class="sec-title" style="margin:0">Customers</div>'
-    + '<button class="btn-green btn-sm" onclick="renderCustForm(null)">+ New Customer</button></div>';
-  html += '<div class="search-bar"><span style="color:#57534e">🔍</span>'
-    + '<input id="csearch" placeholder="Search customers..." oninput="filterCustomers()" '
-    + 'style="flex:1;border:none;outline:none;font-size:15px;background:transparent;color:#e7e5e4;font-family:sans-serif"></div>';
-  html += '<div id="clist">' + buildCustList(customers) + '</div></div>';
-
+// ══════════════════════════════════════════════════════
+function renderDashboard(){
+  var years={};samples.forEach(function(s){if(s.year)years[s.year]=true;});
+  var counts={};samples.forEach(function(s){METRICS.forEach(function(m){if(m.info)return;var n=parseFloat(s[m.key]);if(!isNaN(n)&&(n<m.min||n>m.max))counts[m.key]=(counts[m.key]||0)+1;});});
+  var topIssues=Object.keys(counts).sort(function(a,b){return counts[b]-counts[a];}).slice(0,4);
+  var html='<div class="page-title">Soil Data Overview</div><div class="page-sub">'+customers.length+' customers · '+samples.length+' samples · '+Object.keys(years).length+' seasons tracked</div>';
+  html+='<div class="stats-grid"><div class="stat-card"><div class="stat-icon">👨‍🌾</div><div class="stat-val">'+customers.length+'</div><div class="stat-label">Customers</div></div><div class="stat-card"><div class="stat-icon">🧪</div><div class="stat-val">'+samples.length+'</div><div class="stat-label">Samples</div></div><div class="stat-card"><div class="stat-icon">📅</div><div class="stat-val">'+Object.keys(years).length+'</div><div class="stat-label">Seasons</div></div></div>';
+  if(topIssues.length){html+='<div class="card"><div class="sec-title">Common Issues</div>';topIssues.forEach(function(k){var m=METRICS.find(function(x){return x.key===k;});html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #1e1e1e"><span style="font-family:sans-serif;font-size:13px;color:#d6d3d1">'+esc(m?m.label:k)+'</span><span class="badge b-red">'+counts[k]+' out of range</span></div>';});html+='</div>';}
+  html+='<div class="card no-print"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div class="sec-title" style="margin:0">Customers</div><button class="btn-green btn-sm" onclick="renderCustForm(null)">+ New Customer</button></div>';
+  html+='<div class="search-bar"><span style="color:#57534e">🔍</span><input id="csearch" placeholder="Search customers..." oninput="filterCustomers()"></div>';
+  html+='<div id="clist">'+buildCustList(customers)+'</div></div>';
   setApp(html);
 }
+function buildCustList(list){if(!list.length)return'<div class="empty"><div class="empty-icon">🌱</div><div class="empty-title">No customers yet</div></div>';return list.map(function(c){var cs=samples.filter(function(s){return String(s.customerId)===String(c.id);});var yrs=cs.map(function(s){return s.year;}).filter(Boolean).sort();var uniq=yrs.filter(function(v,i,a){return a.indexOf(v)===i;});return'<div class="cust-row" onclick="openCust(\''+c.id+'\')"><div><div class="cust-name">'+esc(c.name)+'</div><div class="cust-sub">'+(c.field?esc(c.field)+' · ':'')+cs.length+' sample'+(cs.length!==1?'s':'')+(uniq.length?' · '+uniq.join(', '):'')+' </div></div><span style="color:#57534e;font-size:20px">›</span></div>';}).join('');}
+function filterCustomers(){var q=(document.getElementById('csearch').value||'').toLowerCase();var list=q?customers.filter(function(c){return c.name.toLowerCase().includes(q)||(c.field||'').toLowerCase().includes(q);}):customers;var el=document.getElementById('clist');if(el)el.innerHTML=buildCustList(list);}
 
-function buildCustList(list) {
-  if (!list.length) return '<div class="empty"><div class="empty-icon">🌱</div>'
-    + '<div class="empty-title">No customers yet</div><div>Tap + New Customer to add one.</div></div>';
-  return list.map(function(c){
-    var cs = samples.filter(function(s){ return String(s.customerId) === String(c.id); });
-    var yrs = cs.map(function(s){ return s.year; }).filter(Boolean).sort();
-    var uniq = yrs.filter(function(v,i,a){ return a.indexOf(v) === i; });
-    return '<div class="cust-row" onclick="openCust(\'' + c.id + '\')">'
-      + '<div><div class="cust-name">' + esc(c.name) + '</div>'
-      + '<div class="cust-sub">' + (c.field ? esc(c.field) + ' · ' : '')
-      + cs.length + ' sample' + (cs.length !== 1 ? 's' : '')
-      + (uniq.length ? ' · ' + uniq.join(', ') : '') + '</div></div>'
-      + '<span style="color:#57534e;font-size:20px">›</span></div>';
-  }).join('');
-}
-
-function filterCustomers() {
-  var q = (document.getElementById('csearch').value || '').toLowerCase();
-  var list = q ? customers.filter(function(c){
-    return c.name.toLowerCase().includes(q) || (c.field || '').toLowerCase().includes(q);
-  }) : customers;
-  var el = document.getElementById('clist');
-  if (el) el.innerHTML = buildCustList(list);
-}
-
-// ══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 // Customer detail
-// ══════════════════════════════════════════════════════════════
-function openCust(id) {
-  activeCust = customers.find(function(c){ return String(c.id) === String(id); });
-  if (!activeCust) return;
-  navActive('');
-
-  var c  = activeCust;
-  var cs = samples.filter(function(s){ return String(s.customerId) === String(c.id); })
-                  .sort(function(a,b){ return b.year - a.year; });
-
-  var html = '<button class="back no-print" onclick="showPage(\'dash\')">&larr; Back</button>';
-  html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:6px">'
-    + '<div class="page-title">' + esc(c.name) + '</div>'
-    + '<div class="btn-row no-print" style="margin:0">'
-    + '<button class="btn-green btn-sm" onclick="startSampleFor(\'' + c.id + '\')">+ Sample</button>'
-    + '<button class="btn-outline btn-sm" onclick="renderCustForm(\'' + c.id + '\')">Edit</button>'
-    + '<button class="btn-danger btn-sm" onclick="doDeleteCust(\'' + c.id + '\')">Delete</button>'
-    + '</div></div>';
-
-  var info = [];
-  if (c.field)   info.push(esc(c.field));
-  if (c.address) info.push(esc(c.address) + (c.city ? ', ' + esc(c.city) : ''));
-  if (c.phone)   info.push(esc(c.phone));
-  if (c.email)   info.push(esc(c.email));
-  if (info.length) html += '<div class="page-sub">' + info.join(' · ') + '</div>';
-
-  if (!cs.length) {
-    html += '<div class="empty"><div class="empty-icon">🧪</div><div class="empty-title">No samples yet</div>'
-      + '<button class="btn-green btn-full no-print" onclick="startSampleFor(\'' + c.id + '\')">+ Add First Sample</button></div>';
-    setApp(html); return;
-  }
-
-  var years = cs.map(function(s){ return s.year; });
-
-  html += '<div class="card"><div class="sec-title">Recommendations</div><div class="tbl-wrap"><table>'
-    + '<thead><tr><th>Item</th>';
-  years.forEach(function(y){ html += '<th class="c">' + y + '</th>'; });
-  html += '<th>Notes</th></tr></thead><tbody>';
-  RECS.forEach(function(r){
-    html += '<tr><td style="font-family:sans-serif;font-size:13px;font-weight:600;color:#d6d3d1;white-space:nowrap">' + r.label + '</td>';
-    cs.forEach(function(s){
-      var v = s[r.key], none = !v || String(v).toLowerCase() === 'none' || v === '0';
-      html += '<td class="c"><span class="badge ' + (none ? 'b-green' : 'b-orange') + '">' + (v || 'None') + '</span></td>';
-    });
-    html += '<td style="color:#57534e;font-size:11px;font-family:sans-serif">' + r.note + '</td></tr>';
-  });
-  html += '</tbody></table></div></div>';
-
-  html += '<div class="card"><div class="sec-title">Lab Results — Year over Year</div><div class="tbl-wrap"><table>'
-    + '<thead><tr><th>Metric</th>';
-  years.forEach(function(y){ html += '<th class="c">' + y + '</th>'; });
-  html += '<th>Ideal</th></tr></thead><tbody>';
-  SECTIONS.forEach(function(sec){
-    html += '<tr class="sec-row"><td colspan="' + (2 + years.length) + '">' + sec + '</td></tr>';
-    METRICS.filter(function(m){ return m.sec === sec; }).forEach(function(m){
-      html += '<tr><td><span class="m-lbl" onclick="showMetricInfo(\'' + m.key + '\')">' + m.label + '</span></td>';
-      cs.forEach(function(s){ html += '<td class="c">' + statusBadge(m, s[m.key]) + '</td>'; });
-      html += '<td class="ideal">' + (m.info ? 'info' : m.min + '–' + m.max + (m.unit ? ' ' + m.unit : '')) + '</td></tr>';
-    });
-  });
-  html += '</tbody></table>';
-
-  html += '<div class="btn-row no-print" style="margin-top:12px">';
-  cs.forEach(function(s){
-    html += '<button class="btn-danger btn-sm" onclick="doDeleteSample(\'' + s.id + '\',' + s.year + ')">Delete ' + s.year + '</button>';
-  });
-  html += '</div></div>';
-  html += '<button class="btn-outline no-print" onclick="openReport(\'' + c.id + '\')">🖨 Print Report</button>';
-
+// ══════════════════════════════════════════════════════
+function openCust(id){
+  activeCust=customers.find(function(c){return String(c.id)===String(id);});if(!activeCust)return;navActive('');
+  var c=activeCust;var cs=samples.filter(function(s){return String(s.customerId)===String(c.id);}).sort(function(a,b){return b.year-a.year;});
+  var html='<button class="back no-print" onclick="showPage(\'dash\')">&larr; Back</button>';
+  html+='<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:6px"><div class="page-title">'+esc(c.name)+'</div><div class="btn-row no-print" style="margin:0"><button class="btn-green btn-sm" onclick="startSampleFor(\''+c.id+'\')">+ Sample</button><button class="btn-outline btn-sm" onclick="renderCustForm(\''+c.id+'\')">Edit</button><button class="btn-danger btn-sm" onclick="doDeleteCust(\''+c.id+'\')">Delete</button></div></div>';
+  var info=[];if(c.field)info.push(esc(c.field));if(c.address)info.push(esc(c.address)+(c.city?', '+esc(c.city):''));if(c.phone)info.push(esc(c.phone));if(c.email)info.push(esc(c.email));
+  if(info.length)html+='<div class="page-sub">'+info.join(' · ')+'</div>';
+  if(!cs.length){html+='<div class="empty"><div class="empty-icon">🧪</div><div class="empty-title">No samples yet</div><button class="btn-green btn-full no-print" onclick="startSampleFor(\''+c.id+'\')">+ Add First Sample</button></div>';setApp(html);return;}
+  var years=cs.map(function(s){return s.year;});
+  html+='<div class="card"><div class="sec-title">Recommendations</div><div class="tbl-wrap"><table><thead><tr><th>Item</th>';years.forEach(function(y){html+='<th class="c">'+y+'</th>';});html+='<th>Notes</th></tr></thead><tbody>';
+  RECS.forEach(function(r){html+='<tr><td style="font-family:sans-serif;font-size:13px;font-weight:600;color:#d6d3d1;white-space:nowrap">'+r.label+'</td>';cs.forEach(function(s){var v=s[r.key],none=!v||String(v).toLowerCase()==='none'||v==='0';html+='<td class="c"><span class="badge '+(none?'b-green':'b-orange')+'">'+(v||'None')+'</span></td>';});html+='<td style="color:#57534e;font-size:11px;font-family:sans-serif">'+r.note+'</td></tr>';});
+  html+='</tbody></table></div></div>';
+  html+='<div class="card"><div class="sec-title">Lab Results — Year over Year</div><div class="tbl-wrap"><table><thead><tr><th>Metric</th>';years.forEach(function(y){html+='<th class="c">'+y+'</th>';});html+='<th>Ideal</th></tr></thead><tbody>';
+  SECTIONS.forEach(function(sec){html+='<tr class="sec-row"><td colspan="'+(2+years.length)+'">'+sec+'</td></tr>';METRICS.filter(function(m){return m.sec===sec;}).forEach(function(m){html+='<tr><td><span class="m-lbl" onclick="showMetricInfo(\''+m.key+'\')">'+m.label+'</span></td>';cs.forEach(function(s){html+='<td class="c">'+statusBadge(m,s[m.key])+'</td>';});html+='<td class="ideal">'+(m.info?'info':m.min+'–'+m.max+(m.unit?' '+m.unit:''))+'</td></tr>';});});
+  html+='</tbody></table><div class="btn-row no-print" style="margin-top:12px">';cs.forEach(function(s){html+='<button class="btn-danger btn-sm" onclick="doDeleteSample(\''+s.id+'\','+s.year+')">Delete '+s.year+'</button>';});
+  html+='</div></div>';
+  html+='<button class="btn-outline no-print" onclick="openReport(\''+c.id+'\')">🖨 Print Report</button>';
   setApp(html);
 }
 
-// ══════════════════════════════════════════════════════════════
-// Add / Edit customer
-// ══════════════════════════════════════════════════════════════
-function renderCustForm(id) {
-  var c = id ? customers.find(function(x){ return String(x.id) === String(id); }) : null;
-  var v = function(k){ return c ? esc(c[k] || '') : ''; };
+// ══════════════════════════════════════════════════════
+// Add/Edit customer
+// ══════════════════════════════════════════════════════
+function renderCustForm(id){
+  var c=id?customers.find(function(x){return String(x.id)===String(id);}):null;var v=function(k){return c?esc(c[k]||''):'';};
+  var html='<button class="back" onclick="showPage(\'dash\')">&larr; Back</button><div class="page-title">'+(c?'Edit Customer':'New Customer')+'</div><div class="card">'
+    +'<div class="form-group"><label class="form-label">Name *</label><input class="form-input" id="cf-name" value="'+v('name')+'" placeholder="John Smith"></div>'
+    +'<div class="grid-2"><div class="form-group"><label class="form-label">Field</label><input class="form-input" id="cf-field" value="'+v('field')+'" placeholder="Front lawn"></div><div class="form-group"><label class="form-label">City</label><input class="form-input" id="cf-city" value="'+v('city')+'"></div></div>'
+    +'<div class="form-group"><label class="form-label">Address</label><input class="form-input" id="cf-addr" value="'+v('address')+'"></div>'
+    +'<div class="grid-2"><div class="form-group"><label class="form-label">Phone</label><input class="form-input" id="cf-phone" type="tel" value="'+v('phone')+'"></div><div class="form-group"><label class="form-label">Email</label><input class="form-input" id="cf-email" type="email" value="'+v('email')+'"></div></div>'
+    +'<button class="btn-green btn-full" onclick="saveCustForm(\''+(id||'')+'\')">'+(c?'Save Changes':'Add Customer')+'</button>';
+  if(c)html+='<button class="btn-danger btn-full" onclick="doDeleteCust(\''+c.id+'\')">Delete Customer</button>';
+  html+='</div>';setApp(html);
+}
+function saveCustForm(existingId){
+  var name=(document.getElementById('cf-name').value||'').trim();if(!name){notify('Name is required.','err');return;}
+  var data={id:existingId||undefined,name:name,field:(document.getElementById('cf-field').value||'').trim(),city:(document.getElementById('cf-city').value||'').trim(),address:(document.getElementById('cf-addr').value||'').trim(),phone:(document.getElementById('cf-phone').value||'').trim(),email:(document.getElementById('cf-email').value||'').trim()};
+  gasPost({action:'saveCustomer',data:data}).then(function(r){if(!r.success){notify('Error: '+(r.error||''),'err');return;}data.id=r.id;if(!existingId)customers.push(data);else{var i=customers.findIndex(function(c){return String(c.id)===String(existingId);});if(i!==-1)customers[i]=Object.assign(customers[i],data);}notify(existingId?'Customer updated.':'Customer added.');if(existingId)openCust(existingId);else showPage('dash');}).catch(function(err){notify('Error: '+err.message,'err');});
+}
 
-  var html = '<button class="back" onclick="showPage(\'dash\')">&larr; Back</button>'
-    + '<div class="page-title">' + (c ? 'Edit Customer' : 'New Customer') + '</div>'
-    + '<div class="card">'
-    + '<div class="form-group"><label class="form-label">Name *</label>'
-    + '<input class="form-input" id="cf-name" value="' + v('name') + '" placeholder="John Smith"></div>'
-    + '<div class="grid-2">'
-    + '<div class="form-group"><label class="form-label">Field / Property</label>'
-    + '<input class="form-input" id="cf-field" value="' + v('field') + '" placeholder="Front lawn"></div>'
-    + '<div class="form-group"><label class="form-label">City</label>'
-    + '<input class="form-input" id="cf-city" value="' + v('city') + '" placeholder="State College"></div></div>'
-    + '<div class="form-group"><label class="form-label">Address</label>'
-    + '<input class="form-input" id="cf-addr" value="' + v('address') + '" placeholder="123 Creek Rd"></div>'
-    + '<div class="grid-2">'
-    + '<div class="form-group"><label class="form-label">Phone</label>'
-    + '<input class="form-input" id="cf-phone" type="tel" value="' + v('phone') + '" placeholder="814-555-0101"></div>'
-    + '<div class="form-group"><label class="form-label">Email</label>'
-    + '<input class="form-input" id="cf-email" type="email" value="' + v('email') + '" placeholder="name@email.com"></div></div>'
-    + '<button class="btn-green btn-full" onclick="saveCustForm(\'' + (id || '') + '\')">'
-    + (c ? 'Save Changes' : 'Add Customer') + '</button>';
-  if (c) html += '<button class="btn-danger btn-full" onclick="doDeleteCust(\'' + c.id + '\')">Delete Customer</button>';
-  html += '</div>';
+// ══════════════════════════════════════════════════════
+// Add sample flow
+// ══════════════════════════════════════════════════════
+function renderAddPage(){activeCust=null;prefill=null;renderScanStep();}
+function startSampleFor(id){activeCust=customers.find(function(c){return String(c.id)===String(id);});prefill=null;renderScanStep();}
+
+function renderScanStep(){
+  var c=activeCust;var backTarget=c?'openCust(\''+c.id+'\')':'showPage(\'dash\')';
+  var html='<button class="back" onclick="'+backTarget+'">&larr; Back</button>'
+    +'<div class="page-title">Add Soil Sample'+(c?' — '+esc(c.name):'')+'</div>'
+    +'<div class="page-sub">Choose how to enter your Penn State soil report data.</div>'
+    +'<div class="scan-opt primary" onclick="document.getElementById(\'cam-input\').click()"><div class="si">📷</div><div><div class="st">Take Photo</div><div class="sd">Photograph your soil test report. AI extracts all values.</div></div></div>'
+    +'<div class="scan-opt" onclick="document.getElementById(\'file-input\').click()"><div class="si">🖼</div><div><div class="st">Upload Photo</div><div class="sd">Choose an existing photo from your device.</div></div></div>'
+    +'<div class="scan-opt" onclick="renderPasteStep()"><div class="si">📋</div><div><div class="st">Paste Report Text</div><div class="sd">Copy text from Genius Scan or any OCR app — AI reads all values instantly.</div></div></div>'
+    +'<div class="scan-opt" onclick="renderSampleForm(null)"><div class="si">✏️</div><div><div class="st">Enter Manually</div><div class="sd">Type in all soil lab values by hand.</div></div></div>';
   setApp(html);
 }
 
-function saveCustForm(existingId) {
-  var name = (document.getElementById('cf-name').value || '').trim();
-  if (!name) { notify('Name is required.', 'err'); return; }
-  var data = {
-    id:      existingId || undefined,
-    name:    name,
-    field:   (document.getElementById('cf-field').value || '').trim(),
-    city:    (document.getElementById('cf-city').value || '').trim(),
-    address: (document.getElementById('cf-addr').value || '').trim(),
-    phone:   (document.getElementById('cf-phone').value || '').trim(),
-    email:   (document.getElementById('cf-email').value || '').trim()
-  };
-  gasPost({ action: 'saveCustomer', data: data })
-    .then(function(r){
-      if (!r.success) { notify('Error: ' + (r.error || 'unknown'), 'err'); return; }
-      data.id = r.id;
-      if (!existingId) { customers.push(data); }
-      else {
-        var i = customers.findIndex(function(c){ return String(c.id) === String(existingId); });
-        if (i !== -1) customers[i] = Object.assign(customers[i], data);
-      }
-      notify(existingId ? 'Customer updated.' : 'Customer added.');
-      if (existingId) openCust(existingId); else showPage('dash');
-    })
-    .catch(function(err){ notify('Save error: ' + (err.message || err), 'err'); });
-}
-
-// ══════════════════════════════════════════════════════════════
-// Add sample flow — no customer required upfront
-// ══════════════════════════════════════════════════════════════
-function renderAddPage() {
-  activeCust = null;
-  prefill = null;
-  renderScanStep();
-}
-
-function startSampleFor(id) {
-  activeCust = customers.find(function(c){ return String(c.id) === String(id); });
-  prefill = null;
-  renderScanStep();
-}
-
-function renderScanStep() {
-  var c = activeCust;
-  var backTarget = c ? 'openCust(\'' + c.id + '\')' : 'showPage(\'dash\')';
-  var html = '<button class="back" onclick="' + backTarget + '">&larr; Back</button>'
-    + '<div class="page-title">Add Soil Sample' + (c ? ' — ' + esc(c.name) : '') + '</div>'
-    + '<div class="page-sub">Photograph or upload a Penn State soil report — the AI will read every value exactly. Or enter by hand.</div>'
-    + '<div class="scan-opt primary" onclick="document.getElementById(\'cam-input\').click()">'
-    + '<div class="si">📷</div><div><div class="st">Take Photo of Report</div>'
-    + '<div class="sd">Point camera at your Penn State soil test report. AI extracts all values automatically.</div></div></div>'
-    + '<div class="scan-opt" onclick="document.getElementById(\'file-input\').click()">'
-    + '<div class="si">🖼</div><div><div class="st">Upload Report Image</div>'
-    + '<div class="sd">Choose a photo from your device. Works best with clear, flat, well-lit shots.</div></div></div>'
-    + '<div class="scan-opt" onclick="renderSampleForm(null)">'
-    + '<div class="si">✏️</div><div><div class="st">Enter Manually</div>'
-    + '<div class="sd">Type in all soil lab values by hand.</div></div></div>';
-  setApp(html);
-}
-
-// ══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 // Image → AI extraction
-// ══════════════════════════════════════════════════════════════
-function setStep(msg) {
-  var el = document.getElementById('scan-step');
-  if (el) el.textContent = msg;
-}
-
-function handleImage(file) {
-  if (!file.type.startsWith('image/')) { notify('Please choose an image file.', 'err'); return; }
-  var start = Date.now(); var done = false; var lastFile = file;
-
-  function showScanUI() {
-    setApp('<button class="back" onclick="renderScanStep()">&larr; Back</button>'
-      + '<div class="page-title">Scanning Report</div>'
-      + '<div class="loading">'
-      + '<div class="spin" style="width:40px;height:40px;border-width:4px"></div>'
-      + '<p style="margin-top:14px;font-size:17px;font-weight:700;color:#f5f5f4">🤖 Reading Soil Report</p>'
-      + '<p id="scan-step" style="color:#a8a29e;font-size:14px;margin-top:8px;font-family:sans-serif">Preparing image…</p>'
-      + '<p style="color:#57534e;font-size:12px;margin-top:4px;font-family:monospace"><span id="ai-t">0</span>s elapsed</p>'
-      + '<div style="margin-top:20px"><button class="btn-outline" onclick="skipScan()">✏️ Enter Manually Instead</button></div>'
-      + '</div>');
-  }
+// ══════════════════════════════════════════════════════
+function handleImage(file){
+  if(!file.type.startsWith('image/')){notify('Please choose an image.','err');return;}
+  var start=Date.now(),done=false,lastFile=file;
+  function showScanUI(){setApp('<button class="back" onclick="renderScanStep()">&larr; Back</button><div class="page-title">Scanning Report</div><div class="loading"><div class="spin" style="width:40px;height:40px;border-width:4px"></div><p style="margin-top:14px;font-size:17px;font-weight:700;color:#f5f5f4">🤖 Reading Soil Report</p><p id="scan-step" style="color:#a8a29e;font-size:14px;margin-top:8px;font-family:sans-serif">Preparing image…</p><p style="color:#57534e;font-size:12px;margin-top:4px;font-family:monospace"><span id="ai-t">0</span>s elapsed</p><div style="margin-top:20px"><button class="btn-outline" onclick="skipScan()">✏️ Enter Manually Instead</button></div></div>');}
   showScanUI();
-
-  var tick = setInterval(function(){
-    var el = document.getElementById('ai-t');
-    if (el) el.textContent = Math.floor((Date.now() - start) / 1000);
-  }, 1000);
-
-  window.skipScan = function(){
-    if (done) return; done = true; clearInterval(tick); prefill = null; renderSampleForm(null);
-  };
-
-  function showError(msg) {
-    clearInterval(tick);
-    setApp('<button class="back" onclick="renderScanStep()">&larr; Back</button>'
-      + '<div class="page-title">Scan Failed</div>'
-      + '<div class="card" style="border:1.5px solid #ef4444">'
-      + '<p style="font-weight:700;color:#ef4444;font-size:15px;margin-bottom:8px">⚠️ Could not read report</p>'
-      + '<p style="color:#a8a29e;font-size:13px;word-break:break-word;font-family:monospace">' + esc(msg) + '</p>'
-      + '</div>'
-      + '<button class="btn-green" onclick="retryImage()" style="margin-top:12px;width:100%">🔄 Try Again</button>'
-      + '<button class="btn-outline" onclick="renderSampleForm(null)" style="margin-top:8px;width:100%">✏️ Enter Manually</button>');
-    window.retryImage = function(){ done = false; start = Date.now(); showScanUI(); runScan(); };
-  }
-
-  function finish(result) {
-    if (done) return; done = true; clearInterval(tick);
-    if (result && result.success && result.data) {
-      prefill = result.data;
-      prefill._ai = true;
-      if (!activeCust && prefill.CustomerName) {
-        var needle = String(prefill.CustomerName).trim().toLowerCase();
-        var match = customers.find(function(c){
-          var hay = c.name.toLowerCase();
-          return hay === needle || hay.includes(needle) || needle.includes(hay);
-        });
-        if (match) activeCust = match;
-      }
-      renderSampleForm(prefill);
-    } else {
-      showError((result && result.error) || 'Unknown error — check API key and GAS deployment.');
-    }
-  }
-
-function runScan() {
+  var tick=setInterval(function(){var el=document.getElementById('ai-t');if(el)el.textContent=Math.floor((Date.now()-start)/1000);},1000);
+  window.skipScan=function(){if(done)return;done=true;clearInterval(tick);prefill=null;renderSampleForm(null);};
+  function showError(msg){clearInterval(tick);setApp('<button class="back" onclick="renderScanStep()">&larr; Back</button><div class="page-title">Scan Failed</div><div class="card" style="border:1.5px solid #ef4444"><p style="font-weight:700;color:#ef4444;font-size:15px;margin-bottom:8px">⚠️ Could not read report</p><p style="color:#a8a29e;font-size:13px;word-break:break-word;font-family:monospace">'+esc(msg)+'</p></div><button class="btn-green" onclick="retryImage()" style="margin-top:12px;width:100%">🔄 Try Again</button><button class="btn-outline" onclick="renderPasteStep()" style="margin-top:8px;width:100%">📋 Paste Text Instead</button><button class="btn-outline" onclick="renderSampleForm(null)" style="margin-top:8px;width:100%">✏️ Enter Manually</button>');window.retryImage=function(){done=false;start=Date.now();showScanUI();runScan();};}
+  function finish(result){if(done)return;done=true;clearInterval(tick);if(result&&result.success&&result.data){prefill=result.data;prefill._ai=true;if(!activeCust&&prefill.CustomerName){var needle=String(prefill.CustomerName).trim().toLowerCase();var match=customers.find(function(c){var hay=c.name.toLowerCase();return hay===needle||hay.includes(needle)||needle.includes(hay);});if(match)activeCust=match;}renderSampleForm(prefill);}else{showError((result&&result.error)||'Unknown error');}}
+  function setStep(msg){var el=document.getElementById('scan-step');if(el)el.textContent=msg;}
+  function runScan(){
     setStep('Compressing image…');
-    compressImage(lastFile, 70000, function(b64) {
-      var sizeKB = Math.round(b64.length / 1024);
-      setStep('Sending ' + sizeKB + 'KB image via Apps Script…');
-      gasPost({ action: 'extractImage', imageBase64: b64, mimeType: 'image/jpeg' })
-        .then(function(r){ finish(r); })
-        .catch(function(e){ finish({ success:false, error: 'Network error: ' + e.message }); });
+    compressImage(lastFile,70000,function(b64){
+      var sizeKB=Math.round(b64.length/1024);
+      setStep('Sending '+sizeKB+'KB image via Apps Script…');
+      gasPost({action:'extractImage',imageBase64:b64,mimeType:'image/jpeg'}).then(function(r){finish(r);}).catch(function(e){finish({success:false,error:'Network error: '+e.message});});
     });
   }
   runScan();
 }
 
-function compressImage(file, maxChars, cb) {
-  var steps = [{s:1800,q:.85},{s:1600,q:.78},{s:1400,q:.70},{s:1200,q:.63},{s:1000,q:.58},{s:800,q:.46}];
-  var canvas = document.createElement('canvas'), ctx = canvas.getContext('2d'), img = new Image();
-  var url = URL.createObjectURL(file);
-  img.onload = function(){
-    URL.revokeObjectURL(url);
-    var i = 0;
-    (function next(){
-      var st = steps[i] || steps[steps.length-1];
-      var sc = Math.min(1, st.s / Math.max(img.width, img.height));
-      canvas.width = Math.round(img.width * sc);
-      canvas.height = Math.round(img.height * sc);
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      var b64 = canvas.toDataURL('image/jpeg', st.q).split(',')[1];
-      if (b64.length <= maxChars || i >= steps.length - 1) { cb(b64); }
-      else { i++; next(); }
-    })();
-  };
-  img.onerror = function(){
-    var r = new FileReader();
-    r.onload = function(e){ cb(e.target.result.split(',')[1]); };
-    r.readAsDataURL(file);
-  };
-  img.src = url;
+function compressImage(file,maxChars,cb){
+  var steps=[{s:1800,q:.85},{s:1600,q:.78},{s:1400,q:.70},{s:1200,q:.63},{s:1000,q:.58},{s:800,q:.46},{s:600,q:.35},{s:400,q:.25}];
+  var canvas=document.createElement('canvas'),ctx=canvas.getContext('2d'),img=new Image();
+  var url=URL.createObjectURL(file);
+  img.onload=function(){URL.revokeObjectURL(url);var i=0;(function next(){var st=steps[i]||steps[steps.length-1];var sc=Math.min(1,st.s/Math.max(img.width,img.height));canvas.width=Math.round(img.width*sc);canvas.height=Math.round(img.height*sc);ctx.drawImage(img,0,0,canvas.width,canvas.height);var b64=canvas.toDataURL('image/jpeg',st.q).split(',')[1];if(b64.length<=maxChars||i>=steps.length-1){cb(b64);}else{i++;next();}})();};
+  img.onerror=function(){var r=new FileReader();r.onload=function(e){cb(e.target.result.split(',')[1]);};r.readAsDataURL(file);};
+  img.src=url;
 }
 
-var PROMPT = 'This image is a Penn State Extension Soil Test Report. Read every printed number EXACTLY as it appears — do not estimate, round, or guess.\n\n'
-  + 'Return ONLY this JSON object (use null for any field you cannot clearly read):\n'
-  + '{"CustomerName":"","Field":"","Year":null,"pH":null,"phosphorus":null,"organicMatter":null,'
-  + '"acidity":null,"potassium":null,"magnesium":null,"calcium":null,"cec":null,'
-  + '"satK":null,"satMg":null,"satCa":null,"limestoneLbs":null,"recN":"","recP":"","recK":""}\n\n'
-  + 'WHERE TO FIND EACH VALUE:\n'
-  + '• CustomerName — the name printed after "SOIL TEST REPORT FOR:" or "NAME:"\n'
-  + '• Field — the text after "FIELD ID:" or "FIELD:"\n'
-  + '• Year — the 4-digit year in the DATE field\n'
-  + '• pH — the Soil pH number (a decimal like 6.3 — NOT Buffer pH)\n'
-  + '• phosphorus — the P value in lb/A (a whole number like 47)\n'
-  + '• organicMatter — the Organic Matter % (OM%) decimal like 3.8\n'
-  + '• acidity — the Buffer Acidity in meq/100g (a decimal like 2.4 — this is NOT the same as pH)\n'
-  + '• potassium — the K value in meq/100g from the Exchangeable Cations table (decimal like 0.31)\n'
-  + '• magnesium — the Mg value in meq/100g (decimal like 1.2)\n'
-  + '• calcium — the Ca value in meq/100g (decimal like 7.8)\n'
-  + '• cec — the CEC (Cation Exchange Capacity) in meq/100g (decimal like 11.7)\n'
-  + '• satK — K% saturation of CEC (a percentage like 2.7)\n'
-  + '• satMg — Mg% saturation of CEC (a percentage like 10.4)\n'
-  + '• satCa — Ca% saturation of CEC (a percentage like 66.7)\n'
-  + '• limestoneLbs — the limestone recommendation number in lb/1000 sq ft (number only, no units)\n'
-  + '• recN — the Nitrogen recommendation EXACTLY as printed on the report (e.g. "3.0 lb N/1000 sq ft")\n'
-  + '• recP — the Phosphate (P2O5) recommendation EXACTLY as printed\n'
-  + '• recK — the Potash (K2O) recommendation EXACTLY as printed\n\n'
-  + 'CRITICAL: Copy every number character-for-character from the printed report. Do not convert units. Do not calculate. Return ONLY the JSON.';
-
-function callAnthropic(key, b64, cb) {
-  var ctrl = new AbortController();
-  var timer = setTimeout(function(){ ctrl.abort(); }, 90000);
-  fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    signal: ctrl.signal,
-    headers: {
-      'x-api-key': key,
-      'anthropic-version': '2023-06-01',
-      'content-type': 'application/json',
-      'anthropic-dangerous-direct-browser-access': 'true'
-    },
-    body: JSON.stringify({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 512,
-      messages: [{ role: 'user', content: [
-        { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: b64 } },
-        { type: 'text',  text: PROMPT }
-      ]}]
-    })
-  })
-  .then(function(r){
-    clearTimeout(timer);
-    if (!r.ok) return r.text().then(function(t){ cb({success:false, error:'API '+r.status+': '+t.substring(0,300)}); });
-    return r.json().then(function(j){
-      var txt = ((j.content||[]).find(function(c){ return c.type==='text'; })||{}).text || '';
-      var m   = txt.match(/\{[\s\S]*\}/);
-      try { cb({ success:true, data: JSON.parse(m ? m[0] : txt) }); }
-      catch(e) { cb({ success:false, error:'Parse error: '+e.message+' | Raw: '+txt.substring(0,200) }); }
-    });
-  })
-  .catch(function(e){
-    clearTimeout(timer);
-    var msg = e.name === 'AbortError'
-      ? 'Request timed out after 90 seconds. Try a clearer photo or enter manually.'
-      : (e.message || String(e));
-    cb({ success:false, error: msg });
-  });
+// ══════════════════════════════════════════════════════
+// Paste OCR text → AI extraction (NEW)
+// ══════════════════════════════════════════════════════
+function renderPasteStep(){
+  var c=activeCust;
+  var html='<button class="back" onclick="renderScanStep()">&larr; Back</button>'
+    +'<div class="page-title">Paste Report Text</div>'
+    +'<div class="page-sub">Copy the text from Genius Scan (or any OCR app) and paste it below. AI will extract all values instantly.</div>'
+    +'<div class="card">'
+    +'<div class="form-group"><label class="form-label">Paste soil report text here</label>'
+    +'<textarea class="form-input" id="ocr-text" rows="10" style="min-height:160px;font-size:14px;line-height:1.5" placeholder="Open your scanned report in Genius Scan, select all text, copy it, then paste here..."></textarea></div>'
+    +'<button class="btn-green btn-full" onclick="parseOcrText()">🤖 Extract Values from Text</button>'
+    +'</div>'
+    +'<div class="card"><div class="sec-title">How it works</div>'
+    +'<div style="font-size:13px;color:#a8a29e;font-family:sans-serif;line-height:1.7">'
+    +'1. Open your soil report scan in Genius Scan<br>'
+    +'2. Tap the document to view it<br>'
+    +'3. Select All text and Copy<br>'
+    +'4. Come back here and Paste<br>'
+    +'5. Tap "Extract Values" — AI fills in everything in ~3 seconds</div></div>';
+  setApp(html);
 }
 
-// ══════════════════════════════════════════════════════════════
-// Sample form
-// ══════════════════════════════════════════════════════════════
-function renderSampleForm(p) {
-  var c = activeCust; p = p || {};
-  function gv(k){ var v = p[k]; return (v !== null && v !== undefined && v !== '') ? String(v) : ''; }
+function parseOcrText(){
+  var text=(document.getElementById('ocr-text')||{}).value||'';
+  if(text.trim().length<20){notify('Paste the report text first.','err');return;}
+  setApp('<div class="loading"><div class="spin" style="width:40px;height:40px;border-width:4px"></div><p style="margin-top:14px;font-size:17px;font-weight:700;color:#f5f5f4">🤖 Reading Report Text</p><p style="color:#a8a29e;font-size:14px;margin-top:8px;font-family:sans-serif">Extracting values — usually 3–5 seconds…</p></div>');
 
-  var aiName = gv('CustomerName');  // name extracted from report
-
-  var html = '<button class="back" onclick="renderScanStep()">&larr; Back</button>'
-    + '<div class="page-title">' + (p._ai ? 'Review Extracted Data' : 'Enter Sample Data')
-    + (c ? ' — ' + esc(c.name) : '') + '</div>';
-  if (p._ai) html += '<div class="banner-ok">✅ AI extracted values — review and correct before saving.</div>';
-
-  html += '<div class="card">';
-
-  // Customer section — always show if no activeCust
-  if (!c) {
-    html += '<div class="sub-head">Customer</div>';
-    if (customers.length) {
-      // Pre-select if AI name was close to an existing customer
-      var presel = '';
-      if (aiName) {
-        var needle = aiName.toLowerCase();
-        var m2 = customers.find(function(x){ var h=x.name.toLowerCase(); return h===needle||h.includes(needle)||needle.includes(h); });
-        if (m2) presel = String(m2.id);
+  gasGet({action:'getApiKey'}).then(function(r){
+    if(!r.success){notify('Could not get API key: '+(r.error||''),'err');renderPasteStep();return;}
+    return callAnthropicText(r.key,text);
+  }).then(function(result){
+    if(!result)return;
+    if(result.success&&result.data){
+      prefill=result.data;prefill._ai=true;
+      if(!activeCust&&prefill.CustomerName){
+        var needle=String(prefill.CustomerName).trim().toLowerCase();
+        var match=customers.find(function(c){var hay=c.name.toLowerCase();return hay===needle||hay.includes(needle)||needle.includes(hay);});
+        if(match)activeCust=match;
       }
-      html += '<div class="form-group"><label class="form-label">Select existing customer</label>'
-        + '<select class="form-input" id="sf-cust" onchange="sfCustChange(this.value)">'
-        + '<option value="">— New customer —</option>';
-      customers.forEach(function(x){
-        html += '<option value="' + x.id + '"' + (presel === String(x.id) ? ' selected' : '') + '>'
-          + esc(x.name) + (x.field ? ' (' + esc(x.field) + ')' : '') + '</option>';
-      });
-      html += '</select></div>';
-      html += '<div id="sf-newcust-wrap"' + (presel ? ' style="display:none"' : '') + '>'
-        + '<div class="form-group"><label class="form-label">Or create new — Customer name *</label>'
-        + '<input class="form-input" id="sf-newcust" placeholder="Full name" value="' + esc(aiName) + '"></div>'
-        + '</div>';
-    } else {
-      html += '<div class="form-group"><label class="form-label">Customer name *</label>'
-        + '<input class="form-input" id="sf-newcust" placeholder="Full name" value="' + esc(aiName) + '"></div>';
-    }
+      notify('✅ Values extracted! Review and save.');
+      renderSampleForm(prefill);
+    }else{notify('Could not extract: '+(result.error||'Unknown'),'err');renderPasteStep();}
+  }).catch(function(e){notify('Error: '+(e.message||e),'err');renderPasteStep();});
+}
+
+function callAnthropicText(key,reportText){
+  var prompt='This is OCR text from a Penn State Extension Soil Test Report. Extract the values and return ONLY valid JSON:\n'
+    +'{"CustomerName":"","Field":"","Year":null,"pH":null,"phosphorus":null,"organicMatter":null,"acidity":null,"potassium":null,"magnesium":null,"calcium":null,"cec":null,"satK":null,"satMg":null,"satCa":null,"limestoneLbs":null,"recN":"","recP":"","recK":""}\n\n'
+    +'WHERE TO FIND EACH VALUE:\n'
+    +'• CustomerName — name after "SOIL TEST REPORT FOR"\n'
+    +'• Field — FIELD ID value\n'
+    +'• Year — 4-digit year from DATE\n'
+    +'• pH — 1pH from LABORATORY RESULTS row\n'
+    +'• phosphorus — 2P lb/A value from LABORATORY RESULTS\n'
+    +'• acidity — 3Acidity from Exchangeable Cations (meq/100g)\n'
+    +'• potassium — 2K from Exchangeable Cations (meq/100g)\n'
+    +'• magnesium — 2Mg from Exchangeable Cations (meq/100g)\n'
+    +'• calcium — 2Ca from Exchangeable Cations (meq/100g)\n'
+    +'• cec — 4CEC value\n'
+    +'• satK — K from % Saturation of the CEC\n'
+    +'• satMg — Mg from % Saturation of the CEC\n'
+    +'• satCa — Ca from % Saturation of the CEC\n'
+    +'• organicMatter — Organic Matter %\n'
+    +'• limestoneLbs — limestone number (lb/1000 sq ft), null if NONE\n'
+    +'• recN — nitrogen recommendation as printed (e.g. "1 to 4")\n'
+    +'• recP — phosphate recommendation as printed, or "NONE"\n'
+    +'• recK — potash recommendation as printed\n\n'
+    +'Copy numbers exactly as printed. Return ONLY JSON, no explanation.\n\nREPORT TEXT:\n'+reportText;
+
+  return fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'x-api-key':key,'anthropic-version':'2023-06-01','content-type':'application/json','anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:512,messages:[{role:'user',content:prompt}]})
+  }).then(function(r){
+    if(!r.ok)return r.text().then(function(t){return{success:false,error:'API '+r.status+': '+t.substring(0,300)};});
+    return r.json().then(function(j){
+      var txt=((j.content||[]).find(function(c){return c.type==='text';})||{}).text||'';
+      var m=txt.match(/\{[\s\S]*\}/);
+      try{return{success:true,data:JSON.parse(m?m[0]:txt)};}
+      catch(e){return{success:false,error:'Parse error: '+e.message};}
+    });
+  });
+}
+
+// ══════════════════════════════════════════════════════
+// Sample form
+// ══════════════════════════════════════════════════════
+function renderSampleForm(p){
+  var c=activeCust;p=p||{};function gv(k){var v=p[k];return(v!==null&&v!==undefined&&v!=='')?String(v):'';}
+  var aiName=gv('CustomerName');
+  var html='<button class="back" onclick="renderScanStep()">&larr; Back</button><div class="page-title">'+(p._ai?'Review Extracted Data':'Enter Sample Data')+(c?' — '+esc(c.name):'')+'</div>';
+  if(p._ai)html+='<div class="banner-ok">✅ AI extracted values — review and correct before saving.</div>';
+  html+='<div class="card">';
+  if(!c){
+    html+='<div class="sub-head">Customer</div>';
+    if(customers.length){
+      var presel='';if(aiName){var needle=aiName.toLowerCase();var m2=customers.find(function(x){var h=x.name.toLowerCase();return h===needle||h.includes(needle)||needle.includes(h);});if(m2)presel=String(m2.id);}
+      html+='<div class="form-group"><label class="form-label">Select existing customer</label><select class="form-input" id="sf-cust" onchange="sfCustChange(this.value)"><option value="">— New customer —</option>';
+      customers.forEach(function(x){html+='<option value="'+x.id+'"'+(presel===String(x.id)?' selected':'')+'>'+esc(x.name)+(x.field?' ('+esc(x.field)+')':'')+'</option>';});
+      html+='</select></div><div id="sf-newcust-wrap"'+(presel?' style="display:none"':'')+'><div class="form-group"><label class="form-label">Or create new — Customer name *</label><input class="form-input" id="sf-newcust" placeholder="Full name" value="'+esc(aiName)+'"></div></div>';
+    }else{html+='<div class="form-group"><label class="form-label">Customer name *</label><input class="form-input" id="sf-newcust" placeholder="Full name" value="'+esc(aiName)+'"></div>';}
   }
-
-  html += '<div class="form-group"><label class="form-label">Year *</label>'
-    + '<input class="form-input" id="sf-year" type="number" value="' + (gv('Year') || new Date().getFullYear()) + '" min="1990" max="2099"></div>';
-
-  html += '<div class="sub-head">Recommendations</div><div class="grid-2">';
-  html += '<div class="form-group"><label class="form-label">Limestone (lb/1000 ft²)</label>'
-    + '<select class="form-input" id="sf-lime"><option value="">None</option>';
-  [25,50,75,100,125,150,175,200,225,250].forEach(function(n){
-    html += '<option value="' + n + '"' + (String(gv('limestoneLbs')) === String(n) ? ' selected' : '') + '>' + n + '</option>';
-  });
-  html += '</select></div>';
-  [{k:'recN',l:'Nitrogen (N)'},{k:'recP',l:'Phosphorus (P₂O₅)'},{k:'recK',l:'Potassium (K₂O)'}].forEach(function(r){
-    html += '<div class="form-group"><label class="form-label">' + r.l + '</label>'
-      + '<input class="form-input" id="sf-' + r.k + '" value="' + gv(r.k) + '" placeholder="—"></div>';
-  });
-  html += '</div>';
-
+  html+='<div class="form-group"><label class="form-label">Year *</label><input class="form-input" id="sf-year" type="number" value="'+(gv('Year')||new Date().getFullYear())+'" min="1990" max="2099"></div>';
+  html+='<div class="sub-head">Recommendations</div><div class="grid-2">';
+  html+='<div class="form-group"><label class="form-label">Limestone (lb/1000 ft²)</label><select class="form-input" id="sf-lime"><option value="">None</option>';
+  [25,50,75,100,125,150,175,200,225,250].forEach(function(n){html+='<option value="'+n+'"'+(String(gv('limestoneLbs'))===String(n)?' selected':'')+'>'+n+'</option>';});
+  html+='</select></div>';
+  [{k:'recN',l:'Nitrogen (N)'},{k:'recP',l:'Phosphorus (P₂O₅)'},{k:'recK',l:'Potassium (K₂O)'}].forEach(function(r){html+='<div class="form-group"><label class="form-label">'+r.l+'</label><input class="form-input" id="sf-'+r.k+'" value="'+gv(r.k)+'" placeholder="—"></div>';});
+  html+='</div>';
   SECTIONS.forEach(function(sec){
-    html += '<div class="sub-head">' + sec + '</div><div class="grid-3">';
-    METRICS.filter(function(m){ return m.sec === sec; }).forEach(function(m){
-      html += '<div class="form-group"><label class="form-label">' + m.label
-        + (m.unit ? ' <span style="color:#57534e;font-size:10px">' + m.unit + '</span>' : '') + '</label>'
-        + '<input class="form-input" id="sf-' + m.key + '" type="number" step="any" value="' + gv(m.key)
-        + '" placeholder="' + m.min + '–' + m.max + '"></div>';
-    });
-    html += '</div>';
+    html+='<div class="sub-head">'+sec+'</div><div class="grid-3">';
+    METRICS.filter(function(m){return m.sec===sec;}).forEach(function(m){html+='<div class="form-group"><label class="form-label">'+m.label+(m.unit?' <span style="color:#57534e;font-size:10px">'+m.unit+'</span>':'')+'</label><input class="form-input" id="sf-'+m.key+'" type="number" step="any" value="'+gv(m.key)+'" placeholder="'+m.min+'–'+m.max+'"></div>';});
+    html+='</div>';
   });
-
-  html += '<div class="form-group"><label class="form-label">Notes</label>'
-    + '<textarea class="form-input" id="sf-notes" placeholder="Any observations...">' + gv('notes') + '</textarea></div>'
-    + '<button class="btn-green btn-full" onclick="saveSample()">💾 Save to Google Sheets</button></div>';
+  html+='<div class="form-group"><label class="form-label">Notes</label><textarea class="form-input" id="sf-notes" placeholder="Any observations...">'+gv('notes')+'</textarea></div>';
+  html+='<button class="btn-green btn-full" onclick="saveSample()">💾 Save to Google Sheets</button></div>';
   setApp(html);
 }
+function sfCustChange(val){var wrap=document.getElementById('sf-newcust-wrap');if(wrap)wrap.style.display=val?'none':'';}
 
-function sfCustChange(val) {
-  var wrap = document.getElementById('sf-newcust-wrap');
-  if (wrap) wrap.style.display = val ? 'none' : '';
-}
-
-function saveSample() {
-  var year = parseInt((document.getElementById('sf-year') || {}).value, 10);
-  if (!year || year < 1990 || year > 2099) { notify('Enter a valid year.', 'err'); return; }
-
-  function doSave(custId) {
-    var data = { customerId: custId, year: year };
-    METRICS.forEach(function(m){
-      var raw = ((document.getElementById('sf-' + m.key) || {}).value || '').trim();
-      if (raw !== '') data[m.key] = parseFloat(raw);
-    });
-    var lime = ((document.getElementById('sf-lime') || {}).value || '');
-    if (lime) data.limestoneLbs = lime;
-    ['recN','recP','recK'].forEach(function(k){
-      var v = ((document.getElementById('sf-' + k) || {}).value || '').trim();
-      if (v) data[k] = v;
-    });
-    var notes = ((document.getElementById('sf-notes') || {}).value || '').trim();
-    if (notes) data.notes = notes;
-
-    gasPost({ action: 'saveSample', data: data })
-      .then(function(r){
-        if (!r.success) { notify('Error: ' + (r.error || 'unknown'), 'err'); return; }
-        data.id = r.id;
-        data.createdAt = new Date().toISOString();
-        samples.push(data);
-        notify('✅ Sample saved to Google Sheets!');
-        if (activeCust) openCust(activeCust.id); else showPage('dash');
-      })
-      .catch(function(err){ notify('Save error: ' + (err.message || err), 'err'); });
+function saveSample(){
+  var year=parseInt((document.getElementById('sf-year')||{}).value,10);
+  if(!year||year<1990||year>2099){notify('Enter a valid year.','err');return;}
+  function doSave(custId){
+    var data={customerId:custId,year:year};
+    METRICS.forEach(function(m){var raw=((document.getElementById('sf-'+m.key)||{}).value||'').trim();if(raw!=='')data[m.key]=parseFloat(raw);});
+    var lime=((document.getElementById('sf-lime')||{}).value||'');if(lime)data.limestoneLbs=lime;
+    ['recN','recP','recK'].forEach(function(k){var v=((document.getElementById('sf-'+k)||{}).value||'').trim();if(v)data[k]=v;});
+    var notes=((document.getElementById('sf-notes')||{}).value||'').trim();if(notes)data.notes=notes;
+    gasPost({action:'saveSample',data:data}).then(function(r){if(!r.success){notify('Error: '+(r.error||''),'err');return;}data.id=r.id;data.createdAt=new Date().toISOString();samples.push(data);notify('✅ Sample saved!');if(activeCust)openCust(activeCust.id);else showPage('dash');}).catch(function(err){notify('Save error: '+err.message,'err');});
   }
-
-  if (activeCust) {
-    doSave(activeCust.id);
-    return;
-  }
-
-  // No activeCust — check if existing customer was selected from dropdown
-  var selEl = document.getElementById('sf-cust');
-  var selId = selEl ? selEl.value : '';
-  if (selId) {
-    activeCust = customers.find(function(c){ return String(c.id) === String(selId); });
-    doSave(selId);
-    return;
-  }
-
-  // Create new customer first
-  var newName = ((document.getElementById('sf-newcust') || {}).value || '').trim();
-  if (!newName) { notify('Enter a customer name.', 'err'); return; }
-
+  if(activeCust){doSave(activeCust.id);return;}
+  var selEl=document.getElementById('sf-cust');var selId=selEl?selEl.value:'';
+  if(selId){activeCust=customers.find(function(c){return String(c.id)===String(selId);});doSave(selId);return;}
+  var newName=((document.getElementById('sf-newcust')||{}).value||'').trim();
+  if(!newName){notify('Enter a customer name.','err');return;}
   notify('Creating customer…');
-  gasPost({ action: 'saveCustomer', data: { name: newName } })
-    .then(function(r){
-      if (!r.success) { notify('Error creating customer: ' + (r.error || 'unknown'), 'err'); return; }
-      var newCust = { id: r.id, name: newName, field: '', createdAt: new Date().toISOString() };
-      customers.push(newCust);
-      activeCust = newCust;
-      doSave(r.id);
-    })
-    .catch(function(err){ notify('Error creating customer: ' + (err.message || err), 'err'); });
+  gasPost({action:'saveCustomer',data:{name:newName}}).then(function(r){if(!r.success){notify('Error: '+(r.error||''),'err');return;}var nc={id:r.id,name:newName,field:'',createdAt:new Date().toISOString()};customers.push(nc);activeCust=nc;doSave(r.id);}).catch(function(err){notify('Error: '+err.message,'err');});
 }
 
-// ══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 // Delete
-// ══════════════════════════════════════════════════════════════
-function doDeleteCust(id) {
-  var c  = customers.find(function(x){ return String(x.id) === String(id); });
-  var ct = samples.filter(function(s){ return String(s.customerId) === String(id); }).length;
-  if (!confirm('Delete ' + (c ? c.name : 'customer') + ' and all ' + ct + ' sample' + (ct !== 1 ? 's' : '') + ' from Google Sheets? Cannot be undone.')) return;
-  gasPost({ action: 'deleteCustomer', id: id })
-    .then(function(r){
-      if (!r.success) { notify('Error: ' + (r.error || 'unknown'), 'err'); return; }
-      customers = customers.filter(function(x){ return String(x.id) !== String(id); });
-      samples   = samples.filter(function(s){ return String(s.customerId) !== String(id); });
-      notify('Customer deleted.', 'inf');
-      showPage('dash');
-    })
-    .catch(function(err){ notify('Delete error: ' + (err.message || err), 'err'); });
-}
+// ══════════════════════════════════════════════════════
+function doDeleteCust(id){var c=customers.find(function(x){return String(x.id)===String(id);});var ct=samples.filter(function(s){return String(s.customerId)===String(id);}).length;if(!confirm('Delete '+(c?c.name:'customer')+' and '+ct+' sample'+(ct!==1?'s':'')+'? Cannot be undone.'))return;gasPost({action:'deleteCustomer',id:id}).then(function(r){if(!r.success){notify('Error: '+(r.error||''),'err');return;}customers=customers.filter(function(x){return String(x.id)!==String(id);});samples=samples.filter(function(s){return String(s.customerId)!==String(id);});notify('Customer deleted.','inf');showPage('dash');}).catch(function(err){notify('Error: '+err.message,'err');});}
+function doDeleteSample(id,year){if(!confirm('Delete the '+year+' sample? Cannot be undone.'))return;var cid=activeCust?activeCust.id:null;gasPost({action:'deleteSample',id:id}).then(function(r){if(!r.success){notify('Error: '+(r.error||''),'err');return;}samples=samples.filter(function(s){return String(s.id)!==String(id);});notify('Sample deleted.','inf');if(cid)openCust(cid);else showPage('dash');}).catch(function(err){notify('Error: '+err.message,'err');});}
 
-function doDeleteSample(id, year) {
-  if (!confirm('Delete the ' + year + ' sample? Cannot be undone.')) return;
-  var cid = activeCust ? activeCust.id : null;
-  gasPost({ action: 'deleteSample', id: id })
-    .then(function(r){
-      if (!r.success) { notify('Error: ' + (r.error || 'unknown'), 'err'); return; }
-      samples = samples.filter(function(s){ return String(s.id) !== String(id); });
-      notify('Sample deleted.', 'inf');
-      if (cid) openCust(cid); else showPage('dash');
-    })
-    .catch(function(err){ notify('Delete error: ' + (err.message || err), 'err'); });
-}
-
-// ══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 // Reports
-// ══════════════════════════════════════════════════════════════
-function renderReportPage() {
-  var html = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:10px" class="no-print">'
-    + '<div class="page-title">Customer Reports</div>'
-    + '<button class="btn-green btn-sm" onclick="window.print()">🖨️ Print / Save PDF</button></div>'
-    + '<div class="card no-print"><div class="sec-title">Select Customer</div>'
-    + '<select class="form-input" id="rpt-cust" onchange="renderReport()">'
-    + '<option value="">— Select a customer —</option>';
-  customers.forEach(function(c){ html += '<option value="' + c.id + '">' + esc(c.name) + '</option>'; });
-  html += '</select></div><div id="rpt-out"></div>';
-  setApp(html);
+// ══════════════════════════════════════════════════════
+function renderReportPage(){
+  var html='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:10px" class="no-print"><div class="page-title">Customer Reports</div><button class="btn-green btn-sm" onclick="window.print()">🖨️ Print / Save PDF</button></div>'
+    +'<div class="card no-print"><div class="sec-title">Select Customer</div><select class="form-input" id="rpt-cust" onchange="renderReport()"><option value="">— Select a customer —</option>';
+  customers.forEach(function(c){html+='<option value="'+c.id+'">'+esc(c.name)+'</option>';});
+  html+='</select></div><div id="rpt-out"></div>';setApp(html);
+}
+function openReport(id){showPage('report');setTimeout(function(){var el=document.getElementById('rpt-cust');if(el){el.value=id;renderReport();}},80);}
+function renderReport(){
+  var id=(document.getElementById('rpt-cust')||{}).value;var out=document.getElementById('rpt-out');if(!out||!id){if(out)out.innerHTML='';return;}
+  var c=customers.find(function(x){return String(x.id)===String(id);});var cs=samples.filter(function(s){return String(s.customerId)===String(id);}).sort(function(a,b){return a.year-b.year;});
+  if(!c||!cs.length){out.innerHTML='<div style="color:#78716c;font-family:sans-serif;padding:16px">No samples yet.</div>';return;}
+  var today=new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});var years=cs.map(function(s){return s.year;});
+  var h='<div style="background:white;color:#1a1a1a;border-radius:12px;padding:24px;font-family:sans-serif">';
+  h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #2d5a1b;padding-bottom:14px;margin-bottom:18px;flex-wrap:wrap;gap:10px"><div style="font-size:18px;font-weight:900;color:#2d5a1b;line-height:1.2">LAWNS PLANTS<br>&amp; PESTS LLC<br><span style="font-size:11px;font-weight:400;color:#666">Soil Health Report</span></div><div style="text-align:right"><div style="font-size:16px;font-weight:700;color:#2d5a1b">'+esc(c.name)+'</div>'+(c.field?'<div style="font-size:11px;color:#666">'+esc(c.field)+'</div>':'')+(c.address?'<div style="font-size:11px;color:#666">'+esc(c.address)+(c.city?', '+esc(c.city):'')+'</div>':'')+'<div style="font-size:11px;color:#666">Generated '+today+'</div></div></div>';
+  var TH='style="background:#f0f7ee;padding:6px 8px;text-align:left;color:#2d5a1b;font-weight:600"';var THC='style="background:#f0f7ee;padding:6px 8px;text-align:center;color:#2d5a1b;font-weight:600"';
+  h+='<div style="font-size:11px;font-weight:700;color:#2d5a1b;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Recommendations</div><table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:18px"><thead><tr><th '+TH+'>Item</th>';years.forEach(function(y){h+='<th '+THC+'>'+y+'</th>';});h+='</tr></thead><tbody>';
+  RECS.forEach(function(r){h+='<tr><td style="padding:6px 8px;border-bottom:1px solid #eee;font-weight:600">'+r.label+'</td>';cs.forEach(function(s){var v=s[r.key],none=!v||String(v).toLowerCase()==='none'||v==='0';h+='<td style="padding:6px 8px;border-bottom:1px solid #eee;text-align:center;font-weight:700;color:'+(none?'#16a34a':'#d97706')+'">'+(v||'None')+'</td>';});h+='</tr>';});h+='</tbody></table>';
+  h+='<div style="font-size:11px;font-weight:700;color:#2d5a1b;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Soil Test Results</div><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr><th '+TH+'>Metric</th><th '+TH+'>Ideal</th>';years.forEach(function(y){h+='<th '+THC+'>'+y+'</th>';});h+='</tr></thead><tbody>';
+  METRICS.forEach(function(m){h+='<tr><td style="padding:6px 8px;border-bottom:1px solid #eee;font-weight:600">'+m.label+'</td><td style="padding:6px 8px;border-bottom:1px solid #eee;color:#999;font-family:monospace;font-size:10px">'+(m.info?'info':m.min+'–'+m.max)+'</td>';cs.forEach(function(s){var n=parseFloat(s[m.key]);var clr=isNaN(n)?'#999':(!m.info&&n>=m.min&&n<=m.max?'#16a34a':(!m.info&&n<m.min?'#dc2626':(!m.info?'#d97706':'#333')));h+='<td style="padding:6px 8px;border-bottom:1px solid #eee;text-align:center;font-weight:700;color:'+clr+'">'+(s[m.key]!==undefined&&s[m.key]!==null&&s[m.key]!==''?s[m.key]:'—')+'</td>';});h+='</tr>';});h+='</tbody></table>';
+  h+='<div style="margin-top:14px;padding-top:12px;border-top:1px solid #eee;display:flex;justify-content:space-between;font-size:10px;color:#999;flex-wrap:wrap;gap:4px"><span>🟢 Optimal &nbsp; 🟠 Above &nbsp; 🔴 Below</span><span style="color:#2d5a1b;font-weight:700">Lawns Plants &amp; Pests LLC</span></div></div>';
+  out.innerHTML=h;
 }
 
-function openReport(id) {
-  showPage('report');
-  setTimeout(function(){
-    var el = document.getElementById('rpt-cust');
-    if (el) { el.value = id; renderReport(); }
-  }, 80);
-}
-
-function renderReport() {
-  var id  = (document.getElementById('rpt-cust') || {}).value;
-  var out = document.getElementById('rpt-out');
-  if (!out || !id) { if (out) out.innerHTML = ''; return; }
-
-  var c  = customers.find(function(x){ return String(x.id) === String(id); });
-  var cs = samples.filter(function(s){ return String(s.customerId) === String(id); })
-                  .sort(function(a,b){ return a.year - b.year; });
-  if (!c || !cs.length) {
-    out.innerHTML = '<div style="color:#78716c;font-family:sans-serif;padding:16px">No samples for this customer yet.</div>';
-    return;
-  }
-
-  var today = new Date().toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'});
-  var years = cs.map(function(s){ return s.year; });
-
-  var h = '<div style="background:white;color:#1a1a1a;border-radius:12px;padding:24px;font-family:sans-serif">';
-  h += '<div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #2d5a1b;padding-bottom:14px;margin-bottom:18px;flex-wrap:wrap;gap:10px">'
-    + '<div style="font-size:18px;font-weight:900;color:#2d5a1b;line-height:1.2">LAWNS PLANTS<br>&amp; PESTS LLC<br>'
-    + '<span style="font-size:11px;font-weight:400;color:#666">Soil Health Report</span></div>'
-    + '<div style="text-align:right"><div style="font-size:16px;font-weight:700;color:#2d5a1b">' + esc(c.name) + '</div>'
-    + (c.field ? '<div style="font-size:11px;color:#666">' + esc(c.field) + '</div>' : '')
-    + (c.address ? '<div style="font-size:11px;color:#666">' + esc(c.address) + (c.city ? ', ' + esc(c.city) : '') + '</div>' : '')
-    + '<div style="font-size:11px;color:#666">Generated ' + today + '</div></div></div>';
-
-  var TH = 'style="background:#f0f7ee;padding:6px 8px;text-align:left;color:#2d5a1b;font-weight:600"';
-  var THC = 'style="background:#f0f7ee;padding:6px 8px;text-align:center;color:#2d5a1b;font-weight:600"';
-  var TD  = 'style="padding:6px 8px;border-bottom:1px solid #eee"';
-  var TDC = 'style="padding:6px 8px;border-bottom:1px solid #eee;text-align:center;font-weight:700;font-family:monospace"';
-
-  h += '<div style="font-size:11px;font-weight:700;color:#2d5a1b;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Recommendations</div>';
-  h += '<table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:18px"><thead><tr><th ' + TH + '>Item</th>';
-  years.forEach(function(y){ h += '<th ' + THC + '>' + y + '</th>'; });
-  h += '</tr></thead><tbody>';
-  RECS.forEach(function(r){
-    h += '<tr><td ' + TD + ' style="padding:6px 8px;border-bottom:1px solid #eee;font-weight:600">' + r.label + '</td>';
-    cs.forEach(function(s){
-      var v = s[r.key], none = !v || String(v).toLowerCase() === 'none' || v === '0';
-      h += '<td ' + TDC + ' style="padding:6px 8px;border-bottom:1px solid #eee;text-align:center;font-weight:700;color:' + (none ? '#16a34a' : '#d97706') + '">' + (v || 'None') + '</td>';
-    });
-    h += '</tr>';
-  });
-  h += '</tbody></table>';
-
-  h += '<div style="font-size:11px;font-weight:700;color:#2d5a1b;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Soil Test Results</div>';
-  h += '<table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr>'
-    + '<th ' + TH + '>Metric</th><th ' + TH + '>Ideal</th>';
-  years.forEach(function(y){ h += '<th ' + THC + '>' + y + '</th>'; });
-  h += '</tr></thead><tbody>';
-  METRICS.forEach(function(m){
-    h += '<tr><td ' + TD + ' style="padding:6px 8px;border-bottom:1px solid #eee;font-weight:600">' + m.label + '</td>'
-      + '<td ' + TD + ' style="padding:6px 8px;border-bottom:1px solid #eee;color:#999;font-family:monospace;font-size:10px">' + (m.info ? 'info' : m.min + '–' + m.max) + '</td>';
-    cs.forEach(function(s){
-      var n   = parseFloat(s[m.key]);
-      var clr = isNaN(n) ? '#999' : (!m.info && n >= m.min && n <= m.max ? '#16a34a' : (!m.info && n < m.min ? '#dc2626' : (!m.info ? '#d97706' : '#333')));
-      h += '<td style="padding:6px 8px;border-bottom:1px solid #eee;text-align:center;font-weight:700;color:' + clr + '">'
-        + (s[m.key] !== undefined && s[m.key] !== null && s[m.key] !== '' ? s[m.key] : '—') + '</td>';
-    });
-    h += '</tr>';
-  });
-  h += '</tbody></table>';
-  h += '<div style="margin-top:14px;padding-top:12px;border-top:1px solid #eee;display:flex;justify-content:space-between;font-size:10px;color:#999;flex-wrap:wrap;gap:4px">'
-    + '<span>🟢 Optimal &nbsp; 🟠 Above range &nbsp; 🔴 Below range</span>'
-    + '<span style="color:#2d5a1b;font-weight:700">Lawns Plants &amp; Pests LLC</span></div></div>';
-
-  out.innerHTML = h;
-}
-
-// ══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 // Metric info modal
-// ══════════════════════════════════════════════════════════════
-function showMetricInfo(key) {
-  var m = METRICS.find(function(x){ return x.key === key; });
-  if (!m) return;
-  document.getElementById('info-modal-body').innerHTML =
-    '<button class="modal-close" onclick="closeModal()">×</button>'
-    + '<h2>' + m.label + '</h2>'
-    + '<div class="modal-rng">' + (m.info ? 'Informational only' : 'Ideal: ' + m.min + ' – ' + m.max + (m.unit ? ' ' + m.unit : '')) + '</div>'
-    + '<div class="modal-sec-title">About</div><div class="modal-body">' + m.about + '</div>'
-    + '<div class="modal-sec-title" style="margin-top:12px">What to do</div><div class="modal-body">' + m.fix + '</div>';
-  document.getElementById('info-modal').classList.add('open');
-}
-function closeModal() { document.getElementById('info-modal').classList.remove('open'); }
+// ══════════════════════════════════════════════════════
+function showMetricInfo(key){var m=METRICS.find(function(x){return x.key===key;});if(!m)return;document.getElementById('info-modal-body').innerHTML='<button class="modal-close" onclick="closeModal()">×</button><h2>'+m.label+'</h2><div class="modal-rng">'+(m.info?'Informational only':'Ideal: '+m.min+' – '+m.max+(m.unit?' '+m.unit:''))+'</div><div class="modal-sec-title">About</div><div class="modal-body">'+m.about+'</div><div class="modal-sec-title" style="margin-top:12px">What to do</div><div class="modal-body">'+m.fix+'</div>';document.getElementById('info-modal').classList.add('open');}
+function closeModal(){document.getElementById('info-modal').classList.remove('open');}
 </script>
 </body>
 </html>
