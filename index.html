@@ -113,7 +113,6 @@ var customers=[],samples=[],activeCust=null,prefill=null;
 var METRICS=[
   {key:'pH',label:'Soil pH',unit:'',min:6.0,max:7.0,sec:'Lab Results',about:'Measures acidity/alkalinity. Best between 6.0–7.0.',fix:'If low, apply limestone. If high, apply sulfur.'},
   {key:'phosphorus',label:'Phosphorus (P)',unit:'lb/A',min:50,max:100,sec:'Lab Results',about:'Drives root development.',fix:'If deficient, apply phosphate fertilizer.'},
-  {key:'organicMatter',label:'Organic Matter',unit:'%',min:3,max:6,sec:'Lab Results',about:'Improves water retention and soil biology.',fix:'Top-dress with compost.'},
   {key:'acidity',label:'Buffer Acidity',unit:'meq/100g',min:0,max:2,sec:'Exchangeable Cations',about:'Reserve acidity. Higher = more lime needed.',fix:'Determines limestone rate.'},
   {key:'potassium',label:'Potassium (K)',unit:'meq/100g',min:0.15,max:0.40,sec:'Exchangeable Cations',about:'Water regulation and winter hardiness.',fix:'If deficient, apply potash.'},
   {key:'magnesium',label:'Magnesium (Mg)',unit:'meq/100g',min:0.5,max:2.5,sec:'Exchangeable Cations',about:'Central atom in chlorophyll.',fix:'Apply dolomitic limestone or Epsom salt.'},
@@ -266,14 +265,33 @@ function parseOcrText(){
 }
 
 function callAnthropicText(key,text){
-  var prompt='This is OCR text from a Penn State Extension Soil Test Report. Extract values and return ONLY valid JSON:\n'
-    +'{"CustomerName":"","Field":"","Year":null,"pH":null,"phosphorus":null,"organicMatter":null,"acidity":null,"potassium":null,"magnesium":null,"calcium":null,"cec":null,"satK":null,"satMg":null,"satCa":null,"limestoneLbs":null,"recN":"","recP":"","recK":""}\n\n'
-    +'CustomerName=name after SOIL TEST REPORT FOR. Field=FIELD ID. Year=4-digit from DATE.\n'
-    +'pH=1pH from LAB RESULTS. phosphorus=2P lb/A. acidity=3Acidity meq/100g.\n'
-    +'potassium=2K meq/100g. magnesium=2Mg meq/100g. calcium=2Ca meq/100g. cec=4CEC.\n'
-    +'satK=K% Saturation. satMg=Mg% Saturation. satCa=Ca% Saturation. organicMatter=Organic Matter %.\n'
-    +'limestoneLbs=limestone lb/1000ft² or null if NONE. recN/recP/recK=recommendations as printed.\n'
-    +'Return ONLY JSON.\n\nREPORT TEXT:\n'+text;
+  var prompt='You are reading OCR text from a Penn State Extension Soil Test Report. The OCR may be messy with missing spaces or jumbled columns. Use your knowledge of the report layout to find the correct values.\n\n'
+    +'RETURN ONLY THIS JSON (no explanation, no markdown):\n'
+    +'{"CustomerName":"","Field":"","Year":null,"pH":null,"phosphorus":null,"acidity":null,"potassium":null,"magnesium":null,"calcium":null,"cec":null,"satK":null,"satMg":null,"satCa":null,"limestoneLbs":null,"recN":"","recP":"","recK":""}\n\n'
+    +'HOW TO FIND EACH VALUE:\n'
+    +'• CustomerName — the name on the line after "SOIL TEST REPORT FOR:"\n'
+    +'• Field — the value after "FIELD ID" (e.g. "Entire Lawn")\n'
+    +'• Year — the 4-digit year from the DATE line (e.g. 10/13/2020 → 2020)\n\n'
+    +'The LABORATORY RESULTS table at the bottom has this column order:\n'
+    +'  1pH | 2P lb/A | 3Acidity | 2K | 2Mg | 2Ca | 4CEC | K | Mg | Ca | Organic Matter %\n'
+    +'The numbers appear in a single data row below these headers.\n\n'
+    +'• pH — the first number in the lab results row (e.g. 6.9)\n'
+    +'• phosphorus — the second number, this is P in lb/A (e.g. 200)\n'
+    +'• acidity — third number, the 3Acidity value in meq/100g (e.g. 0.00)\n'
+    +'• potassium — fourth number, 2K in meq/100g (e.g. 0.70)\n'
+    +'• magnesium — fifth number, 2Mg in meq/100g (e.g. 1.99)\n'
+    +'• calcium — sixth number, 2Ca in meq/100g (e.g. 9.49)\n'
+    +'• cec — seventh number, 4CEC in meq/100g (e.g. 12.2)\n'
+    +'• satK — eighth number, K% Saturation of CEC (e.g. 5.8)\n'
+    +'• satMg — ninth number, Mg% Saturation (e.g. 16.4)\n'
+    +'• satCa — tenth number, Ca% Saturation (e.g. 77.9)\n\n'
+    +'RECOMMENDATIONS section:\n'
+    +'• limestoneLbs — the limestone number in lb/1000 sq ft. If it says NONE, use null.\n'
+    +'• recN — the nitrogen recommendation (e.g. "1 to 4"). Look for the number before "NONE NONE" or before "N P2O5 K2O"\n'
+    +'• recP — the P2O5 recommendation. Often "NONE"\n'
+    +'• recK — the K2O recommendation. Often "NONE"\n\n'
+    +'IMPORTANT: The OCR text may run numbers together or scramble columns. Use the expected format above to separate values correctly. Return ONLY the JSON.\n\n'
+    +'OCR TEXT:\n'+text;
   return fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'x-api-key':key,'anthropic-version':'2023-06-01','content-type':'application/json','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:512,messages:[{role:'user',content:prompt}]})}).then(function(r){
     if(!r.ok)return r.text().then(function(t){return{success:false,error:'API '+r.status};});
     return r.json().then(function(j){var txt=((j.content||[]).find(function(c){return c.type==='text';})||{}).text||'';var m=txt.match(/\{[\s\S]*\}/);try{return{success:true,data:JSON.parse(m?m[0]:txt)};}catch(e){return{success:false,error:'Parse error'};}});
