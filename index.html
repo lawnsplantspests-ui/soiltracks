@@ -321,11 +321,7 @@ function renderSnapCopy(){
 }
 
 function openCamera(){
-  if(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia){
-    // Just open the native camera app - simplest approach
-    window.open('camera://','_self');
-  }
-  // Show a helpful message
+  document.getElementById('cam-input').click();
   notify('Take the photo, then come back here and paste the text.','inf',6000);
 }
 
@@ -340,7 +336,7 @@ function handleImage(file){
   var tick=setInterval(function(){var el=document.getElementById('ai-t');if(el)el.textContent=Math.floor((Date.now()-start)/1000);},1000);
   window.skipScan=function(){if(done)return;done=true;clearInterval(tick);prefill=null;renderSampleForm(null);};
   function showError(msg){clearInterval(tick);setApp('<button class="back" onclick="renderScanStep()">&larr; Back</button><div class="page-title">Scan Failed</div><div class="card" style="border:1.5px solid #ef4444"><p style="font-weight:700;color:#ef4444;font-size:15px;margin-bottom:8px">⚠️ Could not read report</p><p style="color:#a8a29e;font-size:13px;word-break:break-word;font-family:monospace">'+esc(msg)+'</p></div><button class="btn-green" onclick="retryImage()" style="margin-top:12px;width:100%">🔄 Try Again</button><button class="btn-outline" onclick="renderPasteStep()" style="margin-top:8px;width:100%">📋 Paste Text Instead</button><button class="btn-outline" onclick="renderSampleForm(null)" style="margin-top:8px;width:100%">✏️ Enter Manually</button>');window.retryImage=function(){done=false;start=Date.now();showScanUI();runScan();};}
-  function finish(result){if(done)return;done=true;clearInterval(tick);if(result&&result.success&&result.data){prefill=result.data;prefill._ai=true;if(!activeCust&&prefill.CustomerName){var needle=String(prefill.CustomerName).trim().toLowerCase();var match=customers.find(function(c){var hay=c.name.toLowerCase();return hay===needle||hay.includes(needle)||needle.includes(hay);});if(match)activeCust=match;}renderSampleForm(prefill);}else{showError((result&&result.error)||'Unknown error');}}
+  function finish(result){if(done)return;done=true;clearInterval(tick);if(result&&result.success&&result.data){prefill=result.data;prefill._ai=true;if(!activeCust&&prefill.CustomerName){var needle=String(prefill.CustomerName).trim().toLowerCase();var match=customers.find(function(x){var hay=(x.name||'').toLowerCase();return hay===needle||hay.includes(needle)||needle.includes(hay);});if(match)activeCust=match;}renderSampleForm(prefill);}else{showError((result&&result.error)||'Unknown error');}}
   function setStep(msg){var el=document.getElementById('scan-step');if(el)el.textContent=msg;}
   function runScan(){
     setStep('Compressing image…');
@@ -392,7 +388,7 @@ function parseOcrText(){
       prefill=result.data;prefill._ai=true;
       if(!activeCust&&prefill.CustomerName){
         var needle=String(prefill.CustomerName).trim().toLowerCase();
-        var match=customers.find(function(c){var hay=c.name.toLowerCase();return hay===needle||hay.includes(needle)||needle.includes(hay);});
+        var match=customers.find(function(x){var hay=(x.name||'').toLowerCase();return hay===needle||hay.includes(needle)||needle.includes(hay);});
         if(match)activeCust=match;
       }
       notify('✅ Values extracted! Review and save.');
@@ -452,7 +448,7 @@ function renderSampleForm(p){
   if(!c){
     html+='<div class="sub-head">Customer</div>';
     if(customers.length){
-      var presel='';if(aiName){var needle=aiName.toLowerCase();var m2=customers.find(function(x){var h=x.name.toLowerCase();return h===needle||h.includes(needle)||needle.includes(h);});if(m2)presel=String(m2.id);}
+      var presel='';if(aiName){var needle=aiName.toLowerCase();var m2=customers.find(function(x){var h=(x.name||'').toLowerCase();return h===needle||h.includes(needle)||needle.includes(h);});if(m2)presel=String(m2.id);}
       html+='<div class="form-group"><label class="form-label">Select existing customer</label><select class="form-input" id="sf-cust" onchange="sfCustChange(this.value)"><option value="">— New customer —</option>';
       customers.forEach(function(x){html+='<option value="'+x.id+'"'+(presel===String(x.id)?' selected':'')+'>'+esc(x.name)+(x.field?' ('+esc(x.field)+')':'')+'</option>';});
       html+='</select></div><div id="sf-newcust-wrap"'+(presel?' style="display:none"':'')+'><div class="form-group"><label class="form-label">Or create new — Customer name *</label><input class="form-input" id="sf-newcust" placeholder="Full name" value="'+esc(aiName)+'"></div></div>';
