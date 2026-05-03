@@ -691,7 +691,7 @@ function handleImage(file) {
 
   function runScan() {
     setStep('Compressing image…');
-    compressImage(lastFile, 100000, function(b64) {
+    compressImage(lastFile, 70000, function(b64) {
       setStep('Fetching API key…');
       gasGet({ action: 'getApiKey' })
         .then(function(r){
@@ -758,8 +758,11 @@ var PROMPT = 'This image is a Penn State Extension Soil Test Report. Read every 
   + 'CRITICAL: Copy every number character-for-character from the printed report. Do not convert units. Do not calculate. Return ONLY the JSON.';
 
 function callAnthropic(key, b64, cb) {
+  var ctrl = new AbortController();
+  var timer = setTimeout(function(){ ctrl.abort(); }, 90000);
   fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
+    signal: ctrl.signal,
     headers: {
       'x-api-key': key,
       'anthropic-version': '2023-06-01',
@@ -768,7 +771,7 @@ function callAnthropic(key, b64, cb) {
     },
     body: JSON.stringify({
       model: 'claude-haiku-4-5-20251001',
-      max_tokens: 1024,
+      max_tokens: 512,
       messages: [{ role: 'user', content: [
         { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: b64 } },
         { type: 'text',  text: PROMPT }
@@ -776,15 +779,22 @@ function callAnthropic(key, b64, cb) {
     })
   })
   .then(function(r){
-    if (!r.ok) return r.text().then(function(t){ cb({success:false, error:'API '+r.status+': '+t.substring(0,200)}); });
+    clearTimeout(timer);
+    if (!r.ok) return r.text().then(function(t){ cb({success:false, error:'API '+r.status+': '+t.substring(0,300)}); });
     return r.json().then(function(j){
       var txt = ((j.content||[]).find(function(c){ return c.type==='text'; })||{}).text || '';
       var m   = txt.match(/\{[\s\S]*\}/);
       try { cb({ success:true, data: JSON.parse(m ? m[0] : txt) }); }
-      catch(e) { cb({ success:false, error:'Parse error: '+e.message }); }
+      catch(e) { cb({ success:false, error:'Parse error: '+e.message+' | Raw: '+txt.substring(0,200) }); }
     });
   })
-  .catch(function(e){ cb({ success:false, error: e.message||String(e) }); });
+  .catch(function(e){
+    clearTimeout(timer);
+    var msg = e.name === 'AbortError'
+      ? 'Request timed out after 90 seconds. Try a clearer photo or enter manually.'
+      : (e.message || String(e));
+    cb({ success:false, error: msg });
+  });
 }
 
 // ══════════════════════════════════════════════════════════════
