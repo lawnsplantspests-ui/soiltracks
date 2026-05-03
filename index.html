@@ -277,11 +277,56 @@ function renderScanStep(){
   var html='<button class="back" onclick="'+backTarget+'">&larr; Back</button>'
     +'<div class="page-title">Add Soil Sample'+(c?' — '+esc(c.name):'')+'</div>'
     +'<div class="page-sub">Choose how to enter your Penn State soil report data.</div>'
-    +'<div class="scan-opt primary" onclick="document.getElementById(\'cam-input\').click()"><div class="si">📷</div><div><div class="st">Take Photo</div><div class="sd">Photograph your soil test report. AI extracts all values.</div></div></div>'
-    +'<div class="scan-opt" onclick="document.getElementById(\'file-input\').click()"><div class="si">🖼</div><div><div class="st">Upload Photo</div><div class="sd">Choose an existing photo from your device.</div></div></div>'
-    +'<div class="scan-opt" onclick="renderPasteStep()"><div class="si">📋</div><div><div class="st">Paste Report Text</div><div class="sd">Copy text from Genius Scan or any OCR app — AI reads all values instantly.</div></div></div>'
-    +'<div class="scan-opt" onclick="renderSampleForm(null)"><div class="si">✏️</div><div><div class="st">Enter Manually</div><div class="sd">Type in all soil lab values by hand.</div></div></div>';
+
+    +'<div class="scan-opt primary" onclick="renderSnapCopy()">'
+    +'<div class="si">📸</div><div><div class="st">Snap & Copy</div>'
+    +'<div class="sd">Take a photo, use Live Text to copy values, paste — AI does the rest. Fastest method!</div></div></div>'
+
+    +'<div class="scan-opt" onclick="renderPasteStep()">'
+    +'<div class="si">📋</div><div><div class="st">Paste Report Text</div>'
+    +'<div class="sd">Already have text copied? Paste it here.</div></div></div>'
+
+    +'<div class="scan-opt" onclick="renderSampleForm(null)">'
+    +'<div class="si">✏️</div><div><div class="st">Enter Manually</div>'
+    +'<div class="sd">Type in all soil lab values by hand.</div></div></div>';
   setApp(html);
+}
+
+function renderSnapCopy(){
+  var c=activeCust;
+  var html='<button class="back" onclick="renderScanStep()">&larr; Back</button>'
+    +'<div class="page-title">Snap & Copy</div>'
+
+    +'<div class="card">'
+    +'<div class="sec-title">Step 1 — Take the Photo</div>'
+    +'<div style="font-size:14px;color:#a8a29e;font-family:sans-serif;line-height:1.7;margin-bottom:14px">'
+    +'Take a photo of your Penn State soil report with your regular camera. Make sure the <b>Laboratory Results</b> table at the bottom is clear and readable.</div>'
+    +'<button class="btn-green btn-full" onclick="openCamera()" style="margin-top:0">📷 Open Camera</button>'
+    +'</div>'
+
+    +'<div class="card">'
+    +'<div class="sec-title">Step 2 — Copy the Text</div>'
+    +'<div style="font-size:14px;color:#a8a29e;font-family:sans-serif;line-height:1.7;margin-bottom:6px">'
+    +'Open the photo you just took. <b>Tap and hold</b> on any text in the photo — your iPhone will highlight it with Live Text. Tap <b>"Select All"</b> then <b>"Copy"</b>.</div>'
+    +'<div style="font-size:12px;color:#57534e;font-family:sans-serif;margin-bottom:14px">💡 Tip: If Live Text doesn\'t activate, make sure the text is in focus and well-lit.</div>'
+    +'</div>'
+
+    +'<div class="card">'
+    +'<div class="sec-title">Step 3 — Paste & Extract</div>'
+    +'<div class="form-group"><label class="form-label">Paste the copied text here</label>'
+    +'<textarea class="form-input" id="ocr-text" rows="8" style="min-height:140px;font-size:14px;line-height:1.5" placeholder="Tap here, then tap Paste..."></textarea></div>'
+    +'<button class="btn-green btn-full" onclick="parseOcrText()">🤖 Extract Values & Save</button>'
+    +'</div>';
+  setApp(html);
+}
+
+function openCamera(){
+  if(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia){
+    // Just open the native camera app - simplest approach
+    window.open('camera://','_self');
+  }
+  // Show a helpful message
+  notify('Take the photo, then come back here and paste the text.','inf',6000);
 }
 
 // ══════════════════════════════════════════════════════
@@ -324,19 +369,12 @@ function renderPasteStep(){
   var c=activeCust;
   var html='<button class="back" onclick="renderScanStep()">&larr; Back</button>'
     +'<div class="page-title">Paste Report Text</div>'
-    +'<div class="page-sub">Copy the text from Genius Scan (or any OCR app) and paste it below. AI will extract all values instantly.</div>'
+    +'<div class="page-sub">Paste the text from your soil report below. You can copy it from a photo using Live Text, or from any document.</div>'
     +'<div class="card">'
     +'<div class="form-group"><label class="form-label">Paste soil report text here</label>'
-    +'<textarea class="form-input" id="ocr-text" rows="10" style="min-height:160px;font-size:14px;line-height:1.5" placeholder="Open your scanned report in Genius Scan, select all text, copy it, then paste here..."></textarea></div>'
+    +'<textarea class="form-input" id="ocr-text" rows="10" style="min-height:160px;font-size:14px;line-height:1.5" placeholder="Tap here, then tap Paste..."></textarea></div>'
     +'<button class="btn-green btn-full" onclick="parseOcrText()">🤖 Extract Values from Text</button>'
-    +'</div>'
-    +'<div class="card"><div class="sec-title">How it works</div>'
-    +'<div style="font-size:13px;color:#a8a29e;font-family:sans-serif;line-height:1.7">'
-    +'1. Open your soil report scan in Genius Scan<br>'
-    +'2. Tap the document to view it<br>'
-    +'3. Select All text and Copy<br>'
-    +'4. Come back here and Paste<br>'
-    +'5. Tap "Extract Values" — AI fills in everything in ~3 seconds</div></div>';
+    +'</div>';
   setApp(html);
 }
 
