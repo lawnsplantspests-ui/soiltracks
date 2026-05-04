@@ -6,88 +6,89 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>SoilTracks - Lawns Plants &amp; Pests</title>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: #0c0c0c; color: #e7e5e4; font-family: Georgia, serif; min-height: 100vh; }
-  .header { background: #111; border-bottom: 1px solid #292524; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; gap: 10px; }
-  .logo { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-  .logo-icon { width: 38px; height: 38px; border-radius: 8px; overflow: hidden; flex-shrink: 0; }
-  .logo-text { font-size: 18px; font-weight: 700; color: #f5f5f4; line-height: 1.1; }
-  .logo-sub { font-size: 10px; color: #78716c; font-family: monospace; }
-  .nav { display: flex; gap: 2px; }
-  .nav-btn { min-height: 40px; padding: 0 12px; border-radius: 8px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; background: transparent; color: #a8a29e; font-family: sans-serif; white-space: nowrap; }
-  .nav-btn.active { background: #4ade8022; color: #4ade80; }
-  .main { padding: 20px 16px; max-width: 900px; margin: 0 auto; }
-  .page-title { font-size: 22px; font-weight: 700; color: #f5f5f4; margin-bottom: 4px; }
-  .page-sub { color: #78716c; font-size: 13px; font-family: sans-serif; margin-bottom: 18px; line-height: 1.5; }
-  .card { background: #161616; border: 1px solid #222; border-radius: 14px; padding: 20px; margin-bottom: 16px; }
-  .sec-title { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #57534e; margin-bottom: 14px; font-family: sans-serif; }
-  .sub-head { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #4ade8077; margin: 20px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #1f1f1f; font-family: sans-serif; }
-  .stats-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 16px; }
-  .stat-card { background: #161616; border: 1px solid #222; border-radius: 12px; padding: 14px; }
-  .stat-icon { font-size: 22px; margin-bottom: 4px; }
-  .stat-val { font-size: 30px; font-weight: 900; color: #4ade80; }
-  .stat-label { font-size: 11px; color: #78716c; font-family: sans-serif; }
-  .btn-green { background: linear-gradient(135deg,#16a34a,#15803d); color: #fff; border: none; border-radius: 10px; padding: 13px 22px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: sans-serif; }
-  .btn-outline { background: transparent; border: 1px solid #333; border-radius: 8px; color: #a8a29e; padding: 10px 16px; cursor: pointer; font-size: 14px; font-family: sans-serif; }
-  .btn-danger { background: #7f1d1d33; border: 1px solid #f8717133; border-radius: 8px; color: #f87171; padding: 10px 16px; cursor: pointer; font-size: 14px; font-family: sans-serif; }
-  .btn-full { width: 100%; margin-top: 10px; padding: 15px 0; text-align: center; }
-  .btn-sm { padding: 8px 14px; font-size: 13px; }
-  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
-  .form-group { margin-bottom: 14px; }
-  .form-label { font-size: 13px; color: #a8a29e; margin-bottom: 5px; display: block; font-family: sans-serif; font-weight: 600; }
-  .form-input { width: 100%; background: #1a1a1a; border: 1px solid #333; border-radius: 8px; padding: 12px 14px; color: #e7e5e4; font-size: 16px; font-family: sans-serif; min-height: 46px; }
-  .form-input:focus { outline: none; border-color: #4ade8055; }
-  select.form-input { cursor: pointer; }
-  textarea.form-input { min-height: 76px; resize: vertical; }
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-  .search-bar { display: flex; align-items: center; gap: 10px; padding: 11px 14px; background: #161616; border: 1px solid #222; border-radius: 10px; margin-bottom: 12px; }
-  .search-bar input { flex: 1; border: none; outline: none; font-size: 15px; background: transparent; color: #e7e5e4; font-family: sans-serif; }
-  .cust-row { padding: 13px 14px; border-radius: 10px; cursor: pointer; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; border: 1px solid transparent; transition: all .15s; }
-  .cust-row:hover { background: #1a1a1a; border-color: #2a2a2a; }
-  .cust-name { font-weight: 700; color: #f5f5f4; font-size: 16px; }
-  .cust-sub { font-size: 12px; color: #78716c; font-family: sans-serif; margin-top: 2px; }
-  .badge { display: inline-block; padding: 3px 9px; border-radius: 5px; font-size: 12px; font-weight: 700; font-family: monospace; }
-  .b-green { background: #4ade8018; color: #4ade80; border: 1px solid #4ade8033; }
-  .b-red { background: #f8717118; color: #f87171; border: 1px solid #f8717133; }
-  .b-orange { background: #fb923c18; color: #fb923c; border: 1px solid #fb923c33; }
-  .b-gray { color: #57534e; }
-  .tbl-wrap { overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  th { padding: 7px 9px; font-weight: 600; border-bottom: 1px solid #222; font-family: sans-serif; font-size: 11px; color: #57534e; text-align: left; white-space: nowrap; }
-  th.c { text-align: center; color: #a8a29e; font-family: monospace; font-size: 13px; }
-  td { padding: 8px 9px; border-bottom: 1px solid #1a1a1a; }
-  td.c { text-align: center; }
-  .sec-row td { padding: 10px 9px 4px; color: #4ade8077; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; font-family: sans-serif; border-bottom: 1px solid #1e1e1e; background: #0f0f0f; }
-  .m-lbl { font-weight: 600; color: #d6d3d1; font-family: sans-serif; cursor: pointer; text-decoration: underline dotted #444; }
-  .ideal { color: #57534e; font-size: 11px; font-family: monospace; white-space: nowrap; }
-  .scan-opt { display: flex; align-items: center; gap: 14px; padding: 18px; background: #161616; border: 1px solid #222; border-radius: 12px; cursor: pointer; margin-bottom: 12px; }
-  .scan-opt:hover { border-color: #4ade8044; }
-  .scan-opt.primary { background: linear-gradient(135deg,#16a34a,#15803d); border-color: #16a34a; color: #fff; }
-  .scan-opt .si { font-size: 30px; flex-shrink: 0; }
-  .scan-opt .st { font-size: 17px; font-weight: 700; margin-bottom: 2px; font-family: sans-serif; }
-  .scan-opt .sd { font-size: 13px; opacity: .75; font-family: sans-serif; line-height: 1.4; }
-  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.65); z-index: 200; display: none; align-items: flex-end; justify-content: center; }
-  .modal-overlay.open { display: flex; }
-  .modal { background: #1a1a1a; border: 1px solid #333; border-radius: 18px 18px 0 0; padding: 26px 22px; width: 100%; max-width: 520px; max-height: 75vh; overflow-y: auto; }
-  .modal h2 { font-size: 19px; font-weight: 700; color: #f5f5f4; margin-bottom: 4px; }
-  .modal-rng { font-size: 13px; color: #4ade80; margin-bottom: 14px; font-family: monospace; }
-  .modal-close { float: right; background: none; border: none; font-size: 26px; cursor: pointer; color: #78716c; }
-  .modal-sec-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #4ade80; margin: 12px 0 5px; font-family: sans-serif; }
-  .modal-body { font-size: 14px; line-height: 1.65; color: #a8a29e; }
-  .notif { position: fixed; top: 14px; left: 10px; right: 10px; max-width: 480px; margin: 0 auto; border-radius: 10px; padding: 13px 16px; font-size: 14px; font-weight: 600; z-index: 999; box-shadow: 0 8px 24px #00000088; font-family: sans-serif; display: none; }
-  .notif.ok { background: #14532d; border: 1px solid #4ade80; color: #bbf7d0; }
-  .notif.err { background: #7f1d1d; border: 1px solid #f87171; color: #fca5a5; }
-  .notif.inf { background: #1e3a5f; border: 1px solid #60a5fa; color: #bfdbfe; }
-  .loading { text-align: center; padding: 60px 20px; color: #78716c; font-family: sans-serif; }
-  .spin { display: inline-block; width: 34px; height: 34px; border: 3px solid #333; border-top-color: #4ade80; border-radius: 50%; animation: spin .7s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .empty { text-align: center; padding: 44px 20px; color: #78716c; font-family: sans-serif; }
-  .back { display: inline-flex; align-items: center; gap: 6px; color: #78716c; font-family: sans-serif; font-size: 14px; cursor: pointer; margin-bottom: 16px; background: none; border: none; padding: 0; }
-  .banner-ok { background: #0a1f0f; border: 1px solid #4ade8033; border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; font-family: sans-serif; font-size: 13px; color: #4ade80; }
-  .banner-err { background: #1a0000; border: 1px solid #f8717133; border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; font-family: sans-serif; font-size: 13px; color: #f87171; }
-  @media print { .header,.no-print { display: none !important; } body { background: #fff; } .main { padding: 0; } }
-  @media (max-width:600px) { .stats-grid { grid-template-columns: 1fr 1fr; } .grid-2 { grid-template-columns: 1fr; } .grid-3 { grid-template-columns: 1fr 1fr; } .nav-btn { padding: 0 8px; font-size: 12px; } .logo-sub { display: none; } }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{background:#0c0c0c;color:#e7e5e4;font-family:Georgia,serif;min-height:100vh}
+  .header{background:#111;border-bottom:1px solid #292524;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;gap:10px}
+  .logo{display:flex;align-items:center;gap:10px;flex-shrink:0}
+  .logo-icon{width:38px;height:38px;border-radius:8px;overflow:hidden;flex-shrink:0}
+  .logo-text{font-size:18px;font-weight:700;color:#f5f5f4}
+  .logo-sub{font-size:10px;color:#78716c;font-family:monospace}
+  .nav{display:flex;gap:2px}
+  .nav-btn{min-height:40px;padding:0 12px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:600;background:transparent;color:#a8a29e;font-family:sans-serif;white-space:nowrap}
+  .nav-btn.active{background:#4ade8022;color:#4ade80}
+  .main{padding:20px 16px;max-width:900px;margin:0 auto}
+  .page-title{font-size:22px;font-weight:700;color:#f5f5f4;margin-bottom:4px}
+  .page-sub{color:#78716c;font-size:13px;font-family:sans-serif;margin-bottom:18px;line-height:1.5}
+  .card{background:#161616;border:1px solid #222;border-radius:14px;padding:20px;margin-bottom:16px}
+  .sec-title{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#57534e;margin-bottom:14px;font-family:sans-serif}
+  .sub-head{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#4ade8077;margin:20px 0 10px;padding-bottom:6px;border-bottom:1px solid #1f1f1f;font-family:sans-serif}
+  .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+  .stat-card{background:#161616;border:1px solid #222;border-radius:12px;padding:14px}
+  .stat-icon{font-size:22px;margin-bottom:4px}
+  .stat-val{font-size:30px;font-weight:900;color:#4ade80}
+  .stat-label{font-size:11px;color:#78716c;font-family:sans-serif}
+  .btn-green{background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;border:none;border-radius:10px;padding:13px 22px;font-size:15px;font-weight:700;cursor:pointer;font-family:sans-serif}
+  .btn-outline{background:transparent;border:1px solid #333;border-radius:8px;color:#a8a29e;padding:10px 16px;cursor:pointer;font-size:14px;font-family:sans-serif}
+  .btn-danger{background:#7f1d1d33;border:1px solid #f8717133;border-radius:8px;color:#f87171;padding:10px 16px;cursor:pointer;font-size:14px;font-family:sans-serif}
+  .btn-full{width:100%;margin-top:10px;padding:15px 0;text-align:center}
+  .btn-sm{padding:8px 14px;font-size:13px}
+  .btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+  .form-group{margin-bottom:14px}
+  .form-label{font-size:13px;color:#a8a29e;margin-bottom:5px;display:block;font-family:sans-serif;font-weight:600}
+  .form-input{width:100%;background:#1a1a1a;border:1px solid #333;border-radius:8px;padding:12px 14px;color:#e7e5e4;font-size:16px;font-family:sans-serif;min-height:46px}
+  .form-input:focus{outline:none;border-color:#4ade8055}
+  select.form-input{cursor:pointer}
+  textarea.form-input{min-height:76px;resize:vertical}
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+  .search-bar{display:flex;align-items:center;gap:10px;padding:11px 14px;background:#161616;border:1px solid #222;border-radius:10px;margin-bottom:12px}
+  .search-bar input{flex:1;border:none;outline:none;font-size:15px;background:transparent;color:#e7e5e4;font-family:sans-serif}
+  .cust-row{padding:13px 14px;border-radius:10px;cursor:pointer;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;border:1px solid transparent;transition:all .15s}
+  .cust-row:hover{background:#1a1a1a;border-color:#2a2a2a}
+  .cust-name{font-weight:700;color:#f5f5f4;font-size:16px}
+  .cust-sub{font-size:12px;color:#78716c;font-family:sans-serif;margin-top:2px}
+  .badge{display:inline-block;padding:3px 9px;border-radius:5px;font-size:12px;font-weight:700;font-family:monospace}
+  .b-green{background:#4ade8018;color:#4ade80;border:1px solid #4ade8033}
+  .b-red{background:#f8717118;color:#f87171;border:1px solid #f8717133}
+  .b-orange{background:#fb923c18;color:#fb923c;border:1px solid #fb923c33}
+  .b-gray{color:#57534e}
+  .tbl-wrap{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{padding:7px 9px;font-weight:600;border-bottom:1px solid #222;font-family:sans-serif;font-size:11px;color:#57534e;text-align:left;white-space:nowrap}
+  th.c{text-align:center;color:#a8a29e;font-family:monospace;font-size:13px}
+  td{padding:8px 9px;border-bottom:1px solid #1a1a1a}
+  td.c{text-align:center}
+  .sec-row td{padding:10px 9px 4px;color:#4ade8077;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;font-family:sans-serif;border-bottom:1px solid #1e1e1e;background:#0f0f0f}
+  .m-lbl{font-weight:600;color:#d6d3d1;font-family:sans-serif;cursor:pointer;text-decoration:underline dotted #444}
+  .ideal{color:#57534e;font-size:11px;font-family:monospace;white-space:nowrap}
+  .scan-opt{display:flex;align-items:center;gap:14px;padding:18px;background:#161616;border:1px solid #222;border-radius:12px;cursor:pointer;margin-bottom:12px}
+  .scan-opt:hover{border-color:#4ade8044}
+  .scan-opt.primary{background:linear-gradient(135deg,#16a34a,#15803d);border-color:#16a34a;color:#fff}
+  .scan-opt .si{font-size:30px;flex-shrink:0}
+  .scan-opt .st{font-size:17px;font-weight:700;margin-bottom:2px;font-family:sans-serif}
+  .scan-opt .sd{font-size:13px;opacity:.75;font-family:sans-serif;line-height:1.4}
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:200;display:none;align-items:flex-end;justify-content:center}
+  .modal-overlay.open{display:flex}
+  .modal{background:#1a1a1a;border:1px solid #333;border-radius:18px 18px 0 0;padding:26px 22px;width:100%;max-width:520px;max-height:75vh;overflow-y:auto}
+  .modal h2{font-size:19px;font-weight:700;color:#f5f5f4;margin-bottom:4px}
+  .modal-rng{font-size:13px;color:#4ade80;margin-bottom:14px;font-family:monospace}
+  .modal-close{float:right;background:none;border:none;font-size:26px;cursor:pointer;color:#78716c}
+  .modal-sec-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#4ade80;margin:12px 0 5px;font-family:sans-serif}
+  .modal-body{font-size:14px;line-height:1.65;color:#a8a29e}
+  .notif{position:fixed;top:14px;left:10px;right:10px;max-width:480px;margin:0 auto;border-radius:10px;padding:13px 16px;font-size:14px;font-weight:600;z-index:999;box-shadow:0 8px 24px #00000088;font-family:sans-serif;display:none}
+  .notif.ok{background:#14532d;border:1px solid #4ade80;color:#bbf7d0}
+  .notif.err{background:#7f1d1d;border:1px solid #f87171;color:#fca5a5}
+  .notif.inf{background:#1e3a5f;border:1px solid #60a5fa;color:#bfdbfe}
+  .loading{text-align:center;padding:60px 20px;color:#78716c;font-family:sans-serif}
+  .spin{display:inline-block;width:34px;height:34px;border:3px solid #333;border-top-color:#4ade80;border-radius:50%;animation:spin .7s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .empty{text-align:center;padding:44px 20px;color:#78716c;font-family:sans-serif}
+  .back{display:inline-flex;align-items:center;gap:6px;color:#78716c;font-family:sans-serif;font-size:14px;cursor:pointer;margin-bottom:16px;background:none;border:none;padding:0}
+  .banner-ok{background:#0a1f0f;border:1px solid #4ade8033;border-radius:8px;padding:11px 14px;margin-bottom:12px;font-family:sans-serif;font-size:13px;color:#4ade80}
+  .banner-err{background:#1a0000;border:1px solid #f8717133;border-radius:8px;padding:11px 14px;margin-bottom:12px;font-family:sans-serif;font-size:13px;color:#f87171}
+  .photo-preview{max-width:100%;border-radius:10px;margin-bottom:12px;border:1px solid #333}
+  @media print{.header,.no-print{display:none !important}body{background:#fff}.main{padding:0}}
+  @media(max-width:600px){.stats-grid{grid-template-columns:1fr 1fr}.grid-2{grid-template-columns:1fr}.grid-3{grid-template-columns:1fr 1fr}.nav-btn{padding:0 8px;font-size:12px}.logo-sub{display:none}}
 </style>
 </head>
 <body>
@@ -110,24 +111,25 @@
 <script>
 var customers=[],samples=[],activeCust=null,prefill=null;
 
+// Keys match EXACT sheet headers (capitalized)
 var METRICS=[
-  {key:'pH',label:'Soil pH',unit:'',min:6.0,max:7.0,sec:'Lab Results',about:'Measures acidity/alkalinity. Best between 6.0–7.0.',fix:'If low, apply limestone. If high, apply sulfur.'},
-  {key:'phosphorus',label:'Phosphorus (P)',unit:'lb/A',min:50,max:100,sec:'Lab Results',about:'Drives root development.',fix:'If deficient, apply phosphate fertilizer.'},
-  {key:'acidity',label:'Buffer Acidity',unit:'meq/100g',min:0,max:2,sec:'Exchangeable Cations',about:'Reserve acidity. Higher = more lime needed.',fix:'Determines limestone rate.'},
-  {key:'potassium',label:'Potassium (K)',unit:'meq/100g',min:0.15,max:0.40,sec:'Exchangeable Cations',about:'Water regulation and winter hardiness.',fix:'If deficient, apply potash.'},
-  {key:'magnesium',label:'Magnesium (Mg)',unit:'meq/100g',min:0.5,max:2.5,sec:'Exchangeable Cations',about:'Central atom in chlorophyll.',fix:'Apply dolomitic limestone or Epsom salt.'},
-  {key:'calcium',label:'Calcium (Ca)',unit:'meq/100g',min:5,max:15,sec:'Exchangeable Cations',about:'Builds cell walls. In limestone.',fix:'Apply limestone.'},
-  {key:'cec',label:'CEC',unit:'meq/100g',min:10,max:20,sec:'Exchangeable Cations',info:true,about:'Nutrient holding capacity.',fix:'Informational. Add organic matter.'},
-  {key:'satK',label:'K Saturation',unit:'%',min:2,max:5,sec:'% Saturation of CEC',about:'K as % of CEC.',fix:'Balance with Ca and Mg.'},
-  {key:'satMg',label:'Mg Saturation',unit:'%',min:10,max:20,sec:'% Saturation of CEC',about:'Mg as % of CEC.',fix:'Apply dolomitic limestone.'},
-  {key:'satCa',label:'Ca Saturation',unit:'%',min:60,max:80,sec:'% Saturation of CEC',about:'Ca as % of CEC. Low = acidic.',fix:'Apply limestone.'}
+  {key:'pH',label:'Soil pH',unit:'',min:6.0,max:7.0,sec:'Lab Results',about:'Measures acidity/alkalinity.',fix:'If low, apply limestone.'},
+  {key:'Phosphorus',label:'Phosphorus (P)',unit:'lb/A',min:50,max:100,sec:'Lab Results',about:'Drives root development.',fix:'Apply phosphate fertilizer if deficient.'},
+  {key:'Acidity',label:'Buffer Acidity',unit:'meq/100g',min:0,max:2,sec:'Exchangeable Cations',about:'Reserve acidity. Higher = more lime needed.',fix:'Determines limestone rate.'},
+  {key:'Potassium',label:'Potassium (K)',unit:'meq/100g',min:0.15,max:0.40,sec:'Exchangeable Cations',about:'Water regulation and winter hardiness.',fix:'Apply potash if deficient.'},
+  {key:'Magnesium',label:'Magnesium (Mg)',unit:'meq/100g',min:0.5,max:2.5,sec:'Exchangeable Cations',about:'Central atom in chlorophyll.',fix:'Apply dolomitic limestone or Epsom salt.'},
+  {key:'Calcium',label:'Calcium (Ca)',unit:'meq/100g',min:5,max:15,sec:'Exchangeable Cations',about:'Builds cell walls.',fix:'Apply limestone.'},
+  {key:'CEC',label:'CEC',unit:'meq/100g',min:10,max:20,sec:'Exchangeable Cations',info:true,about:'Nutrient holding capacity.',fix:'Informational. Add organic matter.'},
+  {key:'SatK',label:'K Saturation',unit:'%',min:2,max:5,sec:'% Saturation of CEC',about:'K as % of CEC.',fix:'Balance with Ca and Mg.'},
+  {key:'SatMg',label:'Mg Saturation',unit:'%',min:10,max:20,sec:'% Saturation of CEC',about:'Mg as % of CEC.',fix:'Apply dolomitic limestone.'},
+  {key:'SatCa',label:'Ca Saturation',unit:'%',min:60,max:80,sec:'% Saturation of CEC',about:'Ca as % of CEC.',fix:'Apply limestone.'}
 ];
 var SECTIONS=['Lab Results','Exchangeable Cations','% Saturation of CEC'];
 var RECS=[
-  {key:'limestoneLbs',label:'Limestone (lb/1000 ft²)',note:'Raises pH. Split if >100 lb.'},
-  {key:'recN',label:'Nitrogen (N)',note:'Split into multiple apps.'},
-  {key:'recP',label:'Phosphorus (P₂O₅)',note:'Only apply what test recommends.'},
-  {key:'recK',label:'Potassium (K₂O)',note:'Important for winter hardiness.'}
+  {key:'LimestoneLbs',label:'Limestone (lb/1000 ft²)',note:'Raises pH. Split if >100 lb.'},
+  {key:'RecN',label:'Nitrogen (N)',note:'Split into multiple apps.'},
+  {key:'RecP',label:'Phosphorus (P₂O₅)',note:'Only apply what test recommends.'},
+  {key:'RecK',label:'Potassium (K₂O)',note:'Important for winter hardiness.'}
 ];
 
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
@@ -138,8 +140,25 @@ function navActive(id){['nb-dash','nb-add','nb-report'].forEach(function(n){var 
 function gasGet(p){var qs=Object.keys(p).map(function(k){return encodeURIComponent(k)+'='+encodeURIComponent(p[k]);}).join('&');return fetch(GAS_URL+'?'+qs).then(function(r){return r.json();});}
 function gasPost(b){return fetch(GAS_URL,{method:'POST',body:JSON.stringify(b)}).then(function(r){return r.json();});}
 
-window.addEventListener('load',function(){
-  document.getElementById('cam-input').addEventListener('change',function(e){e.target.value='';notify('Photo taken! Now use Live Text to copy the text, then paste below.','inf',6000);});
+// Camera handler — show photo on screen for Live Text
+document.addEventListener('DOMContentLoaded',function(){
+  document.getElementById('cam-input').addEventListener('change',function(e){
+    var file=e.target.files[0];
+    if(!file)return;
+    e.target.value='';
+    var reader=new FileReader();
+    reader.onload=function(ev){
+      var imgEl=document.getElementById('snap-photo');
+      if(imgEl){
+        imgEl.src=ev.target.result;
+        imgEl.style.display='block';
+        document.getElementById('snap-step2').style.display='block';
+        document.getElementById('snap-step3').style.display='block';
+        notify('Photo taken! Now tap and hold on the image below to use Live Text.','inf',6000);
+      }
+    };
+    reader.readAsDataURL(file);
+  });
   loadAndShow();
 });
 
@@ -148,18 +167,17 @@ function loadAndShow(){
   var t=setTimeout(function(){setApp('<div class="banner-err">Could not reach Apps Script.<br><button class="btn-green btn-sm" style="margin-top:10px" onclick="loadAndShow()">↺ Retry</button></div>');},15000);
   gasGet({action:'getData'}).then(function(d){clearTimeout(t);if(!d.success){setApp('<div class="banner-err">Error: '+esc(d.error)+'</div>');return;}customers=d.customers||[];samples=d.samples||[];showPage('dash');}).catch(function(err){clearTimeout(t);setApp('<div class="banner-err">Network error: '+esc(err.message)+'<br><button class="btn-green btn-sm" style="margin-top:10px" onclick="loadAndShow()">↺ Retry</button></div>');});
 }
-
 function showPage(page){navActive(page);if(page==='dash'){activeCust=null;renderDashboard();}else if(page==='add'){prefill=null;renderScanStep();}else if(page==='report')renderReportPage();}
 
 // ── Dashboard ──
 function renderDashboard(){
-  var years={};samples.forEach(function(s){if(s.year)years[s.year]=true;});
+  var years={};samples.forEach(function(s){if(s.Year)years[s.Year]=true;});
   var counts={};samples.forEach(function(s){METRICS.forEach(function(m){if(m.info)return;var n=parseFloat(s[m.key]);if(!isNaN(n)&&(n<m.min||n>m.max))counts[m.key]=(counts[m.key]||0)+1;});});
   var topIssues=Object.keys(counts).sort(function(a,b){return counts[b]-counts[a];}).slice(0,4);
   var html='<div class="page-title">Soil Data Overview</div><div class="page-sub">'+customers.length+' customers · '+samples.length+' samples · '+Object.keys(years).length+' seasons</div>';
   html+='<div class="stats-grid"><div class="stat-card"><div class="stat-icon">👨‍🌾</div><div class="stat-val">'+customers.length+'</div><div class="stat-label">Customers</div></div><div class="stat-card"><div class="stat-icon">🧪</div><div class="stat-val">'+samples.length+'</div><div class="stat-label">Samples</div></div><div class="stat-card"><div class="stat-icon">📅</div><div class="stat-val">'+Object.keys(years).length+'</div><div class="stat-label">Seasons</div></div></div>';
   if(topIssues.length){html+='<div class="card"><div class="sec-title">Common Issues</div>';topIssues.forEach(function(k){var m=METRICS.find(function(x){return x.key===k;});html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #1e1e1e"><span style="font-family:sans-serif;font-size:13px;color:#d6d3d1">'+esc(m?m.label:k)+'</span><span class="badge b-red">'+counts[k]+' out of range</span></div>';});html+='</div>';}
-  html+='<div class="card no-print"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div class="sec-title" style="margin:0">Customers</div></div>';
+  html+='<div class="card no-print"><div class="sec-title" style="margin-bottom:12px">Customers</div>';
   html+='<div class="search-bar"><span style="color:#57534e">🔍</span><input id="csearch" placeholder="Search..." oninput="filterCust()"></div>';
   html+='<div id="clist">'+buildCustList(customers)+'</div></div>';
   setApp(html);
@@ -167,62 +185,43 @@ function renderDashboard(){
 function buildCustList(list){
   if(!list.length)return'<div class="empty"><div style="font-size:40px;margin-bottom:10px">🌱</div><div style="font-size:15px;font-weight:700;color:#f5f5f4">No customers yet</div></div>';
   return list.map(function(c){
-    var cs=samples.filter(function(s){return String(s.customerId)===String(c.ID);});
-    var yrs=[...new Set(cs.map(function(s){return s.year;}).filter(Boolean))].sort().join(', ');
-    return'<div class="cust-row" onclick="openCust(\''+c.ID+'\')"><div><div class="cust-name">'+esc(c.Name)+'</div><div class="cust-sub">'+(c.Field?esc(c.Field)+' · ':'')+cs.length+' sample'+(cs.length!==1?'s':'')+(yrs?' · '+yrs:'')+'</div></div><span style="color:#57534e;font-size:20px">›</span></div>';
+    var cs=samples.filter(function(s){return String(s.CustomerName)===String(c.Name);});
+    var yrs=[...new Set(cs.map(function(s){return s.Year;}).filter(Boolean))].sort().join(', ');
+    return'<div class="cust-row" onclick="openCust(\''+esc(c.Name)+'\')"><div><div class="cust-name">'+esc(c.Name)+'</div><div class="cust-sub">'+(c.Field?esc(c.Field)+' · ':'')+cs.length+' sample'+(cs.length!==1?'s':'')+(yrs?' · '+yrs:'')+'</div></div><span style="color:#57534e;font-size:20px">›</span></div>';
   }).join('');
 }
-function filterCust(){var q=(document.getElementById('csearch').value||'').toLowerCase();var list=q?customers.filter(function(c){return(c.Name||'').toLowerCase().includes(q)||(c.Field||'').toLowerCase().includes(q);}):customers;document.getElementById('clist').innerHTML=buildCustList(list);}
+function filterCust(){var q=(document.getElementById('csearch').value||'').toLowerCase();var list=q?customers.filter(function(c){return(c.Name||'').toLowerCase().includes(q)||(c.Field||'').toLowerCase().includes(q)||(c.City||'').toLowerCase().includes(q);}):customers;document.getElementById('clist').innerHTML=buildCustList(list);}
 
 // ── Customer Detail ──
-function openCust(id){
-  activeCust=customers.find(function(c){return String(c.ID)===String(id);});if(!activeCust)return;navActive('');
-  var c=activeCust;var cs=samples.filter(function(s){return String(s.customerId)===String(c.ID);}).sort(function(a,b){return b.year-a.year;});
+function openCust(name){
+  activeCust=customers.find(function(c){return c.Name===name;});if(!activeCust)return;navActive('');
+  var c=activeCust;var cs=samples.filter(function(s){return String(s.CustomerName)===String(c.Name);}).sort(function(a,b){return b.Year-a.Year;});
   var html='<button class="back no-print" onclick="showPage(\'dash\')">&larr; Back</button>';
-  html+='<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:6px"><div class="page-title">'+esc(c.Name)+'</div><div class="btn-row no-print" style="margin:0"><button class="btn-green btn-sm" onclick="startSampleFor(\''+c.ID+'\')">+ Sample</button></div></div>';
+  html+='<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:6px"><div class="page-title">'+esc(c.Name)+'</div><div class="btn-row no-print" style="margin:0"><button class="btn-green btn-sm" onclick="startSampleFor()">+ Sample</button></div></div>';
   var info=[];if(c.Field)info.push(esc(c.Field));if(c.Address)info.push(esc(c.Address)+(c.City?', '+esc(c.City):''));if(c.Phone)info.push(esc(c.Phone));if(c.Email)info.push(esc(c.Email));
   if(info.length)html+='<div class="page-sub">'+info.join(' · ')+'</div>';
-  if(!cs.length){html+='<div class="empty"><div style="font-size:40px;margin-bottom:10px">🧪</div><div style="font-size:15px;font-weight:700;color:#f5f5f4">No samples yet</div><button class="btn-green btn-full no-print" onclick="startSampleFor(\''+c.ID+'\')">+ Add First Sample</button></div>';setApp(html);return;}
-  var years=cs.map(function(s){return s.year;});
+  if(!cs.length){html+='<div class="empty"><div style="font-size:40px;margin-bottom:10px">🧪</div><div style="font-size:15px;font-weight:700;color:#f5f5f4">No samples yet</div><button class="btn-green btn-full no-print" onclick="startSampleFor()">+ Add First Sample</button></div>';setApp(html);return;}
+  var years=cs.map(function(s){return s.Year;});
   html+='<div class="card"><div class="sec-title">Recommendations</div><div class="tbl-wrap"><table><thead><tr><th>Item</th>';years.forEach(function(y){html+='<th class="c">'+y+'</th>';});html+='<th>Notes</th></tr></thead><tbody>';
-  RECS.forEach(function(r){html+='<tr><td style="font-family:sans-serif;font-size:13px;font-weight:600;color:#d6d3d1;white-space:nowrap">'+r.label+'</td>';cs.forEach(function(s){var v=s[r.key],none=!v||String(v).toLowerCase()==='none'||v==='0';html+='<td class="c"><span class="badge '+(none?'b-green':'b-orange')+'">'+(v||'None')+'</span></td>';});html+='<td style="color:#57534e;font-size:11px;font-family:sans-serif">'+r.note+'</td></tr>';});
+  RECS.forEach(function(r){html+='<tr><td style="font-family:sans-serif;font-size:13px;font-weight:600;color:#d6d3d1;white-space:nowrap">'+r.label+'</td>';cs.forEach(function(s){var v=s[r.key],none=!v||String(v).toLowerCase()==='none'||v==='0'||v===0;html+='<td class="c"><span class="badge '+(none?'b-green':'b-orange')+'">'+(none?'None':v)+'</span></td>';});html+='<td style="color:#57534e;font-size:11px;font-family:sans-serif">'+r.note+'</td></tr>';});
   html+='</tbody></table></div></div>';
   html+='<div class="card"><div class="sec-title">Lab Results — Year over Year</div><div class="tbl-wrap"><table><thead><tr><th>Metric</th>';years.forEach(function(y){html+='<th class="c">'+y+'</th>';});html+='<th>Ideal</th></tr></thead><tbody>';
   SECTIONS.forEach(function(sec){html+='<tr class="sec-row"><td colspan="'+(2+years.length)+'">'+sec+'</td></tr>';METRICS.filter(function(m){return m.sec===sec;}).forEach(function(m){html+='<tr><td><span class="m-lbl" onclick="showInfo(\''+m.key+'\')">'+m.label+'</span></td>';cs.forEach(function(s){html+='<td class="c">'+statusBadge(m,s[m.key])+'</td>';});html+='<td class="ideal">'+(m.info?'info':m.min+'–'+m.max+(m.unit?' '+m.unit:''))+'</td></tr>';});});
-  html+='</tbody></table><div class="btn-row no-print" style="margin-top:12px">';cs.forEach(function(s){html+='<button class="btn-danger btn-sm" onclick="doDeleteSample(\''+s.id+'\','+s.year+')">Delete '+s.year+'</button>';});
+  html+='</tbody></table><div class="btn-row no-print" style="margin-top:12px">';cs.forEach(function(s){html+='<button class="btn-danger btn-sm" onclick="doDeleteSample(\''+s.ID+'\',\''+s.Year+'\')">Delete '+s.Year+'</button>';});
   html+='</div></div>';
-  html+='<button class="btn-outline no-print" onclick="openReport(\''+c.ID+'\')">🖨 Print Report</button>';
+  html+='<button class="btn-outline no-print" onclick="openReport(\''+esc(c.Name)+'\')">🖨 Print Report</button>';
   setApp(html);
 }
 
-// ── Add/Edit Customer ──
-function renderCustForm(id){
-  var c=id?customers.find(function(x){return String(x.ID)===String(id);}):null;var v=function(k){return c?esc(c[k]||''):'';};
-  var html='<button class="back" onclick="showPage(\'dash\')">&larr; Back</button><div class="page-title">'+(c?'Edit Customer':'New Customer')+'</div><div class="card">'
-    +'<div class="form-group"><label class="form-label">Name *</label><input class="form-input" id="cf-name" value="'+v('Name')+'"></div>'
-    +'<div class="grid-2"><div class="form-group"><label class="form-label">Field</label><input class="form-input" id="cf-field" value="'+v('Field')+'"></div><div class="form-group"><label class="form-label">City</label><input class="form-input" id="cf-city" value="'+v('City')+'"></div></div>'
-    +'<div class="form-group"><label class="form-label">Address</label><input class="form-input" id="cf-addr" value="'+v('Address')+'"></div>'
-    +'<div class="grid-2"><div class="form-group"><label class="form-label">Phone</label><input class="form-input" id="cf-phone" type="tel" value="'+v('Phone')+'"></div><div class="form-group"><label class="form-label">Email</label><input class="form-input" id="cf-email" type="email" value="'+v('Email')+'"></div></div>'
-    +'<button class="btn-green btn-full" onclick="saveCustForm(\''+(id||'')+'\')">'+(c?'Save Changes':'Add Customer')+'</button>';
-  if(c)html+='<button class="btn-danger btn-full" onclick="doDeleteCust(\''+c.ID+'\')">Delete Customer</button>';
-  html+='</div>';setApp(html);
-}
-function saveCustForm(eid){
-  var name=(document.getElementById('cf-name').value||'').trim();if(!name){notify('Name required.','err');return;}
-  var data={ID:eid||undefined,Name:name,Field:(document.getElementById('cf-field').value||'').trim(),City:(document.getElementById('cf-city').value||'').trim(),Address:(document.getElementById('cf-addr').value||'').trim(),Phone:(document.getElementById('cf-phone').value||'').trim(),Email:(document.getElementById('cf-email').value||'').trim()};
-  gasPost({action:'saveCustomer',data:data}).then(function(r){if(!r.success){notify('Error: '+(r.error||''),'err');return;}data.ID=r.id;if(!eid)customers.push(data);else{var i=customers.findIndex(function(c){return String(c.ID)===String(eid);});if(i!==-1)Object.assign(customers[i],data);}notify(eid?'Updated.':'Customer added.');if(eid)openCust(eid);else showPage('dash');}).catch(function(err){notify('Error: '+err.message,'err');});
-}
-
 // ── Add Sample ──
-function renderAddPage(){activeCust=null;prefill=null;renderScanStep();}
-function startSampleFor(id){activeCust=customers.find(function(c){return String(c.ID)===String(id);});prefill=null;renderScanStep();}
+function startSampleFor(){prefill=null;renderScanStep();}
 
 function renderScanStep(){
-  var c=activeCust;var back=c?'openCust(\''+c.ID+'\')':'showPage(\'dash\')';
+  var c=activeCust;var back=c?'openCust(\''+esc(c.Name)+'\')':'showPage(\'dash\')';
   var html='<button class="back" onclick="'+back+'">&larr; Back</button>'
     +'<div class="page-title">Add Soil Sample'+(c?' — '+esc(c.Name):'')+'</div>'
     +'<div class="page-sub">Choose how to enter your Penn State soil report data.</div>'
-    +'<div class="scan-opt primary" onclick="renderSnapCopy()"><div class="si">📸</div><div><div class="st">Snap & Copy</div><div class="sd">Take a photo, use Live Text to copy, paste here. Fastest method!</div></div></div>'
+    +'<div class="scan-opt primary" onclick="renderSnapCopy()"><div class="si">📸</div><div><div class="st">Snap & Copy</div><div class="sd">Take a photo, use Live Text to copy, paste here. Fastest!</div></div></div>'
     +'<div class="scan-opt" onclick="renderPasteStep()"><div class="si">📋</div><div><div class="st">Paste Report Text</div><div class="sd">Already have text copied? Paste it here.</div></div></div>'
     +'<div class="scan-opt" onclick="renderSampleForm(null)"><div class="si">✏️</div><div><div class="st">Enter Manually</div><div class="sd">Type in all values by hand.</div></div></div>';
   setApp(html);
@@ -230,16 +229,28 @@ function renderScanStep(){
 
 function renderSnapCopy(){
   var html='<button class="back" onclick="renderScanStep()">&larr; Back</button><div class="page-title">Snap & Copy</div>'
-    +'<div class="card"><div class="sec-title">Step 1 — Take the Photo</div><div style="font-size:14px;color:#a8a29e;font-family:sans-serif;line-height:1.7;margin-bottom:14px">Take a photo of your soil report with your regular camera. Make sure the <b>Laboratory Results</b> table is clear.</div><button class="btn-green btn-full" onclick="document.getElementById(\'cam-input\').click()" style="margin-top:0">📷 Open Camera</button></div>'
-    +'<div class="card"><div class="sec-title">Step 2 — Copy the Text</div><div style="font-size:14px;color:#a8a29e;font-family:sans-serif;line-height:1.7">Open the photo. <b>Tap and hold</b> on the text — Live Text will highlight it. Tap <b>Select All</b> then <b>Copy</b>.</div></div>'
-    +'<div class="card"><div class="sec-title">Step 3 — Paste & Extract</div><div class="form-group"><label class="form-label">Paste the copied text here</label><textarea class="form-input" id="ocr-text" rows="8" style="min-height:140px;font-size:14px" placeholder="Tap here, then tap Paste..."></textarea></div><button class="btn-green btn-full" onclick="parseOcrText()">🤖 Extract Values</button></div>';
+    +'<div class="card"><div class="sec-title">Step 1 — Take the Photo</div>'
+    +'<div style="font-size:14px;color:#a8a29e;font-family:sans-serif;line-height:1.7;margin-bottom:14px">Take a photo of your Penn State soil report. Make sure the <b>Laboratory Results</b> table at the bottom is clear and readable.</div>'
+    +'<button class="btn-green btn-full" onclick="document.getElementById(\'cam-input\').click()" style="margin-top:0">📷 Open Camera</button>'
+    +'<img id="snap-photo" class="photo-preview" style="display:none;margin-top:14px">'
+    +'</div>'
+    +'<div id="snap-step2" class="card" style="display:none"><div class="sec-title">Step 2 — Copy the Text</div>'
+    +'<div style="font-size:14px;color:#a8a29e;font-family:sans-serif;line-height:1.7"><b>Tap and hold</b> on the photo above. Your iPhone will highlight the text with Live Text. Tap <b>Select All</b> then <b>Copy</b>.</div>'
+    +'<div style="font-size:12px;color:#57534e;font-family:sans-serif;margin-top:8px">💡 If Live Text doesn\'t appear, open the photo in your Photos app instead and copy from there.</div>'
+    +'</div>'
+    +'<div id="snap-step3" class="card" style="display:none"><div class="sec-title">Step 3 — Paste & Extract</div>'
+    +'<div class="form-group"><label class="form-label">Paste the copied text here</label>'
+    +'<textarea class="form-input" id="ocr-text" rows="8" style="min-height:140px;font-size:14px" placeholder="Tap here, then tap Paste..."></textarea></div>'
+    +'<button class="btn-green btn-full" onclick="parseOcrText()">🤖 Extract Values</button></div>';
   setApp(html);
 }
 
 function renderPasteStep(){
   var html='<button class="back" onclick="renderScanStep()">&larr; Back</button><div class="page-title">Paste Report Text</div>'
     +'<div class="page-sub">Paste the text from your soil report below.</div>'
-    +'<div class="card"><div class="form-group"><label class="form-label">Paste soil report text here</label><textarea class="form-input" id="ocr-text" rows="10" style="min-height:160px;font-size:14px" placeholder="Tap here, then tap Paste..."></textarea></div><button class="btn-green btn-full" onclick="parseOcrText()">🤖 Extract Values from Text</button></div>';
+    +'<div class="card"><div class="form-group"><label class="form-label">Paste soil report text here</label>'
+    +'<textarea class="form-input" id="ocr-text" rows="10" style="min-height:160px;font-size:14px" placeholder="Tap here, then tap Paste..."></textarea></div>'
+    +'<button class="btn-green btn-full" onclick="parseOcrText()">🤖 Extract Values</button></div>';
   setApp(html);
 }
 
@@ -248,7 +259,7 @@ function parseOcrText(){
   if(text.trim().length<20){notify('Paste the report text first.','err');return;}
   setApp('<div class="loading"><div class="spin" style="width:40px;height:40px"></div><p style="margin-top:14px;font-size:17px;font-weight:700;color:#f5f5f4">🤖 Reading Report</p><p style="color:#a8a29e;font-size:14px;margin-top:8px;font-family:sans-serif">3–5 seconds...</p></div>');
   gasGet({action:'getApiKey'}).then(function(r){
-    if(!r.success){notify('API key error: '+(r.error||''),'err');renderPasteStep();return;}
+    if(!r.success){notify('API key error','err');renderPasteStep();return;}
     return callAnthropicText(r.key,text);
   }).then(function(result){
     if(!result)return;
@@ -265,33 +276,32 @@ function parseOcrText(){
 }
 
 function callAnthropicText(key,text){
-  var prompt='You are reading OCR text from a Penn State Extension Soil Test Report. The OCR may be messy with missing spaces or jumbled columns. Use your knowledge of the report layout to find the correct values.\n\n'
-    +'RETURN ONLY THIS JSON (no explanation, no markdown):\n'
-    +'{"CustomerName":"","Field":"","Year":null,"pH":null,"phosphorus":null,"acidity":null,"potassium":null,"magnesium":null,"calcium":null,"cec":null,"satK":null,"satMg":null,"satCa":null,"limestoneLbs":null,"recN":"","recP":"","recK":""}\n\n'
+  var prompt='You are reading OCR text from a Penn State Extension Soil Test Report. The OCR may be messy with missing spaces or jumbled columns.\n\n'
+    +'RETURN ONLY THIS JSON (no explanation):\n'
+    +'{"CustomerName":"","Field":"","Year":null,"pH":null,"Phosphorus":null,"Acidity":null,"Potassium":null,"Magnesium":null,"Calcium":null,"CEC":null,"SatK":null,"SatMg":null,"SatCa":null,"LimestoneLbs":null,"RecN":"","RecP":"","RecK":""}\n\n'
     +'HOW TO FIND EACH VALUE:\n'
-    +'• CustomerName — the name on the line after "SOIL TEST REPORT FOR:"\n'
-    +'• Field — the value after "FIELD ID" (e.g. "Entire Lawn")\n'
-    +'• Year — the 4-digit year from the DATE line (e.g. 10/13/2020 → 2020)\n\n'
-    +'The LABORATORY RESULTS table at the bottom has this column order:\n'
-    +'  1pH | 2P lb/A | 3Acidity | 2K | 2Mg | 2Ca | 4CEC | K | Mg | Ca | Organic Matter %\n'
-    +'The numbers appear in a single data row below these headers.\n\n'
-    +'• pH — the first number in the lab results row (e.g. 6.9)\n'
-    +'• phosphorus — the second number, this is P in lb/A (e.g. 200)\n'
-    +'• acidity — third number, the 3Acidity value in meq/100g (e.g. 0.00)\n'
-    +'• potassium — fourth number, 2K in meq/100g (e.g. 0.70)\n'
-    +'• magnesium — fifth number, 2Mg in meq/100g (e.g. 1.99)\n'
-    +'• calcium — sixth number, 2Ca in meq/100g (e.g. 9.49)\n'
-    +'• cec — seventh number, 4CEC in meq/100g (e.g. 12.2)\n'
-    +'• satK — eighth number, K% Saturation of CEC (e.g. 5.8)\n'
-    +'• satMg — ninth number, Mg% Saturation (e.g. 16.4)\n'
-    +'• satCa — tenth number, Ca% Saturation (e.g. 77.9)\n\n'
-    +'RECOMMENDATIONS section:\n'
-    +'• limestoneLbs — the limestone number in lb/1000 sq ft. If it says NONE, use null.\n'
-    +'• recN — the nitrogen recommendation (e.g. "1 to 4"). Look for the number before "NONE NONE" or before "N P2O5 K2O"\n'
-    +'• recP — the P2O5 recommendation. Often "NONE"\n'
-    +'• recK — the K2O recommendation. Often "NONE"\n\n'
-    +'IMPORTANT: The OCR text may run numbers together or scramble columns. Use the expected format above to separate values correctly. Return ONLY the JSON.\n\n'
-    +'OCR TEXT:\n'+text;
+    +'• CustomerName — name after "SOIL TEST REPORT FOR:"\n'
+    +'• Field — value after "FIELD ID"\n'
+    +'• Year — 4-digit year from the DATE line\n\n'
+    +'The LABORATORY RESULTS table at the bottom has columns in this order:\n'
+    +'  1pH | 2P lb/A | 3Acidity | 2K | 2Mg | 2Ca | 4CEC | K | Mg | Ca\n'
+    +'The data row has numbers in that same order:\n'
+    +'• pH = 1st number (e.g. 6.9)\n'
+    +'• Phosphorus = 2nd number, P in lb/A (e.g. 200)\n'
+    +'• Acidity = 3rd number, meq/100g (e.g. 0.00)\n'
+    +'• Potassium = 4th number, K in meq/100g (e.g. 0.70)\n'
+    +'• Magnesium = 5th number, Mg in meq/100g (e.g. 1.99)\n'
+    +'• Calcium = 6th number, Ca in meq/100g (e.g. 9.49)\n'
+    +'• CEC = 7th number (e.g. 12.2)\n'
+    +'• SatK = 8th number, K% saturation (e.g. 5.8)\n'
+    +'• SatMg = 9th number, Mg% saturation (e.g. 16.4)\n'
+    +'• SatCa = 10th number, Ca% saturation (e.g. 77.9)\n\n'
+    +'RECOMMENDATIONS:\n'
+    +'• LimestoneLbs — number in lb/1000 sq ft. Use 0 if it says NONE.\n'
+    +'• RecN — nitrogen rec as printed (e.g. "1 to 4"). Use "NONE" if none.\n'
+    +'• RecP — P2O5 rec as printed. Use "NONE" if none.\n'
+    +'• RecK — K2O rec as printed. Use "NONE" if none.\n\n'
+    +'IMPORTANT: Copy numbers exactly from the text. Return ONLY JSON.\n\nOCR TEXT:\n'+text;
   return fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'x-api-key':key,'anthropic-version':'2023-06-01','content-type':'application/json','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:512,messages:[{role:'user',content:prompt}]})}).then(function(r){
     if(!r.ok)return r.text().then(function(t){return{success:false,error:'API '+r.status};});
     return r.json().then(function(j){var txt=((j.content||[]).find(function(c){return c.type==='text';})||{}).text||'';var m=txt.match(/\{[\s\S]*\}/);try{return{success:true,data:JSON.parse(m?m[0]:txt)};}catch(e){return{success:false,error:'Parse error'};}});
@@ -301,72 +311,72 @@ function callAnthropicText(key,text){
 // ── Sample Form ──
 function renderSampleForm(p){
   var c=activeCust;p=p||{};function gv(k){var v=p[k];return(v!=null&&v!=='')?String(v):'';}
-  var aiName=gv('CustomerName');
   var html='<button class="back" onclick="renderScanStep()">&larr; Back</button><div class="page-title">'+(p._ai?'Review Extracted Data':'Enter Sample Data')+(c?' — '+esc(c.Name):'')+'</div>';
   if(p._ai)html+='<div class="banner-ok">✅ AI extracted values — review and save.</div>';
   html+='<div class="card">';
   if(!c){
     html+='<div class="sub-head">Customer</div>';
     if(customers.length){
-      var presel='';if(aiName){var needle=aiName.toLowerCase();var m2=customers.find(function(x){var h=(x.Name||'').toLowerCase();return h===needle||h.includes(needle)||needle.includes(h);});if(m2)presel=String(m2.ID);}
-      html+='<div class="form-group"><label class="form-label">Select customer</label><select class="form-input" id="sf-cust" onchange="sfCustChange(this.value)"><option value="">— New customer —</option>';
-      customers.forEach(function(x){html+='<option value="'+x.ID+'"'+(presel===String(x.ID)?' selected':'')+'>'+esc(x.Name)+(x.Field?' ('+esc(x.Field)+')':'')+'</option>';});
-      html+='</select></div><div id="sf-newcust-wrap"'+(presel?' style="display:none"':'')+'><div class="form-group"><label class="form-label">Or new name *</label><input class="form-input" id="sf-newcust" value="'+esc(aiName)+'"></div></div>';
-    }else{html+='<div class="form-group"><label class="form-label">Customer name *</label><input class="form-input" id="sf-newcust" value="'+esc(aiName)+'"></div>';}
+      var presel='';if(gv('CustomerName')){var needle=gv('CustomerName').toLowerCase();var m2=customers.find(function(x){var h=(x.Name||'').toLowerCase();return h===needle||h.includes(needle)||needle.includes(h);});if(m2){presel=m2.Name;activeCust=m2;}}
+      html+='<div class="form-group"><label class="form-label">Select customer</label><select class="form-input" id="sf-cust" onchange="sfCustChange(this.value)"><option value="">— Select —</option>';
+      customers.forEach(function(x){html+='<option value="'+esc(x.Name)+'"'+(presel===x.Name?' selected':'')+'>'+esc(x.Name)+(x.Field?' ('+esc(x.Field)+')':'')+'</option>';});
+      html+='</select></div>';
+      if(!presel&&gv('CustomerName'))html+='<div style="font-size:12px;color:#fb923c;font-family:sans-serif;margin-bottom:8px">AI found: "'+esc(gv('CustomerName'))+'" — not in master list. Select a customer above.</div>';
+    }
   }
   html+='<div class="form-group"><label class="form-label">Year *</label><input class="form-input" id="sf-year" type="number" value="'+(gv('Year')||new Date().getFullYear())+'"></div>';
   html+='<div class="sub-head">Recommendations</div><div class="grid-2">';
-  html+='<div class="form-group"><label class="form-label">Limestone (lb/1000 ft²)</label><select class="form-input" id="sf-lime"><option value="">None</option>';
-  [25,50,75,100,125,150,175,200,225,250].forEach(function(n){html+='<option value="'+n+'"'+(String(gv('limestoneLbs'))===String(n)?' selected':'')+'>'+n+'</option>';});
-  html+='</select></div>';
-  [{k:'recN',l:'Nitrogen (N)'},{k:'recP',l:'Phosphorus (P₂O₅)'},{k:'recK',l:'Potassium (K₂O)'}].forEach(function(r){html+='<div class="form-group"><label class="form-label">'+r.l+'</label><input class="form-input" id="sf-'+r.k+'" value="'+gv(r.k)+'"></div>';});
+  html+='<div class="form-group"><label class="form-label">Limestone (lb/1000 ft²)</label><input class="form-input" id="sf-LimestoneLbs" value="'+gv('LimestoneLbs')+'" placeholder="0 if none"></div>';
+  [{k:'RecN',l:'Nitrogen (N)'},{k:'RecP',l:'Phosphorus (P₂O₅)'},{k:'RecK',l:'Potassium (K₂O)'}].forEach(function(r){html+='<div class="form-group"><label class="form-label">'+r.l+'</label><input class="form-input" id="sf-'+r.k+'" value="'+gv(r.k)+'"></div>';});
   html+='</div>';
   SECTIONS.forEach(function(sec){html+='<div class="sub-head">'+sec+'</div><div class="grid-3">';METRICS.filter(function(m){return m.sec===sec;}).forEach(function(m){html+='<div class="form-group"><label class="form-label">'+m.label+(m.unit?' <span style="color:#57534e;font-size:10px">'+m.unit+'</span>':'')+'</label><input class="form-input" id="sf-'+m.key+'" type="number" step="any" value="'+gv(m.key)+'" placeholder="'+m.min+'–'+m.max+'"></div>';});html+='</div>';});
   html+='<button class="btn-green btn-full" onclick="saveSample()">💾 Save to Google Sheets</button></div>';
   setApp(html);
 }
-function sfCustChange(v){var w=document.getElementById('sf-newcust-wrap');if(w)w.style.display=v?'none':'';}
+function sfCustChange(v){if(v){activeCust=customers.find(function(c){return c.Name===v;});}else{activeCust=null;}}
 
 function saveSample(){
   var year=parseInt((document.getElementById('sf-year')||{}).value,10);if(!year||year<1990){notify('Enter a valid year.','err');return;}
-  function doSave(custId){
-    var custName = activeCust ? activeCust.Name : '';
-    var data={customerId:custId,customerName:custName,year:year};
-    METRICS.forEach(function(m){var raw=((document.getElementById('sf-'+m.key)||{}).value||'').trim();if(raw!=='')data[m.key]=parseFloat(raw);});
-    var lime=((document.getElementById('sf-lime')||{}).value||'');if(lime)data.limestoneLbs=lime;
-    ['recN','recP','recK'].forEach(function(k){var v=((document.getElementById('sf-'+k)||{}).value||'').trim();if(v)data[k]=v;});
-    gasPost({action:'saveSample',data:data}).then(function(r){if(!r.success){notify('Error: '+(r.error||''),'err');return;}data.id=r.id;data.createdAt=new Date().toISOString();samples.push(data);notify('✅ Sample saved!');if(activeCust)openCust(activeCust.ID);else showPage('dash');}).catch(function(err){notify('Error: '+err.message,'err');});
+  if(!activeCust){
+    var sel=document.getElementById('sf-cust');
+    if(sel&&sel.value){activeCust=customers.find(function(c){return c.Name===sel.value;});}
   }
-  if(activeCust){doSave(activeCust.ID);return;}
-  var selEl=document.getElementById('sf-cust');var selId=selEl?selEl.value:'';
-  if(selId){activeCust=customers.find(function(c){return String(c.ID)===String(selId);});doSave(selId);return;}
-  var newName=((document.getElementById('sf-newcust')||{}).value||'').trim();if(!newName){notify('Enter a customer name.','err');return;}
-  notify('Customer not in master list. Please add them to the master Customer spreadsheet first.','err',6000);
+  if(!activeCust){notify('Please select a customer.','err');return;}
+
+  var data={CustomerName:activeCust.Name,Field:activeCust.Field||'',Year:year};
+  METRICS.forEach(function(m){var raw=((document.getElementById('sf-'+m.key)||{}).value||'').trim();if(raw!=='')data[m.key]=parseFloat(raw);});
+  data.LimestoneLbs=((document.getElementById('sf-LimestoneLbs')||{}).value||'').trim()||'0';
+  ['RecN','RecP','RecK'].forEach(function(k){var v=((document.getElementById('sf-'+k)||{}).value||'').trim();if(v)data[k]=v;});
+
+  gasPost({action:'saveSample',data:data}).then(function(r){
+    if(!r.success){notify('Error: '+(r.error||''),'err');return;}
+    data.ID=r.id;data.DateAdded=new Date().toISOString();samples.push(data);
+    notify('✅ Sample saved!');openCust(activeCust.Name);
+  }).catch(function(err){notify('Error: '+err.message,'err');});
 }
 
 // ── Delete ──
-function doDeleteCust(id){if(!confirm('Delete this customer and all samples?'))return;gasPost({action:'deleteCustomer',id:id}).then(function(r){if(!r.success){notify('Error','err');return;}customers=customers.filter(function(x){return String(x.ID)!==String(id);});samples=samples.filter(function(s){return String(s.customerId)!==String(id);});notify('Deleted.','inf');showPage('dash');}).catch(function(err){notify('Error','err');});}
-function doDeleteSample(id,year){if(!confirm('Delete '+year+' sample?'))return;var cid=activeCust?activeCust.ID:null;gasPost({action:'deleteSample',id:id}).then(function(r){if(!r.success){notify('Error','err');return;}samples=samples.filter(function(s){return String(s.id)!==String(id);});notify('Deleted.','inf');if(cid)openCust(cid);else showPage('dash');}).catch(function(err){notify('Error','err');});}
+function doDeleteSample(id,year){if(!confirm('Delete '+year+' sample?'))return;var cName=activeCust?activeCust.Name:null;gasPost({action:'deleteSample',id:id}).then(function(r){if(!r.success){notify('Error','err');return;}samples=samples.filter(function(s){return String(s.ID)!==String(id);});notify('Deleted.','inf');if(cName)openCust(cName);else showPage('dash');}).catch(function(err){notify('Error','err');});}
 
 // ── Reports ──
 function renderReportPage(){
   var html='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px" class="no-print"><div class="page-title">Reports</div><button class="btn-green btn-sm" onclick="window.print()">🖨️ Print</button></div>'
     +'<div class="card no-print"><div class="sec-title">Select Customer</div><select class="form-input" id="rpt-cust" onchange="renderReport()"><option value="">— Select —</option>';
-  customers.forEach(function(c){html+='<option value="'+c.ID+'">'+esc(c.Name)+'</option>';});
+  customers.forEach(function(c){html+='<option value="'+esc(c.Name)+'">'+esc(c.Name)+'</option>';});
   html+='</select></div><div id="rpt-out"></div>';setApp(html);
 }
-function openReport(id){showPage('report');setTimeout(function(){var el=document.getElementById('rpt-cust');if(el){el.value=id;renderReport();}},80);}
+function openReport(name){showPage('report');setTimeout(function(){var el=document.getElementById('rpt-cust');if(el){el.value=name;renderReport();}},80);}
 function renderReport(){
-  var id=(document.getElementById('rpt-cust')||{}).value;var out=document.getElementById('rpt-out');if(!out||!id){if(out)out.innerHTML='';return;}
-  var c=customers.find(function(x){return String(x.ID)===String(id);});var cs=samples.filter(function(s){return String(s.customerId)===String(id);}).sort(function(a,b){return a.year-b.year;});
+  var name=(document.getElementById('rpt-cust')||{}).value;var out=document.getElementById('rpt-out');if(!out||!name){if(out)out.innerHTML='';return;}
+  var c=customers.find(function(x){return x.Name===name;});var cs=samples.filter(function(s){return String(s.CustomerName)===name;}).sort(function(a,b){return a.Year-b.Year;});
   if(!c||!cs.length){out.innerHTML='<div style="color:#78716c;font-family:sans-serif;padding:16px">No samples.</div>';return;}
-  var today=new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});var years=cs.map(function(s){return s.year;});
+  var today=new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});var years=cs.map(function(s){return s.Year;});
   var h='<div style="background:white;color:#1a1a1a;border-radius:12px;padding:24px;font-family:sans-serif">';
   h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #2d5a1b;padding-bottom:14px;margin-bottom:18px;flex-wrap:wrap;gap:10px"><div style="font-size:18px;font-weight:900;color:#2d5a1b;line-height:1.2">LAWNS PLANTS<br>&amp; PESTS LLC<br><span style="font-size:11px;font-weight:400;color:#666">Soil Health Report</span></div><div style="text-align:right"><div style="font-size:16px;font-weight:700;color:#2d5a1b">'+esc(c.Name)+'</div>'+(c.Field?'<div style="font-size:11px;color:#666">'+esc(c.Field)+'</div>':'')+(c.Address?'<div style="font-size:11px;color:#666">'+esc(c.Address)+(c.City?', '+esc(c.City):'')+'</div>':'')+'<div style="font-size:11px;color:#666">'+today+'</div></div></div>';
   h+='<div style="font-size:11px;font-weight:700;color:#2d5a1b;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Recommendations</div><table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:18px"><thead><tr><th style="background:#f0f7ee;padding:6px 8px;text-align:left;color:#2d5a1b;font-weight:600">Item</th>';
   years.forEach(function(y){h+='<th style="background:#f0f7ee;padding:6px 8px;text-align:center;color:#2d5a1b;font-weight:600">'+y+'</th>';});
   h+='</tr></thead><tbody>';
-  RECS.forEach(function(r){h+='<tr><td style="padding:6px 8px;border-bottom:1px solid #eee;font-weight:600">'+r.label+'</td>';cs.forEach(function(s){var v=s[r.key],none=!v||String(v).toLowerCase()==='none'||v==='0';h+='<td style="padding:6px 8px;border-bottom:1px solid #eee;text-align:center;font-weight:700;color:'+(none?'#16a34a':'#d97706')+'">'+(v||'None')+'</td>';});h+='</tr>';});
+  RECS.forEach(function(r){h+='<tr><td style="padding:6px 8px;border-bottom:1px solid #eee;font-weight:600">'+r.label+'</td>';cs.forEach(function(s){var v=s[r.key],none=!v||String(v).toLowerCase()==='none'||v==='0'||v===0;h+='<td style="padding:6px 8px;border-bottom:1px solid #eee;text-align:center;font-weight:700;color:'+(none?'#16a34a':'#d97706')+'">'+(none?'None':v)+'</td>';});h+='</tr>';});
   h+='</tbody></table>';
   h+='<div style="font-size:11px;font-weight:700;color:#2d5a1b;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Soil Test Results</div><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr><th style="background:#f0f7ee;padding:6px 8px;text-align:left;color:#2d5a1b;font-weight:600">Metric</th><th style="background:#f0f7ee;padding:6px 8px;text-align:left;color:#2d5a1b;font-weight:600">Ideal</th>';
   years.forEach(function(y){h+='<th style="background:#f0f7ee;padding:6px 8px;text-align:center;color:#2d5a1b;font-weight:600">'+y+'</th>';});
