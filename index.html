@@ -4,18 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>SoilTracks - Lawns Plants &amp; Pests</title>
+<title>SoilTracks</title>
 <style>
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
   body{background:#0c0c0c;color:#e7e5e4;font-family:Georgia,serif;min-height:100vh}
   .header{background:#111;border-bottom:1px solid #292524;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;gap:10px}
-  .logo{display:flex;align-items:center;gap:10px;flex-shrink:0}
-  .logo-icon{width:38px;height:38px;border-radius:8px;overflow:hidden;flex-shrink:0}
-  .logo-text{font-size:18px;font-weight:700;color:#f5f5f4}
-  .logo-sub{font-size:10px;color:#78716c;font-family:monospace}
-  .nav{display:flex;gap:2px}
-  .nav-btn{min-height:40px;padding:0 12px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:600;background:transparent;color:#a8a29e;font-family:sans-serif;white-space:nowrap}
-  .nav-btn.active{background:#4ade8022;color:#4ade80}
+  .logo{display:flex;align-items:center;gap:10px}.logo-icon{width:38px;height:38px;border-radius:8px;overflow:hidden}
+  .logo-text{font-size:18px;font-weight:700;color:#f5f5f4}.logo-sub{font-size:10px;color:#78716c;font-family:monospace}
+  .nav{display:flex;gap:2px}.nav-btn{min-height:40px;padding:0 12px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:600;background:transparent;color:#a8a29e;font-family:sans-serif;white-space:nowrap}.nav-btn.active{background:#4ade8022;color:#4ade80}
   .main{padding:20px 16px;max-width:900px;margin:0 auto}
   .page-title{font-size:22px;font-weight:700;color:#f5f5f4;margin-bottom:4px}
   .page-sub{color:#78716c;font-size:13px;font-family:sans-serif;margin-bottom:18px;line-height:1.5}
@@ -23,70 +19,43 @@
   .sec-title{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#57534e;margin-bottom:14px;font-family:sans-serif}
   .sub-head{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#4ade8077;margin:20px 0 10px;padding-bottom:6px;border-bottom:1px solid #1f1f1f;font-family:sans-serif}
   .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
-  .stat-card{background:#161616;border:1px solid #222;border-radius:12px;padding:14px}
-  .stat-icon{font-size:22px;margin-bottom:4px}
-  .stat-val{font-size:30px;font-weight:900;color:#4ade80}
-  .stat-label{font-size:11px;color:#78716c;font-family:sans-serif}
+  .stat-card{background:#161616;border:1px solid #222;border-radius:12px;padding:14px}.stat-icon{font-size:22px;margin-bottom:4px}.stat-val{font-size:30px;font-weight:900;color:#4ade80}.stat-label{font-size:11px;color:#78716c;font-family:sans-serif}
   .btn-green{background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;border:none;border-radius:10px;padding:13px 22px;font-size:15px;font-weight:700;cursor:pointer;font-family:sans-serif}
   .btn-outline{background:transparent;border:1px solid #333;border-radius:8px;color:#a8a29e;padding:10px 16px;cursor:pointer;font-size:14px;font-family:sans-serif}
   .btn-danger{background:#7f1d1d33;border:1px solid #f8717133;border-radius:8px;color:#f87171;padding:10px 16px;cursor:pointer;font-size:14px;font-family:sans-serif}
-  .btn-full{width:100%;margin-top:10px;padding:15px 0;text-align:center}
-  .btn-sm{padding:8px 14px;font-size:13px}
+  .btn-full{width:100%;margin-top:10px;padding:15px 0;text-align:center}.btn-sm{padding:8px 14px;font-size:13px}
   .btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-  .form-group{margin-bottom:14px}
-  .form-label{font-size:13px;color:#a8a29e;margin-bottom:5px;display:block;font-family:sans-serif;font-weight:600}
-  .form-input{width:100%;background:#1a1a1a;border:1px solid #333;border-radius:8px;padding:12px 14px;color:#e7e5e4;font-size:16px;font-family:sans-serif;min-height:46px}
-  .form-input:focus{outline:none;border-color:#4ade8055}
-  select.form-input{cursor:pointer}
-  textarea.form-input{min-height:76px;resize:vertical}
-  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-  .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+  .form-group{margin-bottom:14px}.form-label{font-size:13px;color:#a8a29e;margin-bottom:5px;display:block;font-family:sans-serif;font-weight:600}
+  .form-input{width:100%;background:#1a1a1a;border:1px solid #333;border-radius:8px;padding:12px 14px;color:#e7e5e4;font-size:16px;font-family:sans-serif;min-height:46px}.form-input:focus{outline:none;border-color:#4ade8055}
+  select.form-input{cursor:pointer}textarea.form-input{min-height:76px;resize:vertical}
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
   .search-bar{display:flex;align-items:center;gap:10px;padding:11px 14px;background:#161616;border:1px solid #222;border-radius:10px;margin-bottom:12px}
   .search-bar input{flex:1;border:none;outline:none;font-size:15px;background:transparent;color:#e7e5e4;font-family:sans-serif}
-  .cust-row{padding:13px 14px;border-radius:10px;cursor:pointer;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;border:1px solid transparent;transition:all .15s}
-  .cust-row:hover{background:#1a1a1a;border-color:#2a2a2a}
-  .cust-name{font-weight:700;color:#f5f5f4;font-size:16px}
-  .cust-sub{font-size:12px;color:#78716c;font-family:sans-serif;margin-top:2px}
+  .cust-row{padding:13px 14px;border-radius:10px;cursor:pointer;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;border:1px solid transparent;transition:all .15s}.cust-row:hover{background:#1a1a1a;border-color:#2a2a2a}
+  .cust-name{font-weight:700;color:#f5f5f4;font-size:16px}.cust-sub{font-size:12px;color:#78716c;font-family:sans-serif;margin-top:2px}
   .badge{display:inline-block;padding:3px 9px;border-radius:5px;font-size:12px;font-weight:700;font-family:monospace}
-  .b-green{background:#4ade8018;color:#4ade80;border:1px solid #4ade8033}
-  .b-red{background:#f8717118;color:#f87171;border:1px solid #f8717133}
-  .b-orange{background:#fb923c18;color:#fb923c;border:1px solid #fb923c33}
-  .b-gray{color:#57534e}
-  .tbl-wrap{overflow-x:auto}
-  table{width:100%;border-collapse:collapse;font-size:13px}
-  th{padding:7px 9px;font-weight:600;border-bottom:1px solid #222;font-family:sans-serif;font-size:11px;color:#57534e;text-align:left;white-space:nowrap}
-  th.c{text-align:center;color:#a8a29e;font-family:monospace;font-size:13px}
-  td{padding:8px 9px;border-bottom:1px solid #1a1a1a}
-  td.c{text-align:center}
+  .b-green{background:#4ade8018;color:#4ade80;border:1px solid #4ade8033}.b-red{background:#f8717118;color:#f87171;border:1px solid #f8717133}.b-orange{background:#fb923c18;color:#fb923c;border:1px solid #fb923c33}.b-gray{color:#57534e}
+  .tbl-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:13px}
+  th{padding:7px 9px;font-weight:600;border-bottom:1px solid #222;font-family:sans-serif;font-size:11px;color:#57534e;text-align:left;white-space:nowrap}th.c{text-align:center;color:#a8a29e;font-family:monospace;font-size:13px}
+  td{padding:8px 9px;border-bottom:1px solid #1a1a1a}td.c{text-align:center}
   .sec-row td{padding:10px 9px 4px;color:#4ade8077;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;font-family:sans-serif;border-bottom:1px solid #1e1e1e;background:#0f0f0f}
-  .m-lbl{font-weight:600;color:#d6d3d1;font-family:sans-serif;cursor:pointer;text-decoration:underline dotted #444}
-  .ideal{color:#57534e;font-size:11px;font-family:monospace;white-space:nowrap}
-  .scan-opt{display:flex;align-items:center;gap:14px;padding:18px;background:#161616;border:1px solid #222;border-radius:12px;cursor:pointer;margin-bottom:12px}
-  .scan-opt:hover{border-color:#4ade8044}
-  .scan-opt.primary{background:linear-gradient(135deg,#16a34a,#15803d);border-color:#16a34a;color:#fff}
-  .scan-opt .si{font-size:30px;flex-shrink:0}
-  .scan-opt .st{font-size:17px;font-weight:700;margin-bottom:2px;font-family:sans-serif}
-  .scan-opt .sd{font-size:13px;opacity:.75;font-family:sans-serif;line-height:1.4}
-  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:200;display:none;align-items:flex-end;justify-content:center}
-  .modal-overlay.open{display:flex}
+  .m-lbl{font-weight:600;color:#d6d3d1;font-family:sans-serif}.ideal{color:#57534e;font-size:11px;font-family:monospace;white-space:nowrap}
+  .scan-opt{display:flex;align-items:center;gap:14px;padding:18px;background:#161616;border:1px solid #222;border-radius:12px;cursor:pointer;margin-bottom:12px}.scan-opt:hover{border-color:#4ade8044}.scan-opt.primary{background:linear-gradient(135deg,#16a34a,#15803d);border-color:#16a34a;color:#fff}
+  .scan-opt .si{font-size:30px;flex-shrink:0}.scan-opt .st{font-size:17px;font-weight:700;margin-bottom:2px;font-family:sans-serif}.scan-opt .sd{font-size:13px;opacity:.75;font-family:sans-serif;line-height:1.4}
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:200;display:none;align-items:flex-end;justify-content:center}.modal-overlay.open{display:flex}
   .modal{background:#1a1a1a;border:1px solid #333;border-radius:18px 18px 0 0;padding:26px 22px;width:100%;max-width:520px;max-height:75vh;overflow-y:auto}
-  .modal h2{font-size:19px;font-weight:700;color:#f5f5f4;margin-bottom:4px}
-  .modal-rng{font-size:13px;color:#4ade80;margin-bottom:14px;font-family:monospace}
+  .modal h2{font-size:19px;font-weight:700;color:#f5f5f4;margin-bottom:4px}.modal-rng{font-size:13px;color:#4ade80;margin-bottom:14px;font-family:monospace}
   .modal-close{float:right;background:none;border:none;font-size:26px;cursor:pointer;color:#78716c}
-  .modal-sec-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#4ade80;margin:12px 0 5px;font-family:sans-serif}
-  .modal-body{font-size:14px;line-height:1.65;color:#a8a29e}
+  .modal-sec-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#4ade80;margin:12px 0 5px;font-family:sans-serif}.modal-body{font-size:14px;line-height:1.65;color:#a8a29e}
   .notif{position:fixed;top:14px;left:10px;right:10px;max-width:480px;margin:0 auto;border-radius:10px;padding:13px 16px;font-size:14px;font-weight:600;z-index:999;box-shadow:0 8px 24px #00000088;font-family:sans-serif;display:none}
-  .notif.ok{background:#14532d;border:1px solid #4ade80;color:#bbf7d0}
-  .notif.err{background:#7f1d1d;border:1px solid #f87171;color:#fca5a5}
-  .notif.inf{background:#1e3a5f;border:1px solid #60a5fa;color:#bfdbfe}
+  .notif.ok{background:#14532d;border:1px solid #4ade80;color:#bbf7d0}.notif.err{background:#7f1d1d;border:1px solid #f87171;color:#fca5a5}.notif.inf{background:#1e3a5f;border:1px solid #60a5fa;color:#bfdbfe}
   .loading{text-align:center;padding:60px 20px;color:#78716c;font-family:sans-serif}
-  .spin{display:inline-block;width:34px;height:34px;border:3px solid #333;border-top-color:#4ade80;border-radius:50%;animation:spin .7s linear infinite}
-  @keyframes spin{to{transform:rotate(360deg)}}
+  .spin{display:inline-block;width:34px;height:34px;border:3px solid #333;border-top-color:#4ade80;border-radius:50%;animation:spin .7s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
   .empty{text-align:center;padding:44px 20px;color:#78716c;font-family:sans-serif}
   .back{display:inline-flex;align-items:center;gap:6px;color:#78716c;font-family:sans-serif;font-size:14px;cursor:pointer;margin-bottom:16px;background:none;border:none;padding:0}
   .banner-ok{background:#0a1f0f;border:1px solid #4ade8033;border-radius:8px;padding:11px 14px;margin-bottom:12px;font-family:sans-serif;font-size:13px;color:#4ade80}
   .banner-err{background:#1a0000;border:1px solid #f8717133;border-radius:8px;padding:11px 14px;margin-bottom:12px;font-family:sans-serif;font-size:13px;color:#f87171}
-  .photo-preview{max-width:100%;border-radius:10px;margin-bottom:12px;border:1px solid #333}
+  .photo-preview{max-width:100%;border-radius:10px;margin-top:14px;border:1px solid #333}
   @media print{.header,.no-print{display:none !important}body{background:#fff}.main{padding:0}}
   @media(max-width:600px){.stats-grid{grid-template-columns:1fr 1fr}.grid-2{grid-template-columns:1fr}.grid-3{grid-template-columns:1fr 1fr}.nav-btn{padding:0 8px;font-size:12px}.logo-sub{display:none}}
 </style>
@@ -98,7 +67,7 @@
 <input type="file" accept="image/*" capture="environment" id="cam-input" style="display:none">
 <div class="header">
   <div class="logo">
-    <div class="logo-icon"><svg width="38" height="38" viewBox="0 0 38 38" fill="none"><rect width="38" height="38" rx="8" fill="#1a1208"/><path d="M6 28c2-4 5-3 8-5s4-6 7-5 3 4 6 3 5-3 5-3v10H6z" fill="#3d2b1f"/><path d="M6 30c3-2 5-1 8-3s4-4 7-3 3 3 6 2 5-2 5-2v6H6z" fill="#5c3d2e"/><path d="M19 8v12" stroke="#4ade80" stroke-width="1.8" stroke-linecap="round"/><path d="M19 8c0 0-4 3-5 6" stroke="#4ade80" stroke-width="1.5" stroke-linecap="round" fill="none"/><path d="M19 10c0 0 3 2 4 5" stroke="#4ade80" stroke-width="1.5" stroke-linecap="round" fill="none"/><ellipse cx="14" cy="13" rx="3" ry="4" fill="#4ade80" opacity=".8" transform="rotate(-20 14 13)"/><ellipse cx="23" cy="14" rx="2.5" ry="3.5" fill="#22c55e" opacity=".7" transform="rotate(15 23 14)"/><ellipse cx="18" cy="9" rx="2" ry="3" fill="#16a34a" opacity=".9" transform="rotate(-5 18 9)"/></svg></div>
+    <div class="logo-icon"><svg width="38" height="38" viewBox="0 0 38 38" fill="none"><rect width="38" height="38" rx="8" fill="#1a1208"/><path d="M6 28c2-4 5-3 8-5s4-6 7-5 3 4 6 3 5-3 5-3v10H6z" fill="#3d2b1f"/><path d="M6 30c3-2 5-1 8-3s4-4 7-3 3 3 6 2 5-2 5-2v6H6z" fill="#5c3d2e"/><path d="M19 8v12" stroke="#4ade80" stroke-width="1.8" stroke-linecap="round"/><ellipse cx="14" cy="13" rx="3" ry="4" fill="#4ade80" opacity=".8" transform="rotate(-20 14 13)"/><ellipse cx="23" cy="14" rx="2.5" ry="3.5" fill="#22c55e" opacity=".7" transform="rotate(15 23 14)"/><ellipse cx="18" cy="9" rx="2" ry="3" fill="#16a34a" opacity=".9" transform="rotate(-5 18 9)"/></svg></div>
     <div><div class="logo-text">SoilTracks</div><div class="logo-sub">Lawns Plants &amp; Pests LLC</div></div>
   </div>
   <div class="nav">
@@ -111,283 +80,269 @@
 <script>
 var customers=[],samples=[],activeCust=null,prefill=null;
 
-// Keys match EXACT sheet headers (capitalized)
-var METRICS=[
-  {key:'pH',label:'Soil pH',unit:'',min:6.0,max:7.0,sec:'Lab Results',about:'Measures acidity/alkalinity.',fix:'If low, apply limestone.'},
-  {key:'Phosphorus',label:'Phosphorus (P)',unit:'lb/A',min:50,max:100,sec:'Lab Results',about:'Drives root development.',fix:'Apply phosphate fertilizer if deficient.'},
-  {key:'Acidity',label:'Buffer Acidity',unit:'meq/100g',min:0,max:2,sec:'Exchangeable Cations',about:'Reserve acidity. Higher = more lime needed.',fix:'Determines limestone rate.'},
-  {key:'Potassium',label:'Potassium (K)',unit:'meq/100g',min:0.15,max:0.40,sec:'Exchangeable Cations',about:'Water regulation and winter hardiness.',fix:'Apply potash if deficient.'},
-  {key:'Magnesium',label:'Magnesium (Mg)',unit:'meq/100g',min:0.5,max:2.5,sec:'Exchangeable Cations',about:'Central atom in chlorophyll.',fix:'Apply dolomitic limestone or Epsom salt.'},
-  {key:'Calcium',label:'Calcium (Ca)',unit:'meq/100g',min:5,max:15,sec:'Exchangeable Cations',about:'Builds cell walls.',fix:'Apply limestone.'},
-  {key:'CEC',label:'CEC',unit:'meq/100g',min:10,max:20,sec:'Exchangeable Cations',info:true,about:'Nutrient holding capacity.',fix:'Informational. Add organic matter.'},
-  {key:'SatK',label:'K Saturation',unit:'%',min:2,max:5,sec:'% Saturation of CEC',about:'K as % of CEC.',fix:'Balance with Ca and Mg.'},
-  {key:'SatMg',label:'Mg Saturation',unit:'%',min:10,max:20,sec:'% Saturation of CEC',about:'Mg as % of CEC.',fix:'Apply dolomitic limestone.'},
-  {key:'SatCa',label:'Ca Saturation',unit:'%',min:60,max:80,sec:'% Saturation of CEC',about:'Ca as % of CEC.',fix:'Apply limestone.'}
+// Top section metrics
+var TOP_FIELDS=[
+  {key:'pH',label:'Soil pH',unit:'',min:6.0,max:7.0},
+  {key:'Phosphorus_ppm',label:'Phosphorus',unit:'ppm',min:50,max:100},
+  {key:'Potassium_ppm',label:'Potassium',unit:'ppm',min:100,max:300}
 ];
-var SECTIONS=['Lab Results','Exchangeable Cations','% Saturation of CEC'];
-var RECS=[
+// Rec fields
+var REC_FIELDS=[
   {key:'LimestoneLbs',label:'Limestone (lb/1000 ft²)',note:'Raises pH. Split if >100 lb.'},
   {key:'RecN',label:'Nitrogen (N)',note:'Split into multiple apps.'},
-  {key:'RecP',label:'Phosphorus (P₂O₅)',note:'Only apply what test recommends.'},
-  {key:'RecK',label:'Potassium (K₂O)',note:'Important for winter hardiness.'}
+  {key:'RecP',label:'Phosphorus (P₂O₅)',note:'Only apply what test says.'},
+  {key:'RecK',label:'Potassium (K₂O)',note:'Winter hardiness.'}
 ];
+// Lab results
+var LAB_FIELDS=[
+  {key:'P_lbA',label:'P (lb/A)',unit:'lb/A',min:50,max:200},
+  {key:'Acidity',label:'Acidity',unit:'meq/100g',min:0,max:2},
+  {key:'K_meq',label:'K',unit:'meq/100g',min:0.15,max:0.40},
+  {key:'Mg_meq',label:'Mg',unit:'meq/100g',min:0.5,max:2.5},
+  {key:'Ca_meq',label:'Ca',unit:'meq/100g',min:5,max:15},
+  {key:'CEC',label:'CEC',unit:'meq/100g',min:10,max:20,info:true},
+  {key:'SatK',label:'K Sat',unit:'%',min:2,max:5},
+  {key:'SatMg',label:'Mg Sat',unit:'%',min:10,max:20},
+  {key:'SatCa',label:'Ca Sat',unit:'%',min:60,max:80}
+];
+var ALL_METRICS=[].concat(TOP_FIELDS,LAB_FIELDS);
 
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function statusBadge(m,v){if(m.info||v==null||v==='')return'<span class="b-gray">—</span>';var n=parseFloat(v);if(isNaN(n))return'<span class="b-gray">—</span>';if(n>=m.min&&n<=m.max)return'<span class="badge b-green">'+n+'</span>';if(n>m.max)return'<span class="badge b-orange">'+n+'</span>';return'<span class="badge b-red">'+n+'</span>';}
+function badge(m,v){if(!m||m.info||v==null||v==='')return'<span class="b-gray">—</span>';var n=parseFloat(v);if(isNaN(n))return'<span class="b-gray">—</span>';if(n>=m.min&&n<=m.max)return'<span class="badge b-green">'+n+'</span>';if(n>m.max)return'<span class="badge b-orange">'+n+'</span>';return'<span class="badge b-red">'+n+'</span>';}
 function setApp(h){document.getElementById('app').innerHTML=h;}
 function notify(msg,type,ms){var el=document.getElementById('notif');el.textContent=msg;el.className='notif '+(type||'ok');el.style.display='block';clearTimeout(el._t);el._t=setTimeout(function(){el.style.display='none';},ms||4000);}
 function navActive(id){['nb-dash','nb-add','nb-report'].forEach(function(n){var el=document.getElementById(n);if(el)el.classList.remove('active');});var t=document.getElementById('nb-'+id);if(t)t.classList.add('active');}
 function gasGet(p){var qs=Object.keys(p).map(function(k){return encodeURIComponent(k)+'='+encodeURIComponent(p[k]);}).join('&');return fetch(GAS_URL+'?'+qs).then(function(r){return r.json();});}
 function gasPost(b){return fetch(GAS_URL,{method:'POST',body:JSON.stringify(b)}).then(function(r){return r.json();});}
 
-// Camera handler — show photo on screen for Live Text
 document.addEventListener('DOMContentLoaded',function(){
   document.getElementById('cam-input').addEventListener('change',function(e){
-    var file=e.target.files[0];
-    if(!file)return;
-    e.target.value='';
+    var file=e.target.files[0];if(!file)return;e.target.value='';
     var reader=new FileReader();
     reader.onload=function(ev){
-      var imgEl=document.getElementById('snap-photo');
-      if(imgEl){
-        imgEl.src=ev.target.result;
-        imgEl.style.display='block';
-        document.getElementById('snap-step2').style.display='block';
-        document.getElementById('snap-step3').style.display='block';
-        notify('Photo taken! Now tap and hold on the image below to use Live Text.','inf',6000);
-      }
-    };
-    reader.readAsDataURL(file);
+      var img=document.getElementById('snap-photo');
+      if(img){img.src=ev.target.result;img.style.display='block';document.getElementById('snap-step2').style.display='block';document.getElementById('snap-step3').style.display='block';notify('Photo ready! Tap and hold on image to use Live Text.','inf',6000);}
+    };reader.readAsDataURL(file);
   });
   loadAndShow();
 });
 
 function loadAndShow(){
   setApp('<div class="loading"><div class="spin"></div><p style="margin-top:14px">Loading...</p></div>');
-  var t=setTimeout(function(){setApp('<div class="banner-err">Could not reach Apps Script.<br><button class="btn-green btn-sm" style="margin-top:10px" onclick="loadAndShow()">↺ Retry</button></div>');},15000);
-  gasGet({action:'getData'}).then(function(d){clearTimeout(t);if(!d.success){setApp('<div class="banner-err">Error: '+esc(d.error)+'</div>');return;}customers=d.customers||[];samples=d.samples||[];showPage('dash');}).catch(function(err){clearTimeout(t);setApp('<div class="banner-err">Network error: '+esc(err.message)+'<br><button class="btn-green btn-sm" style="margin-top:10px" onclick="loadAndShow()">↺ Retry</button></div>');});
+  var t=setTimeout(function(){setApp('<div class="banner-err">Could not connect.<br><button class="btn-green btn-sm" style="margin-top:10px" onclick="loadAndShow()">↺ Retry</button></div>');},15000);
+  gasGet({action:'getData'}).then(function(d){clearTimeout(t);if(!d.success){setApp('<div class="banner-err">'+esc(d.error)+'</div>');return;}customers=d.customers||[];samples=d.samples||[];showPage('dash');}).catch(function(err){clearTimeout(t);setApp('<div class="banner-err">'+esc(err.message)+'<br><button class="btn-green btn-sm" style="margin-top:10px" onclick="loadAndShow()">↺ Retry</button></div>');});
 }
-function showPage(page){navActive(page);if(page==='dash'){activeCust=null;renderDashboard();}else if(page==='add'){prefill=null;renderScanStep();}else if(page==='report')renderReportPage();}
+function showPage(p){navActive(p);if(p==='dash'){activeCust=null;renderDash();}else if(p==='add'){prefill=null;renderScan();}else if(p==='report')renderReportPage();}
 
 // ── Dashboard ──
-function renderDashboard(){
-  var years={};samples.forEach(function(s){if(s.Year)years[s.Year]=true;});
-  var counts={};samples.forEach(function(s){METRICS.forEach(function(m){if(m.info)return;var n=parseFloat(s[m.key]);if(!isNaN(n)&&(n<m.min||n>m.max))counts[m.key]=(counts[m.key]||0)+1;});});
-  var topIssues=Object.keys(counts).sort(function(a,b){return counts[b]-counts[a];}).slice(0,4);
-  var html='<div class="page-title">Soil Data Overview</div><div class="page-sub">'+customers.length+' customers · '+samples.length+' samples · '+Object.keys(years).length+' seasons</div>';
-  html+='<div class="stats-grid"><div class="stat-card"><div class="stat-icon">👨‍🌾</div><div class="stat-val">'+customers.length+'</div><div class="stat-label">Customers</div></div><div class="stat-card"><div class="stat-icon">🧪</div><div class="stat-val">'+samples.length+'</div><div class="stat-label">Samples</div></div><div class="stat-card"><div class="stat-icon">📅</div><div class="stat-val">'+Object.keys(years).length+'</div><div class="stat-label">Seasons</div></div></div>';
-  if(topIssues.length){html+='<div class="card"><div class="sec-title">Common Issues</div>';topIssues.forEach(function(k){var m=METRICS.find(function(x){return x.key===k;});html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #1e1e1e"><span style="font-family:sans-serif;font-size:13px;color:#d6d3d1">'+esc(m?m.label:k)+'</span><span class="badge b-red">'+counts[k]+' out of range</span></div>';});html+='</div>';}
-  html+='<div class="card no-print"><div class="sec-title" style="margin-bottom:12px">Customers</div>';
-  html+='<div class="search-bar"><span style="color:#57534e">🔍</span><input id="csearch" placeholder="Search..." oninput="filterCust()"></div>';
-  html+='<div id="clist">'+buildCustList(customers)+'</div></div>';
+function renderDash(){
+  var yrs={};samples.forEach(function(s){if(s.Year)yrs[s.Year]=true;});
+  var html='<div class="page-title">Soil Data Overview</div><div class="page-sub">'+customers.length+' customers · '+samples.length+' samples · '+Object.keys(yrs).length+' seasons</div>';
+  html+='<div class="stats-grid"><div class="stat-card"><div class="stat-icon">👨‍🌾</div><div class="stat-val">'+customers.length+'</div><div class="stat-label">Customers</div></div><div class="stat-card"><div class="stat-icon">🧪</div><div class="stat-val">'+samples.length+'</div><div class="stat-label">Samples</div></div><div class="stat-card"><div class="stat-icon">📅</div><div class="stat-val">'+Object.keys(yrs).length+'</div><div class="stat-label">Seasons</div></div></div>';
+  html+='<div class="card no-print"><div class="sec-title">Customers</div><div class="search-bar"><span style="color:#57534e">🔍</span><input id="csearch" placeholder="Search..." oninput="filterCust()"></div><div id="clist">'+buildCustList(customers)+'</div></div>';
   setApp(html);
 }
 function buildCustList(list){
-  if(!list.length)return'<div class="empty"><div style="font-size:40px;margin-bottom:10px">🌱</div><div style="font-size:15px;font-weight:700;color:#f5f5f4">No customers yet</div></div>';
+  if(!list.length)return'<div class="empty"><div style="font-size:40px;margin-bottom:10px">🌱</div><div style="font-size:15px;font-weight:700;color:#f5f5f4">No customers</div></div>';
   return list.map(function(c){
-    var cs=samples.filter(function(s){return String(s.CustomerName)===String(c.Name);});
+    var cs=samples.filter(function(s){return s.CustomerName===c.Name;});
     var yrs=[...new Set(cs.map(function(s){return s.Year;}).filter(Boolean))].sort().join(', ');
     return'<div class="cust-row" onclick="openCust(\''+esc(c.Name)+'\')"><div><div class="cust-name">'+esc(c.Name)+'</div><div class="cust-sub">'+(c.Field?esc(c.Field)+' · ':'')+cs.length+' sample'+(cs.length!==1?'s':'')+(yrs?' · '+yrs:'')+'</div></div><span style="color:#57534e;font-size:20px">›</span></div>';
   }).join('');
 }
-function filterCust(){var q=(document.getElementById('csearch').value||'').toLowerCase();var list=q?customers.filter(function(c){return(c.Name||'').toLowerCase().includes(q)||(c.Field||'').toLowerCase().includes(q)||(c.City||'').toLowerCase().includes(q);}):customers;document.getElementById('clist').innerHTML=buildCustList(list);}
+function filterCust(){var q=(document.getElementById('csearch').value||'').toLowerCase();var list=q?customers.filter(function(c){return(c.Name||'').toLowerCase().includes(q)||(c.City||'').toLowerCase().includes(q);}):customers;document.getElementById('clist').innerHTML=buildCustList(list);}
 
 // ── Customer Detail ──
 function openCust(name){
   activeCust=customers.find(function(c){return c.Name===name;});if(!activeCust)return;navActive('');
-  var c=activeCust;var cs=samples.filter(function(s){return String(s.CustomerName)===String(c.Name);}).sort(function(a,b){return b.Year-a.Year;});
+  var c=activeCust,cs=samples.filter(function(s){return s.CustomerName===c.Name;}).sort(function(a,b){return b.Year-a.Year;});
   var html='<button class="back no-print" onclick="showPage(\'dash\')">&larr; Back</button>';
-  html+='<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:6px"><div class="page-title">'+esc(c.Name)+'</div><div class="btn-row no-print" style="margin:0"><button class="btn-green btn-sm" onclick="startSampleFor()">+ Sample</button></div></div>';
-  var info=[];if(c.Field)info.push(esc(c.Field));if(c.Address)info.push(esc(c.Address)+(c.City?', '+esc(c.City):''));if(c.Phone)info.push(esc(c.Phone));if(c.Email)info.push(esc(c.Email));
+  html+='<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:6px"><div class="page-title">'+esc(c.Name)+'</div><div class="btn-row no-print" style="margin:0"><button class="btn-green btn-sm" onclick="startSample()">+ Sample</button></div></div>';
+  var info=[];if(c.Field)info.push(esc(c.Field));if(c.Address)info.push(esc(c.Address)+(c.City?', '+esc(c.City):''));if(c.Phone)info.push(esc(c.Phone));
   if(info.length)html+='<div class="page-sub">'+info.join(' · ')+'</div>';
-  if(!cs.length){html+='<div class="empty"><div style="font-size:40px;margin-bottom:10px">🧪</div><div style="font-size:15px;font-weight:700;color:#f5f5f4">No samples yet</div><button class="btn-green btn-full no-print" onclick="startSampleFor()">+ Add First Sample</button></div>';setApp(html);return;}
+  if(!cs.length){html+='<div class="empty"><div style="font-size:40px;margin-bottom:10px">🧪</div><div style="font-size:15px;font-weight:700;color:#f5f5f4">No samples yet</div><button class="btn-green btn-full no-print" onclick="startSample()">+ Add Sample</button></div>';setApp(html);return;}
   var years=cs.map(function(s){return s.Year;});
+
+  // Recommendations
   html+='<div class="card"><div class="sec-title">Recommendations</div><div class="tbl-wrap"><table><thead><tr><th>Item</th>';years.forEach(function(y){html+='<th class="c">'+y+'</th>';});html+='<th>Notes</th></tr></thead><tbody>';
-  RECS.forEach(function(r){html+='<tr><td style="font-family:sans-serif;font-size:13px;font-weight:600;color:#d6d3d1;white-space:nowrap">'+r.label+'</td>';cs.forEach(function(s){var v=s[r.key],none=!v||String(v).toLowerCase()==='none'||v==='0'||v===0;html+='<td class="c"><span class="badge '+(none?'b-green':'b-orange')+'">'+(none?'None':v)+'</span></td>';});html+='<td style="color:#57534e;font-size:11px;font-family:sans-serif">'+r.note+'</td></tr>';});
+  REC_FIELDS.forEach(function(r){html+='<tr><td style="font-family:sans-serif;font-size:13px;font-weight:600;color:#d6d3d1;white-space:nowrap">'+r.label+'</td>';cs.forEach(function(s){var v=s[r.key],none=!v||String(v).toLowerCase()==='none'||v==='0'||v===0;html+='<td class="c"><span class="badge '+(none?'b-green':'b-orange')+'">'+(none?'None':v)+'</span></td>';});html+='<td style="color:#57534e;font-size:11px;font-family:sans-serif">'+r.note+'</td></tr>';});
   html+='</tbody></table></div></div>';
-  html+='<div class="card"><div class="sec-title">Lab Results — Year over Year</div><div class="tbl-wrap"><table><thead><tr><th>Metric</th>';years.forEach(function(y){html+='<th class="c">'+y+'</th>';});html+='<th>Ideal</th></tr></thead><tbody>';
-  SECTIONS.forEach(function(sec){html+='<tr class="sec-row"><td colspan="'+(2+years.length)+'">'+sec+'</td></tr>';METRICS.filter(function(m){return m.sec===sec;}).forEach(function(m){html+='<tr><td><span class="m-lbl" onclick="showInfo(\''+m.key+'\')">'+m.label+'</span></td>';cs.forEach(function(s){html+='<td class="c">'+statusBadge(m,s[m.key])+'</td>';});html+='<td class="ideal">'+(m.info?'info':m.min+'–'+m.max+(m.unit?' '+m.unit:''))+'</td></tr>';});});
-  html+='</tbody></table><div class="btn-row no-print" style="margin-top:12px">';cs.forEach(function(s){html+='<button class="btn-danger btn-sm" onclick="doDeleteSample(\''+s.ID+'\',\''+s.Year+'\')">Delete '+s.Year+'</button>';});
+
+  // Top values
+  html+='<div class="card"><div class="sec-title">Soil Nutrient Levels</div><div class="tbl-wrap"><table><thead><tr><th>Metric</th>';years.forEach(function(y){html+='<th class="c">'+y+'</th>';});html+='<th>Ideal</th></tr></thead><tbody>';
+  TOP_FIELDS.forEach(function(m){html+='<tr><td class="m-lbl">'+m.label+(m.unit?' ('+m.unit+')':'')+'</td>';cs.forEach(function(s){html+='<td class="c">'+badge(m,s[m.key])+'</td>';});html+='<td class="ideal">'+m.min+'–'+m.max+'</td></tr>';});
+  html+='</tbody></table></div></div>';
+
+  // Lab results
+  html+='<div class="card"><div class="sec-title">Laboratory Results</div><div class="tbl-wrap"><table><thead><tr><th>Metric</th>';years.forEach(function(y){html+='<th class="c">'+y+'</th>';});html+='<th>Ideal</th></tr></thead><tbody>';
+  LAB_FIELDS.forEach(function(m){html+='<tr><td class="m-lbl">'+m.label+(m.unit?' ('+m.unit+')':'')+'</td>';cs.forEach(function(s){html+='<td class="c">'+badge(m,s[m.key])+'</td>';});html+='<td class="ideal">'+(m.info?'info':m.min+'–'+m.max)+'</td></tr>';});
+  html+='</tbody></table>';
+  html+='<div class="btn-row no-print" style="margin-top:12px">';cs.forEach(function(s){html+='<button class="btn-danger btn-sm" onclick="doDelete(\''+s.ID+'\',\''+s.Year+'\')">Delete '+s.Year+'</button>';});
   html+='</div></div>';
   html+='<button class="btn-outline no-print" onclick="openReport(\''+esc(c.Name)+'\')">🖨 Print Report</button>';
   setApp(html);
 }
 
 // ── Add Sample ──
-function startSampleFor(){prefill=null;renderScanStep();}
-
-function renderScanStep(){
-  var c=activeCust;var back=c?'openCust(\''+esc(c.Name)+'\')':'showPage(\'dash\')';
-  var html='<button class="back" onclick="'+back+'">&larr; Back</button>'
-    +'<div class="page-title">Add Soil Sample'+(c?' — '+esc(c.Name):'')+'</div>'
-    +'<div class="page-sub">Choose how to enter your Penn State soil report data.</div>'
-    +'<div class="scan-opt primary" onclick="renderSnapCopy()"><div class="si">📸</div><div><div class="st">Snap & Copy</div><div class="sd">Take a photo, use Live Text to copy, paste here. Fastest!</div></div></div>'
-    +'<div class="scan-opt" onclick="renderPasteStep()"><div class="si">📋</div><div><div class="st">Paste Report Text</div><div class="sd">Already have text copied? Paste it here.</div></div></div>'
-    +'<div class="scan-opt" onclick="renderSampleForm(null)"><div class="si">✏️</div><div><div class="st">Enter Manually</div><div class="sd">Type in all values by hand.</div></div></div>';
+function startSample(){prefill=null;renderScan();}
+function renderScan(){
+  var c=activeCust,back=c?'openCust(\''+esc(c.Name)+'\')':'showPage(\'dash\')';
+  var html='<button class="back" onclick="'+back+'">&larr; Back</button><div class="page-title">Add Sample'+(c?' — '+esc(c.Name):'')+'</div><div class="page-sub">Choose how to enter data.</div>'
+    +'<div class="scan-opt primary" onclick="renderSnap()"><div class="si">📸</div><div><div class="st">Snap & Copy</div><div class="sd">Photo → Live Text → Paste. Fastest!</div></div></div>'
+    +'<div class="scan-opt" onclick="renderPaste()"><div class="si">📋</div><div><div class="st">Paste Text</div><div class="sd">Already copied? Paste here.</div></div></div>'
+    +'<div class="scan-opt" onclick="renderForm(null)"><div class="si">✏️</div><div><div class="st">Manual Entry</div><div class="sd">Type all values.</div></div></div>';
   setApp(html);
 }
 
-function renderSnapCopy(){
-  var html='<button class="back" onclick="renderScanStep()">&larr; Back</button><div class="page-title">Snap & Copy</div>'
-    +'<div class="card"><div class="sec-title">Step 1 — Take the Photo</div>'
-    +'<div style="font-size:14px;color:#a8a29e;font-family:sans-serif;line-height:1.7;margin-bottom:14px">Take a photo of your Penn State soil report. Make sure the <b>Laboratory Results</b> table at the bottom is clear and readable.</div>'
-    +'<button class="btn-green btn-full" onclick="document.getElementById(\'cam-input\').click()" style="margin-top:0">📷 Open Camera</button>'
-    +'<img id="snap-photo" class="photo-preview" style="display:none;margin-top:14px">'
-    +'</div>'
-    +'<div id="snap-step2" class="card" style="display:none"><div class="sec-title">Step 2 — Copy the Text</div>'
-    +'<div style="font-size:14px;color:#a8a29e;font-family:sans-serif;line-height:1.7"><b>Tap and hold</b> on the photo above. Your iPhone will highlight the text with Live Text. Tap <b>Select All</b> then <b>Copy</b>.</div>'
-    +'<div style="font-size:12px;color:#57534e;font-family:sans-serif;margin-top:8px">💡 If Live Text doesn\'t appear, open the photo in your Photos app instead and copy from there.</div>'
-    +'</div>'
-    +'<div id="snap-step3" class="card" style="display:none"><div class="sec-title">Step 3 — Paste & Extract</div>'
-    +'<div class="form-group"><label class="form-label">Paste the copied text here</label>'
-    +'<textarea class="form-input" id="ocr-text" rows="8" style="min-height:140px;font-size:14px" placeholder="Tap here, then tap Paste..."></textarea></div>'
-    +'<button class="btn-green btn-full" onclick="parseOcrText()">🤖 Extract Values</button></div>';
-  setApp(html);
+function renderSnap(){
+  setApp('<button class="back" onclick="renderScan()">&larr; Back</button><div class="page-title">Snap & Copy</div>'
+    +'<div class="card"><div class="sec-title">Step 1 — Take Photo</div><div style="font-size:14px;color:#a8a29e;font-family:sans-serif;line-height:1.7;margin-bottom:14px">Photograph the soil report. Make sure the <b>Laboratory Results</b> table at the bottom is clear.</div><button class="btn-green btn-full" onclick="document.getElementById(\'cam-input\').click()" style="margin-top:0">📷 Open Camera</button><img id="snap-photo" class="photo-preview" style="display:none"></div>'
+    +'<div id="snap-step2" class="card" style="display:none"><div class="sec-title">Step 2 — Copy Text</div><div style="font-size:14px;color:#a8a29e;font-family:sans-serif;line-height:1.7"><b>Tap and hold</b> on the photo above. Live Text will highlight it. Tap <b>Select All</b> → <b>Copy</b>.</div><div style="font-size:12px;color:#57534e;font-family:sans-serif;margin-top:8px">💡 If it doesn\'t work, open the photo in Photos app and copy from there.</div></div>'
+    +'<div id="snap-step3" class="card" style="display:none"><div class="sec-title">Step 3 — Paste & Extract</div><div class="form-group"><label class="form-label">Paste here</label><textarea class="form-input" id="ocr-text" rows="8" style="min-height:140px;font-size:14px" placeholder="Tap here, then Paste..."></textarea></div><button class="btn-green btn-full" onclick="doParse()">🤖 Extract Values</button></div>');
 }
 
-function renderPasteStep(){
-  var html='<button class="back" onclick="renderScanStep()">&larr; Back</button><div class="page-title">Paste Report Text</div>'
-    +'<div class="page-sub">Paste the text from your soil report below.</div>'
-    +'<div class="card"><div class="form-group"><label class="form-label">Paste soil report text here</label>'
-    +'<textarea class="form-input" id="ocr-text" rows="10" style="min-height:160px;font-size:14px" placeholder="Tap here, then tap Paste..."></textarea></div>'
-    +'<button class="btn-green btn-full" onclick="parseOcrText()">🤖 Extract Values</button></div>';
-  setApp(html);
+function renderPaste(){
+  setApp('<button class="back" onclick="renderScan()">&larr; Back</button><div class="page-title">Paste Text</div><div class="page-sub">Paste your soil report text below.</div>'
+    +'<div class="card"><div class="form-group"><label class="form-label">Paste here</label><textarea class="form-input" id="ocr-text" rows="10" style="min-height:160px;font-size:14px" placeholder="Tap here, then Paste..."></textarea></div><button class="btn-green btn-full" onclick="doParse()">🤖 Extract Values</button></div>');
 }
 
-function parseOcrText(){
+function doParse(){
   var text=(document.getElementById('ocr-text')||{}).value||'';
-  if(text.trim().length<20){notify('Paste the report text first.','err');return;}
+  if(text.trim().length<20){notify('Paste the text first.','err');return;}
   setApp('<div class="loading"><div class="spin" style="width:40px;height:40px"></div><p style="margin-top:14px;font-size:17px;font-weight:700;color:#f5f5f4">🤖 Reading Report</p><p style="color:#a8a29e;font-size:14px;margin-top:8px;font-family:sans-serif">3–5 seconds...</p></div>');
   gasGet({action:'getApiKey'}).then(function(r){
-    if(!r.success){notify('API key error','err');renderPasteStep();return;}
-    return callAnthropicText(r.key,text);
-  }).then(function(result){
-    if(!result)return;
-    if(result.success&&result.data){
-      prefill=result.data;prefill._ai=true;
+    if(!r.success){notify('API key error','err');renderPaste();return;}
+    return callAI(r.key,text);
+  }).then(function(res){
+    if(!res)return;
+    if(res.success&&res.data){
+      prefill=res.data;prefill._ai=true;
       if(!activeCust&&prefill.CustomerName){
-        var needle=String(prefill.CustomerName).trim().toLowerCase();
-        var match=customers.find(function(x){return(x.Name||'').toLowerCase()===needle||(x.Name||'').toLowerCase().includes(needle)||needle.includes((x.Name||'').toLowerCase());});
-        if(match)activeCust=match;
+        var n=String(prefill.CustomerName).trim().toLowerCase();
+        var m=customers.find(function(x){var h=(x.Name||'').toLowerCase();return h===n||h.includes(n)||n.includes(h);});
+        if(m)activeCust=m;
       }
-      notify('✅ Values extracted!');renderSampleForm(prefill);
-    }else{notify('Error: '+(result.error||'Unknown'),'err');renderPasteStep();}
-  }).catch(function(e){notify('Error: '+(e.message||e),'err');renderPasteStep();});
+      notify('✅ Values extracted!');renderForm(prefill);
+    }else{notify('Error: '+(res.error||''),'err');renderPaste();}
+  }).catch(function(e){notify('Error: '+e.message,'err');renderPaste();});
 }
 
-function callAnthropicText(key,text){
-  var prompt='You are reading OCR text from a Penn State Extension Soil Test Report. The OCR may be messy with missing spaces or jumbled columns.\n\n'
-    +'RETURN ONLY THIS JSON (no explanation):\n'
-    +'{"CustomerName":"","Field":"","Year":null,"pH":null,"Phosphorus":null,"Acidity":null,"Potassium":null,"Magnesium":null,"Calcium":null,"CEC":null,"SatK":null,"SatMg":null,"SatCa":null,"LimestoneLbs":null,"RecN":"","RecP":"","RecK":""}\n\n'
-    +'HOW TO FIND EACH VALUE:\n'
-    +'• CustomerName — name after "SOIL TEST REPORT FOR:"\n'
-    +'• Field — value after "FIELD ID"\n'
-    +'• Year — 4-digit year from the DATE line\n\n'
-    +'The LABORATORY RESULTS table at the bottom has columns in this order:\n'
-    +'  1pH | 2P lb/A | 3Acidity | 2K | 2Mg | 2Ca | 4CEC | K | Mg | Ca\n'
-    +'The data row has numbers in that same order:\n'
-    +'• pH = 1st number (e.g. 6.9)\n'
-    +'• Phosphorus = 2nd number, P in lb/A (e.g. 200)\n'
-    +'• Acidity = 3rd number, meq/100g (e.g. 0.00)\n'
-    +'• Potassium = 4th number, K in meq/100g (e.g. 0.70)\n'
-    +'• Magnesium = 5th number, Mg in meq/100g (e.g. 1.99)\n'
-    +'• Calcium = 6th number, Ca in meq/100g (e.g. 9.49)\n'
-    +'• CEC = 7th number (e.g. 12.2)\n'
-    +'• SatK = 8th number, K% saturation (e.g. 5.8)\n'
-    +'• SatMg = 9th number, Mg% saturation (e.g. 16.4)\n'
-    +'• SatCa = 10th number, Ca% saturation (e.g. 77.9)\n\n'
-    +'RECOMMENDATIONS:\n'
-    +'• LimestoneLbs — number in lb/1000 sq ft. Use 0 if it says NONE.\n'
-    +'• RecN — nitrogen rec as printed (e.g. "1 to 4"). Use "NONE" if none.\n'
-    +'• RecP — P2O5 rec as printed. Use "NONE" if none.\n'
-    +'• RecK — K2O rec as printed. Use "NONE" if none.\n\n'
-    +'IMPORTANT: Copy numbers exactly from the text. Return ONLY JSON.\n\nOCR TEXT:\n'+text;
+function callAI(key,text){
+  var prompt='You are reading OCR text from a Penn State Extension Soil Test Report. The OCR may be messy.\n\n'
+    +'RETURN ONLY THIS JSON:\n'
+    +'{"CustomerName":"","Field":"","Year":null,"Phosphorus_ppm":null,"Potassium_ppm":null,"LimestoneLbs":null,"RecN":"","RecP":"","RecK":"","pH":null,"P_lbA":null,"Acidity":null,"K_meq":null,"Mg_meq":null,"Ca_meq":null,"CEC":null,"SatK":null,"SatMg":null,"SatCa":null}\n\n'
+    +'TOP OF REPORT:\n'
+    +'• CustomerName = name after "SOIL TEST REPORT FOR:"\n'
+    +'• Field = value after "FIELD ID"\n'
+    +'• Year = 4-digit year from DATE line\n'
+    +'• Phosphorus_ppm = Phosphorus number next to "ppm" in SOIL NUTRIENT LEVELS section\n'
+    +'• Potassium_ppm = Potassium number next to "ppm" in SOIL NUTRIENT LEVELS section\n\n'
+    +'RECOMMENDATIONS SECTION:\n'
+    +'• LimestoneLbs = limestone lb/1000 sq ft. Use 0 if NONE.\n'
+    +'• RecN = nitrogen rec as printed (e.g. "1 to 4"). "NONE" if none.\n'
+    +'• RecP = P2O5 rec as printed. "NONE" if none.\n'
+    +'• RecK = K2O rec as printed. "NONE" if none.\n\n'
+    +'LABORATORY RESULTS TABLE (bottom):\n'
+    +'Columns in order: 1pH | 2P lb/A | 3Acidity | 2K | 2Mg | 2Ca | 4CEC | K | Mg | Ca\n'
+    +'Data row numbers in that same order:\n'
+    +'• pH = 1st (e.g. 6.9)\n'
+    +'• P_lbA = 2nd (e.g. 200)\n'
+    +'• Acidity = 3rd meq/100g (e.g. 0.00)\n'
+    +'• K_meq = 4th meq/100g (e.g. 0.70)\n'
+    +'• Mg_meq = 5th meq/100g (e.g. 1.99)\n'
+    +'• Ca_meq = 6th meq/100g (e.g. 9.49)\n'
+    +'• CEC = 7th meq/100g (e.g. 12.2)\n'
+    +'• SatK = 8th % (e.g. 5.8)\n'
+    +'• SatMg = 9th % (e.g. 16.4)\n'
+    +'• SatCa = 10th % (e.g. 77.9)\n\n'
+    +'Copy numbers exactly. Return ONLY JSON.\n\nOCR TEXT:\n'+text;
   return fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'x-api-key':key,'anthropic-version':'2023-06-01','content-type':'application/json','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:512,messages:[{role:'user',content:prompt}]})}).then(function(r){
     if(!r.ok)return r.text().then(function(t){return{success:false,error:'API '+r.status};});
-    return r.json().then(function(j){var txt=((j.content||[]).find(function(c){return c.type==='text';})||{}).text||'';var m=txt.match(/\{[\s\S]*\}/);try{return{success:true,data:JSON.parse(m?m[0]:txt)};}catch(e){return{success:false,error:'Parse error'};}});
+    return r.json().then(function(j){var t=((j.content||[]).find(function(c){return c.type==='text';})||{}).text||'';var m=t.match(/\{[\s\S]*\}/);try{return{success:true,data:JSON.parse(m?m[0]:t)};}catch(e){return{success:false,error:'Parse error'};}});
   });
 }
 
 // ── Sample Form ──
-function renderSampleForm(p){
+function renderForm(p){
   var c=activeCust;p=p||{};function gv(k){var v=p[k];return(v!=null&&v!=='')?String(v):'';}
-  var html='<button class="back" onclick="renderScanStep()">&larr; Back</button><div class="page-title">'+(p._ai?'Review Extracted Data':'Enter Sample Data')+(c?' — '+esc(c.Name):'')+'</div>';
-  if(p._ai)html+='<div class="banner-ok">✅ AI extracted values — review and save.</div>';
+  var html='<button class="back" onclick="renderScan()">&larr; Back</button><div class="page-title">'+(p._ai?'Review Extracted Data':'Enter Sample')+(c?' — '+esc(c.Name):'')+'</div>';
+  if(p._ai)html+='<div class="banner-ok">✅ AI extracted — review and save.</div>';
   html+='<div class="card">';
   if(!c){
     html+='<div class="sub-head">Customer</div>';
-    if(customers.length){
-      var presel='';if(gv('CustomerName')){var needle=gv('CustomerName').toLowerCase();var m2=customers.find(function(x){var h=(x.Name||'').toLowerCase();return h===needle||h.includes(needle)||needle.includes(h);});if(m2){presel=m2.Name;activeCust=m2;}}
-      html+='<div class="form-group"><label class="form-label">Select customer</label><select class="form-input" id="sf-cust" onchange="sfCustChange(this.value)"><option value="">— Select —</option>';
-      customers.forEach(function(x){html+='<option value="'+esc(x.Name)+'"'+(presel===x.Name?' selected':'')+'>'+esc(x.Name)+(x.Field?' ('+esc(x.Field)+')':'')+'</option>';});
-      html+='</select></div>';
-      if(!presel&&gv('CustomerName'))html+='<div style="font-size:12px;color:#fb923c;font-family:sans-serif;margin-bottom:8px">AI found: "'+esc(gv('CustomerName'))+'" — not in master list. Select a customer above.</div>';
-    }
+    var presel='';if(gv('CustomerName')){var n=gv('CustomerName').toLowerCase();var m=customers.find(function(x){var h=(x.Name||'').toLowerCase();return h===n||h.includes(n)||n.includes(h);});if(m){presel=m.Name;activeCust=m;}}
+    html+='<div class="form-group"><label class="form-label">Select customer</label><select class="form-input" id="sf-cust" onchange="sfCC(this.value)"><option value="">— Select —</option>';
+    customers.forEach(function(x){html+='<option value="'+esc(x.Name)+'"'+(presel===x.Name?' selected':'')+'>'+esc(x.Name)+'</option>';});
+    html+='</select></div>';
+    if(!presel&&gv('CustomerName'))html+='<div style="font-size:12px;color:#fb923c;font-family:sans-serif;margin-bottom:8px">AI found: "'+esc(gv('CustomerName'))+'" — not in master list.</div>';
   }
-  html+='<div class="form-group"><label class="form-label">Year *</label><input class="form-input" id="sf-year" type="number" value="'+(gv('Year')||new Date().getFullYear())+'"></div>';
+  html+='<div class="form-group"><label class="form-label">Year *</label><input class="form-input" id="sf-Year" type="number" value="'+(gv('Year')||new Date().getFullYear())+'"></div>';
+
+  html+='<div class="sub-head">Soil Nutrient Levels (from top of report)</div><div class="grid-3">';
+  TOP_FIELDS.forEach(function(m){html+='<div class="form-group"><label class="form-label">'+m.label+(m.unit?' ('+m.unit+')':'')+'</label><input class="form-input" id="sf-'+m.key+'" type="number" step="any" value="'+gv(m.key)+'" placeholder="'+m.min+'–'+m.max+'"></div>';});
+  html+='</div>';
+
   html+='<div class="sub-head">Recommendations</div><div class="grid-2">';
   html+='<div class="form-group"><label class="form-label">Limestone (lb/1000 ft²)</label><input class="form-input" id="sf-LimestoneLbs" value="'+gv('LimestoneLbs')+'" placeholder="0 if none"></div>';
-  [{k:'RecN',l:'Nitrogen (N)'},{k:'RecP',l:'Phosphorus (P₂O₅)'},{k:'RecK',l:'Potassium (K₂O)'}].forEach(function(r){html+='<div class="form-group"><label class="form-label">'+r.l+'</label><input class="form-input" id="sf-'+r.k+'" value="'+gv(r.k)+'"></div>';});
+  [{k:'RecN',l:'Nitrogen (N)'},{k:'RecP',l:'P₂O₅'},{k:'RecK',l:'K₂O'}].forEach(function(r){html+='<div class="form-group"><label class="form-label">'+r.l+'</label><input class="form-input" id="sf-'+r.k+'" value="'+gv(r.k)+'"></div>';});
   html+='</div>';
-  SECTIONS.forEach(function(sec){html+='<div class="sub-head">'+sec+'</div><div class="grid-3">';METRICS.filter(function(m){return m.sec===sec;}).forEach(function(m){html+='<div class="form-group"><label class="form-label">'+m.label+(m.unit?' <span style="color:#57534e;font-size:10px">'+m.unit+'</span>':'')+'</label><input class="form-input" id="sf-'+m.key+'" type="number" step="any" value="'+gv(m.key)+'" placeholder="'+m.min+'–'+m.max+'"></div>';});html+='</div>';});
-  html+='<button class="btn-green btn-full" onclick="saveSample()">💾 Save to Google Sheets</button></div>';
+
+  html+='<div class="sub-head">Laboratory Results</div><div class="grid-3">';
+  LAB_FIELDS.forEach(function(m){html+='<div class="form-group"><label class="form-label">'+m.label+(m.unit?' ('+m.unit+')':'')+'</label><input class="form-input" id="sf-'+m.key+'" type="number" step="any" value="'+gv(m.key)+'" placeholder="'+m.min+'–'+m.max+'"></div>';});
+  html+='</div>';
+
+  html+='<button class="btn-green btn-full" onclick="doSave()">💾 Save to Google Sheets</button></div>';
   setApp(html);
 }
-function sfCustChange(v){if(v){activeCust=customers.find(function(c){return c.Name===v;});}else{activeCust=null;}}
+function sfCC(v){if(v){activeCust=customers.find(function(c){return c.Name===v;});}else{activeCust=null;}}
 
-function saveSample(){
-  var year=parseInt((document.getElementById('sf-year')||{}).value,10);if(!year||year<1990){notify('Enter a valid year.','err');return;}
-  if(!activeCust){
-    var sel=document.getElementById('sf-cust');
-    if(sel&&sel.value){activeCust=customers.find(function(c){return c.Name===sel.value;});}
-  }
-  if(!activeCust){notify('Please select a customer.','err');return;}
-
+function doSave(){
+  var year=parseInt((document.getElementById('sf-Year')||{}).value,10);if(!year||year<1990){notify('Enter a valid year.','err');return;}
+  if(!activeCust){var sel=document.getElementById('sf-cust');if(sel&&sel.value)activeCust=customers.find(function(c){return c.Name===sel.value;});}
+  if(!activeCust){notify('Select a customer.','err');return;}
   var data={CustomerName:activeCust.Name,Field:activeCust.Field||'',Year:year};
-  METRICS.forEach(function(m){var raw=((document.getElementById('sf-'+m.key)||{}).value||'').trim();if(raw!=='')data[m.key]=parseFloat(raw);});
+  TOP_FIELDS.concat(LAB_FIELDS).forEach(function(m){var v=((document.getElementById('sf-'+m.key)||{}).value||'').trim();if(v!=='')data[m.key]=parseFloat(v);});
   data.LimestoneLbs=((document.getElementById('sf-LimestoneLbs')||{}).value||'').trim()||'0';
   ['RecN','RecP','RecK'].forEach(function(k){var v=((document.getElementById('sf-'+k)||{}).value||'').trim();if(v)data[k]=v;});
-
   gasPost({action:'saveSample',data:data}).then(function(r){
     if(!r.success){notify('Error: '+(r.error||''),'err');return;}
     data.ID=r.id;data.DateAdded=new Date().toISOString();samples.push(data);
-    notify('✅ Sample saved!');openCust(activeCust.Name);
+    notify('✅ Saved!');openCust(activeCust.Name);
   }).catch(function(err){notify('Error: '+err.message,'err');});
 }
 
 // ── Delete ──
-function doDeleteSample(id,year){if(!confirm('Delete '+year+' sample?'))return;var cName=activeCust?activeCust.Name:null;gasPost({action:'deleteSample',id:id}).then(function(r){if(!r.success){notify('Error','err');return;}samples=samples.filter(function(s){return String(s.ID)!==String(id);});notify('Deleted.','inf');if(cName)openCust(cName);else showPage('dash');}).catch(function(err){notify('Error','err');});}
+function doDelete(id,yr){if(!confirm('Delete '+yr+' sample?'))return;var n=activeCust?activeCust.Name:null;gasPost({action:'deleteSample',id:id}).then(function(r){if(!r.success){notify('Error','err');return;}samples=samples.filter(function(s){return String(s.ID)!==String(id);});notify('Deleted.','inf');if(n)openCust(n);else showPage('dash');}).catch(function(){notify('Error','err');});}
 
 // ── Reports ──
 function renderReportPage(){
   var html='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px" class="no-print"><div class="page-title">Reports</div><button class="btn-green btn-sm" onclick="window.print()">🖨️ Print</button></div>'
-    +'<div class="card no-print"><div class="sec-title">Select Customer</div><select class="form-input" id="rpt-cust" onchange="renderReport()"><option value="">— Select —</option>';
+    +'<div class="card no-print"><div class="sec-title">Select Customer</div><select class="form-input" id="rpt-c" onchange="renderRpt()"><option value="">— Select —</option>';
   customers.forEach(function(c){html+='<option value="'+esc(c.Name)+'">'+esc(c.Name)+'</option>';});
   html+='</select></div><div id="rpt-out"></div>';setApp(html);
 }
-function openReport(name){showPage('report');setTimeout(function(){var el=document.getElementById('rpt-cust');if(el){el.value=name;renderReport();}},80);}
-function renderReport(){
-  var name=(document.getElementById('rpt-cust')||{}).value;var out=document.getElementById('rpt-out');if(!out||!name){if(out)out.innerHTML='';return;}
-  var c=customers.find(function(x){return x.Name===name;});var cs=samples.filter(function(s){return String(s.CustomerName)===name;}).sort(function(a,b){return a.Year-b.Year;});
+function openReport(n){showPage('report');setTimeout(function(){var el=document.getElementById('rpt-c');if(el){el.value=n;renderRpt();}},80);}
+function renderRpt(){
+  var n=(document.getElementById('rpt-c')||{}).value,out=document.getElementById('rpt-out');if(!out||!n){if(out)out.innerHTML='';return;}
+  var c=customers.find(function(x){return x.Name===n;}),cs=samples.filter(function(s){return s.CustomerName===n;}).sort(function(a,b){return a.Year-b.Year;});
   if(!c||!cs.length){out.innerHTML='<div style="color:#78716c;font-family:sans-serif;padding:16px">No samples.</div>';return;}
-  var today=new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});var years=cs.map(function(s){return s.Year;});
+  var today=new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}),yrs=cs.map(function(s){return s.Year;});
+  var TH='style="background:#f0f7ee;padding:6px 8px;text-align:left;color:#2d5a1b;font-weight:600"',THC='style="background:#f0f7ee;padding:6px 8px;text-align:center;color:#2d5a1b;font-weight:600"';
   var h='<div style="background:white;color:#1a1a1a;border-radius:12px;padding:24px;font-family:sans-serif">';
-  h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #2d5a1b;padding-bottom:14px;margin-bottom:18px;flex-wrap:wrap;gap:10px"><div style="font-size:18px;font-weight:900;color:#2d5a1b;line-height:1.2">LAWNS PLANTS<br>&amp; PESTS LLC<br><span style="font-size:11px;font-weight:400;color:#666">Soil Health Report</span></div><div style="text-align:right"><div style="font-size:16px;font-weight:700;color:#2d5a1b">'+esc(c.Name)+'</div>'+(c.Field?'<div style="font-size:11px;color:#666">'+esc(c.Field)+'</div>':'')+(c.Address?'<div style="font-size:11px;color:#666">'+esc(c.Address)+(c.City?', '+esc(c.City):'')+'</div>':'')+'<div style="font-size:11px;color:#666">'+today+'</div></div></div>';
-  h+='<div style="font-size:11px;font-weight:700;color:#2d5a1b;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Recommendations</div><table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:18px"><thead><tr><th style="background:#f0f7ee;padding:6px 8px;text-align:left;color:#2d5a1b;font-weight:600">Item</th>';
-  years.forEach(function(y){h+='<th style="background:#f0f7ee;padding:6px 8px;text-align:center;color:#2d5a1b;font-weight:600">'+y+'</th>';});
-  h+='</tr></thead><tbody>';
-  RECS.forEach(function(r){h+='<tr><td style="padding:6px 8px;border-bottom:1px solid #eee;font-weight:600">'+r.label+'</td>';cs.forEach(function(s){var v=s[r.key],none=!v||String(v).toLowerCase()==='none'||v==='0'||v===0;h+='<td style="padding:6px 8px;border-bottom:1px solid #eee;text-align:center;font-weight:700;color:'+(none?'#16a34a':'#d97706')+'">'+(none?'None':v)+'</td>';});h+='</tr>';});
-  h+='</tbody></table>';
-  h+='<div style="font-size:11px;font-weight:700;color:#2d5a1b;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Soil Test Results</div><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr><th style="background:#f0f7ee;padding:6px 8px;text-align:left;color:#2d5a1b;font-weight:600">Metric</th><th style="background:#f0f7ee;padding:6px 8px;text-align:left;color:#2d5a1b;font-weight:600">Ideal</th>';
-  years.forEach(function(y){h+='<th style="background:#f0f7ee;padding:6px 8px;text-align:center;color:#2d5a1b;font-weight:600">'+y+'</th>';});
-  h+='</tr></thead><tbody>';
-  METRICS.forEach(function(m){h+='<tr><td style="padding:6px 8px;border-bottom:1px solid #eee;font-weight:600">'+m.label+'</td><td style="padding:6px 8px;border-bottom:1px solid #eee;color:#999;font-family:monospace;font-size:10px">'+(m.info?'info':m.min+'–'+m.max)+'</td>';cs.forEach(function(s){var n=parseFloat(s[m.key]);var clr=isNaN(n)?'#999':(!m.info&&n>=m.min&&n<=m.max?'#16a34a':(!m.info&&n<m.min?'#dc2626':(!m.info?'#d97706':'#333')));h+='<td style="padding:6px 8px;border-bottom:1px solid #eee;text-align:center;font-weight:700;color:'+clr+'">'+(s[m.key]!=null?s[m.key]:'—')+'</td>';});h+='</tr>';});
-  h+='</tbody></table><div style="margin-top:14px;padding-top:12px;border-top:1px solid #eee;display:flex;justify-content:space-between;font-size:10px;color:#999"><span>🟢 Optimal 🟠 Above 🔴 Below</span><span style="color:#2d5a1b;font-weight:700">Lawns Plants &amp; Pests LLC</span></div></div>';
+  h+='<div style="display:flex;justify-content:space-between;border-bottom:3px solid #2d5a1b;padding-bottom:14px;margin-bottom:18px;flex-wrap:wrap;gap:10px"><div style="font-size:18px;font-weight:900;color:#2d5a1b;line-height:1.2">LAWNS PLANTS<br>&amp; PESTS LLC<br><span style="font-size:11px;font-weight:400;color:#666">Soil Health Report</span></div><div style="text-align:right"><div style="font-size:16px;font-weight:700;color:#2d5a1b">'+esc(c.Name)+'</div>'+(c.Address?'<div style="font-size:11px;color:#666">'+esc(c.Address)+(c.City?', '+esc(c.City):'')+'</div>':'')+'<div style="font-size:11px;color:#666">'+today+'</div></div></div>';
+  // Recs
+  h+='<div style="font-size:11px;font-weight:700;color:#2d5a1b;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Recommendations</div><table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:18px"><thead><tr><th '+TH+'>Item</th>';yrs.forEach(function(y){h+='<th '+THC+'>'+y+'</th>';});h+='</tr></thead><tbody>';
+  REC_FIELDS.forEach(function(r){h+='<tr><td style="padding:6px 8px;border-bottom:1px solid #eee;font-weight:600">'+r.label+'</td>';cs.forEach(function(s){var v=s[r.key],none=!v||String(v).toLowerCase()==='none'||v==='0'||v===0;h+='<td style="padding:6px 8px;border-bottom:1px solid #eee;text-align:center;font-weight:700;color:'+(none?'#16a34a':'#d97706')+'">'+(none?'None':v)+'</td>';});h+='</tr>';});h+='</tbody></table>';
+  // Top values
+  h+='<div style="font-size:11px;font-weight:700;color:#2d5a1b;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Soil Nutrient Levels</div><table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:18px"><thead><tr><th '+TH+'>Metric</th><th '+TH+'>Ideal</th>';yrs.forEach(function(y){h+='<th '+THC+'>'+y+'</th>';});h+='</tr></thead><tbody>';
+  TOP_FIELDS.forEach(function(m){h+='<tr><td style="padding:6px 8px;border-bottom:1px solid #eee;font-weight:600">'+m.label+'</td><td style="padding:6px 8px;border-bottom:1px solid #eee;color:#999;font-family:monospace;font-size:10px">'+m.min+'–'+m.max+'</td>';cs.forEach(function(s){var n=parseFloat(s[m.key]),clr=isNaN(n)?'#999':(n>=m.min&&n<=m.max?'#16a34a':(n<m.min?'#dc2626':'#d97706'));h+='<td style="padding:6px 8px;border-bottom:1px solid #eee;text-align:center;font-weight:700;color:'+clr+'">'+(s[m.key]!=null?s[m.key]:'—')+'</td>';});h+='</tr>';});h+='</tbody></table>';
+  // Lab
+  h+='<div style="font-size:11px;font-weight:700;color:#2d5a1b;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Laboratory Results</div><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr><th '+TH+'>Metric</th><th '+TH+'>Ideal</th>';yrs.forEach(function(y){h+='<th '+THC+'>'+y+'</th>';});h+='</tr></thead><tbody>';
+  LAB_FIELDS.forEach(function(m){h+='<tr><td style="padding:6px 8px;border-bottom:1px solid #eee;font-weight:600">'+m.label+'</td><td style="padding:6px 8px;border-bottom:1px solid #eee;color:#999;font-family:monospace;font-size:10px">'+(m.info?'info':m.min+'–'+m.max)+'</td>';cs.forEach(function(s){var n=parseFloat(s[m.key]),clr=isNaN(n)?'#999':(m.info?'#333':(n>=m.min&&n<=m.max?'#16a34a':(n<m.min?'#dc2626':'#d97706')));h+='<td style="padding:6px 8px;border-bottom:1px solid #eee;text-align:center;font-weight:700;color:'+clr+'">'+(s[m.key]!=null?s[m.key]:'—')+'</td>';});h+='</tr>';});h+='</tbody></table>';
+  h+='<div style="margin-top:14px;padding-top:12px;border-top:1px solid #eee;display:flex;justify-content:space-between;font-size:10px;color:#999"><span>🟢 Optimal 🟠 Above 🔴 Below</span><span style="color:#2d5a1b;font-weight:700">Lawns Plants &amp; Pests LLC</span></div></div>';
   out.innerHTML=h;
 }
 
-// ── Info Modal ──
-function showInfo(key){var m=METRICS.find(function(x){return x.key===key;});if(!m)return;document.getElementById('info-modal-body').innerHTML='<button class="modal-close" onclick="closeModal()">×</button><h2>'+m.label+'</h2><div class="modal-rng">'+(m.info?'Info only':'Ideal: '+m.min+'–'+m.max+(m.unit?' '+m.unit:''))+'</div><div class="modal-sec-title">About</div><div class="modal-body">'+m.about+'</div><div class="modal-sec-title" style="margin-top:12px">What to do</div><div class="modal-body">'+m.fix+'</div>';document.getElementById('info-modal').classList.add('open');}
 function closeModal(){document.getElementById('info-modal').classList.remove('open');}
 </script>
 </body>
