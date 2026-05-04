@@ -39,7 +39,7 @@
   th{padding:7px 9px;font-weight:600;border-bottom:1px solid #222;font-family:sans-serif;font-size:11px;color:#57534e;text-align:left;white-space:nowrap}th.c{text-align:center;color:#a8a29e;font-family:monospace;font-size:13px}
   td{padding:8px 9px;border-bottom:1px solid #1a1a1a}td.c{text-align:center}
   .sec-row td{padding:10px 9px 4px;color:#4ade8077;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;font-family:sans-serif;border-bottom:1px solid #1e1e1e;background:#0f0f0f}
-  .m-lbl{font-weight:600;color:#d6d3d1;font-family:sans-serif}.ideal{color:#57534e;font-size:11px;font-family:monospace;white-space:nowrap}
+  .m-lbl{font-weight:600;color:#d6d3d1;font-family:sans-serif;cursor:pointer;text-decoration:underline dotted #444}.ideal{color:#57534e;font-size:11px;font-family:monospace;white-space:nowrap}
   .scan-opt{display:flex;align-items:center;gap:14px;padding:18px;background:#161616;border:1px solid #222;border-radius:12px;cursor:pointer;margin-bottom:12px}.scan-opt:hover{border-color:#4ade8044}.scan-opt.primary{background:linear-gradient(135deg,#16a34a,#15803d);border-color:#16a34a;color:#fff}
   .scan-opt .si{font-size:30px;flex-shrink:0}.scan-opt .st{font-size:17px;font-weight:700;margin-bottom:2px;font-family:sans-serif}.scan-opt .sd{font-size:13px;opacity:.75;font-family:sans-serif;line-height:1.4}
   .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:200;display:none;align-items:flex-end;justify-content:center}.modal-overlay.open{display:flex}
@@ -54,8 +54,10 @@
   .empty{text-align:center;padding:44px 20px;color:#78716c;font-family:sans-serif}
   .back{display:inline-flex;align-items:center;gap:6px;color:#78716c;font-family:sans-serif;font-size:14px;cursor:pointer;margin-bottom:16px;background:none;border:none;padding:0}
   .banner-ok{background:#0a1f0f;border:1px solid #4ade8033;border-radius:8px;padding:11px 14px;margin-bottom:12px;font-family:sans-serif;font-size:13px;color:#4ade80}
-  .banner-err{background:#1a0000;border:1px solid #f8717133;border-radius:8px;padding:11px 14px;margin-bottom:12px;font-family:sans-serif;font-size:13px;color:#f87171}
   .photo-preview{max-width:100%;border-radius:10px;margin-top:14px;border:1px solid #333}
+  .paste-bar{display:flex;gap:8px;margin-bottom:8px}
+  .paste-btn{padding:8px 14px;border-radius:6px;border:1px solid #333;background:#1a1a1a;color:#a8a29e;font-size:13px;font-family:sans-serif;cursor:pointer}
+  .paste-btn:hover{border-color:#4ade80;color:#4ade80}
   @media print{.header,.no-print{display:none !important}body{background:#fff}.main{padding:0}}
   @media(max-width:600px){.stats-grid{grid-template-columns:1fr 1fr}.grid-2{grid-template-columns:1fr}.grid-3{grid-template-columns:1fr 1fr}.nav-btn{padding:0 8px;font-size:12px}.logo-sub{display:none}}
 </style>
@@ -80,35 +82,32 @@
 <script>
 var customers=[],samples=[],activeCust=null,prefill=null;
 
-// Top section metrics
 var TOP_FIELDS=[
-  {key:'pH',label:'Soil pH',unit:'',min:6.0,max:7.0},
-  {key:'Phosphorus_ppm',label:'Phosphorus',unit:'ppm',min:50,max:100},
-  {key:'Potassium_ppm',label:'Potassium',unit:'ppm',min:100,max:300}
+  {key:'pH',label:'Soil pH',unit:'',min:6.0,max:7.0,about:'Measures soil acidity or alkalinity on a 0–14 scale. Most lawn grasses thrive between 6.0–7.0 where nutrients are most available.',fix:'If too low (acidic), apply limestone to raise pH. If too high (alkaline), apply elemental sulfur.'},
+  {key:'Phosphorus_ppm',label:'Phosphorus',unit:'ppm',min:50,max:100,about:'Supports root development, flowering, and energy transfer. Critical during lawn establishment.',fix:'If deficient, apply phosphate fertilizer (P₂O₅). Avoid excess — high P runs off into waterways.'},
+  {key:'Potassium_ppm',label:'Potassium',unit:'ppm',min:100,max:300,about:'Strengthens cell walls, improves drought resistance and winter hardiness.',fix:'If deficient, apply potash (K₂O). Adequate K improves stress and disease tolerance.'}
 ];
-// Rec fields
 var REC_FIELDS=[
-  {key:'LimestoneLbs',label:'Limestone (lb/1000 ft²)',note:'Raises pH. Split if >100 lb.'},
-  {key:'RecN',label:'Nitrogen (N)',note:'Split into multiple apps.'},
-  {key:'RecP',label:'Phosphorus (P₂O₅)',note:'Only apply what test says.'},
-  {key:'RecK',label:'Potassium (K₂O)',note:'Winter hardiness.'}
+  {key:'LimestoneLbs',label:'Limestone (lb/1000 ft²)',note:'Raises pH. Split if >100 lb. Aerate first.'},
+  {key:'RecN',label:'Nitrogen (N)',note:'Split into 2–4 apps through the season.'},
+  {key:'RecP',label:'Phosphorus (P₂O₅)',note:'Only apply what the test recommends.'},
+  {key:'RecK',label:'Potassium (K₂O)',note:'Important for winter hardiness.'}
 ];
-// Lab results
 var LAB_FIELDS=[
-  {key:'P_lbA',label:'P (lb/A)',unit:'lb/A',min:50,max:200},
-  {key:'Acidity',label:'Acidity',unit:'meq/100g',min:0,max:2},
-  {key:'K_meq',label:'K',unit:'meq/100g',min:0.15,max:0.40},
-  {key:'Mg_meq',label:'Mg',unit:'meq/100g',min:0.5,max:2.5},
-  {key:'Ca_meq',label:'Ca',unit:'meq/100g',min:5,max:15},
-  {key:'CEC',label:'CEC',unit:'meq/100g',min:10,max:20,info:true},
-  {key:'SatK',label:'K Sat',unit:'%',min:2,max:5},
-  {key:'SatMg',label:'Mg Sat',unit:'%',min:10,max:20},
-  {key:'SatCa',label:'Ca Sat',unit:'%',min:60,max:80}
+  {key:'P_lbA',label:'P (lb/A)',unit:'lb/A',min:50,max:200,about:'Phosphorus measured in pounds per acre from the lab analysis. Different unit than ppm at the top.',fix:'Compare to your ppm reading. If low, apply phosphate fertilizer.'},
+  {key:'Acidity',label:'Acidity',unit:'meq/100g',min:0,max:2,about:'Reserve acidity (buffer acidity) in the soil. Higher values mean more limestone is needed to change pH.',fix:'This value determines your limestone application rate. The higher the acidity, the more lime you need.'},
+  {key:'K_meq',label:'K',unit:'meq/100g',min:0.15,max:0.40,about:'Potassium measured in milliequivalents — shows how much K is held by the soil. Essential for water regulation.',fix:'If deficient, apply potash (K₂O). Important for disease resistance and winter survival.'},
+  {key:'Mg_meq',label:'Mg',unit:'meq/100g',min:0.5,max:2.5,about:'Magnesium is the central atom in every chlorophyll molecule. Plants cannot photosynthesize without it.',fix:'If deficient, apply dolomitic limestone (provides both Ca and Mg) or Epsom salt for a quick boost.'},
+  {key:'Ca_meq',label:'Ca',unit:'meq/100g',min:5,max:15,about:'Calcium builds strong cell walls, improves soil structure, and helps neutralize acids. Primary component of limestone.',fix:'If deficient, apply calcitic or dolomitic limestone. Ca and pH are closely linked.'},
+  {key:'CEC',label:'CEC',unit:'meq/100g',min:10,max:20,info:true,about:'Cation Exchange Capacity — the soil\'s ability to hold nutrient ions. Higher CEC means fewer fertilizer applications needed. Sandy soils have low CEC; clay soils have high CEC.',fix:'CEC is informational — you can\'t change it quickly. Long-term, adding compost and organic matter increases CEC.'},
+  {key:'SatK',label:'K Sat',unit:'%',min:2,max:5,about:'Percentage of CEC occupied by potassium. The ratio between K, Mg, and Ca matters for balanced nutrition.',fix:'If too low, apply potassium. If too high relative to Mg, it can block magnesium uptake — focus on balancing all three.'},
+  {key:'SatMg',label:'Mg Sat',unit:'%',min:10,max:20,about:'Percentage of CEC occupied by magnesium. Imbalances between Mg, K, and Ca affect nutrient uptake.',fix:'If deficient, apply dolomitic limestone or Epsom salt. Maintain proper Mg:K ratio.'},
+  {key:'SatCa',label:'Ca Sat',unit:'%',min:60,max:80,about:'Percentage of CEC occupied by calcium. Calcium should dominate in healthy soils.',fix:'If deficient, apply limestone. Low Ca saturation usually signals acidic soil needing lime.'}
 ];
 var ALL_METRICS=[].concat(TOP_FIELDS,LAB_FIELDS);
 
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function badge(m,v){if(!m||m.info||v==null||v==='')return'<span class="b-gray">—</span>';var n=parseFloat(v);if(isNaN(n))return'<span class="b-gray">—</span>';if(n>=m.min&&n<=m.max)return'<span class="badge b-green">'+n+'</span>';if(n>m.max)return'<span class="badge b-orange">'+n+'</span>';return'<span class="badge b-red">'+n+'</span>';}
+function bdg(m,v){if(!m||m.info||v==null||v==='')return'<span class="b-gray">—</span>';var n=parseFloat(v);if(isNaN(n))return'<span class="b-gray">—</span>';if(n>=m.min&&n<=m.max)return'<span class="badge b-green">'+n+'</span>';if(n>m.max)return'<span class="badge b-orange">'+n+'</span>';return'<span class="badge b-red">'+n+'</span>';}
 function setApp(h){document.getElementById('app').innerHTML=h;}
 function notify(msg,type,ms){var el=document.getElementById('notif');el.textContent=msg;el.className='notif '+(type||'ok');el.style.display='block';clearTimeout(el._t);el._t=setTimeout(function(){el.style.display='none';},ms||4000);}
 function navActive(id){['nb-dash','nb-add','nb-report'].forEach(function(n){var el=document.getElementById(n);if(el)el.classList.remove('active');});var t=document.getElementById('nb-'+id);if(t)t.classList.add('active');}
@@ -118,10 +117,9 @@ function gasPost(b){return fetch(GAS_URL,{method:'POST',body:JSON.stringify(b)})
 document.addEventListener('DOMContentLoaded',function(){
   document.getElementById('cam-input').addEventListener('change',function(e){
     var file=e.target.files[0];if(!file)return;e.target.value='';
-    var reader=new FileReader();
-    reader.onload=function(ev){
+    var reader=new FileReader();reader.onload=function(ev){
       var img=document.getElementById('snap-photo');
-      if(img){img.src=ev.target.result;img.style.display='block';document.getElementById('snap-step2').style.display='block';document.getElementById('snap-step3').style.display='block';notify('Photo ready! Tap and hold on image to use Live Text.','inf',6000);}
+      if(img){img.src=ev.target.result;img.style.display='block';document.getElementById('snap-step2').style.display='block';document.getElementById('snap-step3').style.display='block';notify('Photo ready! Tap and hold on the image to use Live Text.','inf',6000);}
     };reader.readAsDataURL(file);
   });
   loadAndShow();
@@ -129,8 +127,8 @@ document.addEventListener('DOMContentLoaded',function(){
 
 function loadAndShow(){
   setApp('<div class="loading"><div class="spin"></div><p style="margin-top:14px">Loading...</p></div>');
-  var t=setTimeout(function(){setApp('<div class="banner-err">Could not connect.<br><button class="btn-green btn-sm" style="margin-top:10px" onclick="loadAndShow()">↺ Retry</button></div>');},15000);
-  gasGet({action:'getData'}).then(function(d){clearTimeout(t);if(!d.success){setApp('<div class="banner-err">'+esc(d.error)+'</div>');return;}customers=d.customers||[];samples=d.samples||[];showPage('dash');}).catch(function(err){clearTimeout(t);setApp('<div class="banner-err">'+esc(err.message)+'<br><button class="btn-green btn-sm" style="margin-top:10px" onclick="loadAndShow()">↺ Retry</button></div>');});
+  var t=setTimeout(function(){setApp('<div style="background:#1a0000;border:1px solid #f8717133;border-radius:8px;padding:14px;color:#f87171;font-family:sans-serif">Could not connect.<br><button class="btn-green btn-sm" style="margin-top:10px" onclick="loadAndShow()">↺ Retry</button></div>');},15000);
+  gasGet({action:'getData'}).then(function(d){clearTimeout(t);if(!d.success){setApp('<div style="color:#f87171;font-family:sans-serif">'+esc(d.error)+'</div>');return;}customers=d.customers||[];samples=d.samples||[];showPage('dash');}).catch(function(err){clearTimeout(t);setApp('<div style="color:#f87171;font-family:sans-serif">'+esc(err.message)+'<br><button class="btn-green btn-sm" style="margin-top:10px" onclick="loadAndShow()">↺ Retry</button></div>');});
 }
 function showPage(p){navActive(p);if(p==='dash'){activeCust=null;renderDash();}else if(p==='add'){prefill=null;renderScan();}else if(p==='report')renderReportPage();}
 
@@ -139,20 +137,16 @@ function renderDash(){
   var yrs={};samples.forEach(function(s){if(s.Year)yrs[s.Year]=true;});
   var html='<div class="page-title">Soil Data Overview</div><div class="page-sub">'+customers.length+' customers · '+samples.length+' samples · '+Object.keys(yrs).length+' seasons</div>';
   html+='<div class="stats-grid"><div class="stat-card"><div class="stat-icon">👨‍🌾</div><div class="stat-val">'+customers.length+'</div><div class="stat-label">Customers</div></div><div class="stat-card"><div class="stat-icon">🧪</div><div class="stat-val">'+samples.length+'</div><div class="stat-label">Samples</div></div><div class="stat-card"><div class="stat-icon">📅</div><div class="stat-val">'+Object.keys(yrs).length+'</div><div class="stat-label">Seasons</div></div></div>';
-  html+='<div class="card no-print"><div class="sec-title">Customers</div><div class="search-bar"><span style="color:#57534e">🔍</span><input id="csearch" placeholder="Search..." oninput="filterCust()"></div><div id="clist">'+buildCustList(customers)+'</div></div>';
+  html+='<div class="card no-print"><div class="sec-title">Customers</div><div class="search-bar"><span style="color:#57534e">🔍</span><input id="csearch" placeholder="Search..." oninput="filterCust()"></div><div id="clist">'+buildCL(customers)+'</div></div>';
   setApp(html);
 }
-function buildCustList(list){
+function buildCL(list){
   if(!list.length)return'<div class="empty"><div style="font-size:40px;margin-bottom:10px">🌱</div><div style="font-size:15px;font-weight:700;color:#f5f5f4">No customers</div></div>';
-  return list.map(function(c){
-    var cs=samples.filter(function(s){return s.CustomerName===c.Name;});
-    var yrs=[...new Set(cs.map(function(s){return s.Year;}).filter(Boolean))].sort().join(', ');
-    return'<div class="cust-row" onclick="openCust(\''+esc(c.Name)+'\')"><div><div class="cust-name">'+esc(c.Name)+'</div><div class="cust-sub">'+(c.Field?esc(c.Field)+' · ':'')+cs.length+' sample'+(cs.length!==1?'s':'')+(yrs?' · '+yrs:'')+'</div></div><span style="color:#57534e;font-size:20px">›</span></div>';
-  }).join('');
+  return list.map(function(c){var cs=samples.filter(function(s){return s.CustomerName===c.Name;});var yrs=[...new Set(cs.map(function(s){return s.Year;}).filter(Boolean))].sort().join(', ');return'<div class="cust-row" onclick="openCust(\''+esc(c.Name)+'\')"><div><div class="cust-name">'+esc(c.Name)+'</div><div class="cust-sub">'+(c.Field?esc(c.Field)+' · ':'')+cs.length+' sample'+(cs.length!==1?'s':'')+(yrs?' · '+yrs:'')+'</div></div><span style="color:#57534e;font-size:20px">›</span></div>';}).join('');
 }
-function filterCust(){var q=(document.getElementById('csearch').value||'').toLowerCase();var list=q?customers.filter(function(c){return(c.Name||'').toLowerCase().includes(q)||(c.City||'').toLowerCase().includes(q);}):customers;document.getElementById('clist').innerHTML=buildCustList(list);}
+function filterCust(){var q=(document.getElementById('csearch').value||'').toLowerCase();var list=q?customers.filter(function(c){return(c.Name||'').toLowerCase().includes(q)||(c.City||'').toLowerCase().includes(q);}):customers;document.getElementById('clist').innerHTML=buildCL(list);}
 
-// ── Customer Detail ──
+// ── Customer Detail (with metric explanations) ──
 function openCust(name){
   activeCust=customers.find(function(c){return c.Name===name;});if(!activeCust)return;navActive('');
   var c=activeCust,cs=samples.filter(function(s){return s.CustomerName===c.Name;}).sort(function(a,b){return b.Year-a.Year;});
@@ -162,20 +156,17 @@ function openCust(name){
   if(info.length)html+='<div class="page-sub">'+info.join(' · ')+'</div>';
   if(!cs.length){html+='<div class="empty"><div style="font-size:40px;margin-bottom:10px">🧪</div><div style="font-size:15px;font-weight:700;color:#f5f5f4">No samples yet</div><button class="btn-green btn-full no-print" onclick="startSample()">+ Add Sample</button></div>';setApp(html);return;}
   var years=cs.map(function(s){return s.Year;});
-
-  // Recommendations
+  // Recs
   html+='<div class="card"><div class="sec-title">Recommendations</div><div class="tbl-wrap"><table><thead><tr><th>Item</th>';years.forEach(function(y){html+='<th class="c">'+y+'</th>';});html+='<th>Notes</th></tr></thead><tbody>';
   REC_FIELDS.forEach(function(r){html+='<tr><td style="font-family:sans-serif;font-size:13px;font-weight:600;color:#d6d3d1;white-space:nowrap">'+r.label+'</td>';cs.forEach(function(s){var v=s[r.key],none=!v||String(v).toLowerCase()==='none'||v==='0'||v===0;html+='<td class="c"><span class="badge '+(none?'b-green':'b-orange')+'">'+(none?'None':v)+'</span></td>';});html+='<td style="color:#57534e;font-size:11px;font-family:sans-serif">'+r.note+'</td></tr>';});
   html+='</tbody></table></div></div>';
-
-  // Top values
-  html+='<div class="card"><div class="sec-title">Soil Nutrient Levels</div><div class="tbl-wrap"><table><thead><tr><th>Metric</th>';years.forEach(function(y){html+='<th class="c">'+y+'</th>';});html+='<th>Ideal</th></tr></thead><tbody>';
-  TOP_FIELDS.forEach(function(m){html+='<tr><td class="m-lbl">'+m.label+(m.unit?' ('+m.unit+')':'')+'</td>';cs.forEach(function(s){html+='<td class="c">'+badge(m,s[m.key])+'</td>';});html+='<td class="ideal">'+m.min+'–'+m.max+'</td></tr>';});
+  // Top values with info buttons
+  html+='<div class="card"><div class="sec-title">Soil Nutrient Levels <span style="font-weight:400;color:#78716c">(tap metric for details)</span></div><div class="tbl-wrap"><table><thead><tr><th>Metric</th>';years.forEach(function(y){html+='<th class="c">'+y+'</th>';});html+='<th>Ideal</th></tr></thead><tbody>';
+  TOP_FIELDS.forEach(function(m){html+='<tr><td><span class="m-lbl" onclick="showInfo(\''+m.key+'\')">'+m.label+(m.unit?' ('+m.unit+')':'')+'</span></td>';cs.forEach(function(s){html+='<td class="c">'+bdg(m,s[m.key])+'</td>';});html+='<td class="ideal">'+m.min+'–'+m.max+'</td></tr>';});
   html+='</tbody></table></div></div>';
-
-  // Lab results
-  html+='<div class="card"><div class="sec-title">Laboratory Results</div><div class="tbl-wrap"><table><thead><tr><th>Metric</th>';years.forEach(function(y){html+='<th class="c">'+y+'</th>';});html+='<th>Ideal</th></tr></thead><tbody>';
-  LAB_FIELDS.forEach(function(m){html+='<tr><td class="m-lbl">'+m.label+(m.unit?' ('+m.unit+')':'')+'</td>';cs.forEach(function(s){html+='<td class="c">'+badge(m,s[m.key])+'</td>';});html+='<td class="ideal">'+(m.info?'info':m.min+'–'+m.max)+'</td></tr>';});
+  // Lab results with info buttons
+  html+='<div class="card"><div class="sec-title">Laboratory Results <span style="font-weight:400;color:#78716c">(tap metric for details)</span></div><div class="tbl-wrap"><table><thead><tr><th>Metric</th>';years.forEach(function(y){html+='<th class="c">'+y+'</th>';});html+='<th>Ideal</th></tr></thead><tbody>';
+  LAB_FIELDS.forEach(function(m){html+='<tr><td><span class="m-lbl" onclick="showInfo(\''+m.key+'\')">'+m.label+(m.unit?' ('+m.unit+')':'')+'</span></td>';cs.forEach(function(s){html+='<td class="c">'+bdg(m,s[m.key])+'</td>';});html+='<td class="ideal">'+(m.info?'info':m.min+'–'+m.max)+'</td></tr>';});
   html+='</tbody></table>';
   html+='<div class="btn-row no-print" style="margin-top:12px">';cs.forEach(function(s){html+='<button class="btn-danger btn-sm" onclick="doDelete(\''+s.ID+'\',\''+s.Year+'\')">Delete '+s.Year+'</button>';});
   html+='</div></div>';
@@ -183,28 +174,54 @@ function openCust(name){
   setApp(html);
 }
 
+// ── Info Modal ──
+function showInfo(key){
+  var m=ALL_METRICS.find(function(x){return x.key===key;});if(!m)return;
+  document.getElementById('info-modal-body').innerHTML='<button class="modal-close" onclick="closeModal()">×</button><h2>'+m.label+'</h2>'
+    +'<div class="modal-rng">'+(m.info?'Informational — no target range':'Ideal: '+m.min+' – '+m.max+(m.unit?' '+m.unit:''))+'</div>'
+    +'<div class="modal-sec-title">What is it?</div><div class="modal-body">'+(m.about||'')+'</div>'
+    +'<div class="modal-sec-title" style="margin-top:12px">What to do</div><div class="modal-body">'+(m.fix||'')+'</div>';
+  document.getElementById('info-modal').classList.add('open');
+}
+function closeModal(){document.getElementById('info-modal').classList.remove('open');}
+
 // ── Add Sample ──
 function startSample(){prefill=null;renderScan();}
 function renderScan(){
   var c=activeCust,back=c?'openCust(\''+esc(c.Name)+'\')':'showPage(\'dash\')';
-  var html='<button class="back" onclick="'+back+'">&larr; Back</button><div class="page-title">Add Sample'+(c?' — '+esc(c.Name):'')+'</div><div class="page-sub">Choose how to enter data.</div>'
+  setApp('<button class="back" onclick="'+back+'">&larr; Back</button><div class="page-title">Add Sample'+(c?' — '+esc(c.Name):'')+'</div><div class="page-sub">Choose how to enter data.</div>'
     +'<div class="scan-opt primary" onclick="renderSnap()"><div class="si">📸</div><div><div class="st">Snap & Copy</div><div class="sd">Photo → Live Text → Paste. Fastest!</div></div></div>'
     +'<div class="scan-opt" onclick="renderPaste()"><div class="si">📋</div><div><div class="st">Paste Text</div><div class="sd">Already copied? Paste here.</div></div></div>'
-    +'<div class="scan-opt" onclick="renderForm(null)"><div class="si">✏️</div><div><div class="st">Manual Entry</div><div class="sd">Type all values.</div></div></div>';
-  setApp(html);
+    +'<div class="scan-opt" onclick="renderForm(null)"><div class="si">✏️</div><div><div class="st">Manual Entry</div><div class="sd">Type all values.</div></div></div>');
 }
 
 function renderSnap(){
   setApp('<button class="back" onclick="renderScan()">&larr; Back</button><div class="page-title">Snap & Copy</div>'
     +'<div class="card"><div class="sec-title">Step 1 — Take Photo</div><div style="font-size:14px;color:#a8a29e;font-family:sans-serif;line-height:1.7;margin-bottom:14px">Photograph the soil report. Make sure the <b>Laboratory Results</b> table at the bottom is clear.</div><button class="btn-green btn-full" onclick="document.getElementById(\'cam-input\').click()" style="margin-top:0">📷 Open Camera</button><img id="snap-photo" class="photo-preview" style="display:none"></div>'
     +'<div id="snap-step2" class="card" style="display:none"><div class="sec-title">Step 2 — Copy Text</div><div style="font-size:14px;color:#a8a29e;font-family:sans-serif;line-height:1.7"><b>Tap and hold</b> on the photo above. Live Text will highlight it. Tap <b>Select All</b> → <b>Copy</b>.</div><div style="font-size:12px;color:#57534e;font-family:sans-serif;margin-top:8px">💡 If it doesn\'t work, open the photo in Photos app and copy from there.</div></div>'
-    +'<div id="snap-step3" class="card" style="display:none"><div class="sec-title">Step 3 — Paste & Extract</div><div class="form-group"><label class="form-label">Paste here</label><textarea class="form-input" id="ocr-text" rows="8" style="min-height:140px;font-size:14px" placeholder="Tap here, then Paste..."></textarea></div><button class="btn-green btn-full" onclick="doParse()">🤖 Extract Values</button></div>');
+    +'<div id="snap-step3" class="card" style="display:none"><div class="sec-title">Step 3 — Paste & Extract</div>'+pasteBox()+'</div>');
 }
 
 function renderPaste(){
-  setApp('<button class="back" onclick="renderScan()">&larr; Back</button><div class="page-title">Paste Text</div><div class="page-sub">Paste your soil report text below.</div>'
-    +'<div class="card"><div class="form-group"><label class="form-label">Paste here</label><textarea class="form-input" id="ocr-text" rows="10" style="min-height:160px;font-size:14px" placeholder="Tap here, then Paste..."></textarea></div><button class="btn-green btn-full" onclick="doParse()">🤖 Extract Values</button></div>');
+  setApp('<button class="back" onclick="renderScan()">&larr; Back</button><div class="page-title">Paste Text</div><div class="page-sub">Paste your soil report text below.</div><div class="card">'+pasteBox()+'</div>');
 }
+
+function pasteBox(){
+  return '<div class="form-group"><label class="form-label">Paste here</label>'
+    +'<div class="paste-bar"><button class="paste-btn" onclick="doPaste()">📋 Paste</button><button class="paste-btn" onclick="doSelectAll()">Select All</button><button class="paste-btn" onclick="doClear()">Clear</button></div>'
+    +'<textarea class="form-input" id="ocr-text" rows="8" style="min-height:140px;font-size:14px" placeholder="Tap Paste button above, or tap here and paste manually..."></textarea></div>'
+    +'<button class="btn-green btn-full" onclick="doParse()">🤖 Extract Values</button>';
+}
+
+function doPaste(){
+  navigator.clipboard.readText().then(function(text){
+    var el=document.getElementById('ocr-text');if(el){el.value=text;notify('Text pasted!','ok',2000);}
+  }).catch(function(){
+    var el=document.getElementById('ocr-text');if(el){el.focus();notify('Tap and hold in the text box, then tap Paste.','inf',3000);}
+  });
+}
+function doSelectAll(){var el=document.getElementById('ocr-text');if(el){el.select();el.setSelectionRange(0,el.value.length);notify('All text selected.','ok',1500);}}
+function doClear(){var el=document.getElementById('ocr-text');if(el)el.value='';}
 
 function doParse(){
   var text=(document.getElementById('ocr-text')||{}).value||'';
@@ -219,7 +236,7 @@ function doParse(){
       prefill=res.data;prefill._ai=true;
       if(!activeCust&&prefill.CustomerName){
         var n=String(prefill.CustomerName).trim().toLowerCase();
-        var m=customers.find(function(x){var h=(x.Name||'').toLowerCase();return h===n||h.includes(n)||n.includes(h);});
+        var m=customers.find(function(x){return(x.Name||'').toLowerCase()===n||(x.Name||'').toLowerCase().includes(n)||n.includes((x.Name||'').toLowerCase());});
         if(m)activeCust=m;
       }
       notify('✅ Values extracted!');renderForm(prefill);
@@ -235,26 +252,18 @@ function callAI(key,text){
     +'• CustomerName = name after "SOIL TEST REPORT FOR:"\n'
     +'• Field = value after "FIELD ID"\n'
     +'• Year = 4-digit year from DATE line\n'
-    +'• Phosphorus_ppm = Phosphorus number next to "ppm" in SOIL NUTRIENT LEVELS section\n'
-    +'• Potassium_ppm = Potassium number next to "ppm" in SOIL NUTRIENT LEVELS section\n\n'
-    +'RECOMMENDATIONS SECTION:\n'
+    +'• Phosphorus_ppm = Phosphorus number next to "ppm" in SOIL NUTRIENT LEVELS\n'
+    +'• Potassium_ppm = Potassium number next to "ppm" in SOIL NUTRIENT LEVELS\n\n'
+    +'RECOMMENDATIONS:\n'
     +'• LimestoneLbs = limestone lb/1000 sq ft. Use 0 if NONE.\n'
     +'• RecN = nitrogen rec as printed (e.g. "1 to 4"). "NONE" if none.\n'
-    +'• RecP = P2O5 rec as printed. "NONE" if none.\n'
-    +'• RecK = K2O rec as printed. "NONE" if none.\n\n'
+    +'• RecP = P2O5 rec. "NONE" if none.\n'
+    +'• RecK = K2O rec. "NONE" if none.\n\n'
     +'LABORATORY RESULTS TABLE (bottom):\n'
-    +'Columns in order: 1pH | 2P lb/A | 3Acidity | 2K | 2Mg | 2Ca | 4CEC | K | Mg | Ca\n'
-    +'Data row numbers in that same order:\n'
-    +'• pH = 1st (e.g. 6.9)\n'
-    +'• P_lbA = 2nd (e.g. 200)\n'
-    +'• Acidity = 3rd meq/100g (e.g. 0.00)\n'
-    +'• K_meq = 4th meq/100g (e.g. 0.70)\n'
-    +'• Mg_meq = 5th meq/100g (e.g. 1.99)\n'
-    +'• Ca_meq = 6th meq/100g (e.g. 9.49)\n'
-    +'• CEC = 7th meq/100g (e.g. 12.2)\n'
-    +'• SatK = 8th % (e.g. 5.8)\n'
-    +'• SatMg = 9th % (e.g. 16.4)\n'
-    +'• SatCa = 10th % (e.g. 77.9)\n\n'
+    +'Columns: 1pH | 2P lb/A | 3Acidity | 2K | 2Mg | 2Ca | 4CEC | K | Mg | Ca\n'
+    +'• pH = 1st (e.g. 6.9)\n• P_lbA = 2nd (e.g. 200)\n• Acidity = 3rd meq/100g (e.g. 0.00)\n'
+    +'• K_meq = 4th meq/100g (e.g. 0.70)\n• Mg_meq = 5th (e.g. 1.99)\n• Ca_meq = 6th (e.g. 9.49)\n'
+    +'• CEC = 7th (e.g. 12.2)\n• SatK = 8th % (e.g. 5.8)\n• SatMg = 9th % (e.g. 16.4)\n• SatCa = 10th % (e.g. 77.9)\n\n'
     +'Copy numbers exactly. Return ONLY JSON.\n\nOCR TEXT:\n'+text;
   return fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'x-api-key':key,'anthropic-version':'2023-06-01','content-type':'application/json','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:512,messages:[{role:'user',content:prompt}]})}).then(function(r){
     if(!r.ok)return r.text().then(function(t){return{success:false,error:'API '+r.status};});
@@ -277,21 +286,14 @@ function renderForm(p){
     if(!presel&&gv('CustomerName'))html+='<div style="font-size:12px;color:#fb923c;font-family:sans-serif;margin-bottom:8px">AI found: "'+esc(gv('CustomerName'))+'" — not in master list.</div>';
   }
   html+='<div class="form-group"><label class="form-label">Year *</label><input class="form-input" id="sf-Year" type="number" value="'+(gv('Year')||new Date().getFullYear())+'"></div>';
-
-  html+='<div class="sub-head">Soil Nutrient Levels (from top of report)</div><div class="grid-3">';
+  html+='<div class="sub-head">Soil Nutrient Levels</div><div class="grid-3">';
   TOP_FIELDS.forEach(function(m){html+='<div class="form-group"><label class="form-label">'+m.label+(m.unit?' ('+m.unit+')':'')+'</label><input class="form-input" id="sf-'+m.key+'" type="number" step="any" value="'+gv(m.key)+'" placeholder="'+m.min+'–'+m.max+'"></div>';});
-  html+='</div>';
-
-  html+='<div class="sub-head">Recommendations</div><div class="grid-2">';
+  html+='</div><div class="sub-head">Recommendations</div><div class="grid-2">';
   html+='<div class="form-group"><label class="form-label">Limestone (lb/1000 ft²)</label><input class="form-input" id="sf-LimestoneLbs" value="'+gv('LimestoneLbs')+'" placeholder="0 if none"></div>';
   [{k:'RecN',l:'Nitrogen (N)'},{k:'RecP',l:'P₂O₅'},{k:'RecK',l:'K₂O'}].forEach(function(r){html+='<div class="form-group"><label class="form-label">'+r.l+'</label><input class="form-input" id="sf-'+r.k+'" value="'+gv(r.k)+'"></div>';});
-  html+='</div>';
-
-  html+='<div class="sub-head">Laboratory Results</div><div class="grid-3">';
-  LAB_FIELDS.forEach(function(m){html+='<div class="form-group"><label class="form-label">'+m.label+(m.unit?' ('+m.unit+')':'')+'</label><input class="form-input" id="sf-'+m.key+'" type="number" step="any" value="'+gv(m.key)+'" placeholder="'+m.min+'–'+m.max+'"></div>';});
-  html+='</div>';
-
-  html+='<button class="btn-green btn-full" onclick="doSave()">💾 Save to Google Sheets</button></div>';
+  html+='</div><div class="sub-head">Laboratory Results</div><div class="grid-3">';
+  LAB_FIELDS.forEach(function(m){html+='<div class="form-group"><label class="form-label">'+m.label+(m.unit?' ('+m.unit+')':'')+'</label><input class="form-input" id="sf-'+m.key+'" type="number" step="any" value="'+gv(m.key)+'" placeholder="'+(m.info?'':m.min+'–'+m.max)+'"></div>';});
+  html+='</div><button class="btn-green btn-full" onclick="doSave()">💾 Save to Google Sheets</button></div>';
   setApp(html);
 }
 function sfCC(v){if(v){activeCust=customers.find(function(c){return c.Name===v;});}else{activeCust=null;}}
@@ -333,7 +335,7 @@ function renderRpt(){
   // Recs
   h+='<div style="font-size:11px;font-weight:700;color:#2d5a1b;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Recommendations</div><table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:18px"><thead><tr><th '+TH+'>Item</th>';yrs.forEach(function(y){h+='<th '+THC+'>'+y+'</th>';});h+='</tr></thead><tbody>';
   REC_FIELDS.forEach(function(r){h+='<tr><td style="padding:6px 8px;border-bottom:1px solid #eee;font-weight:600">'+r.label+'</td>';cs.forEach(function(s){var v=s[r.key],none=!v||String(v).toLowerCase()==='none'||v==='0'||v===0;h+='<td style="padding:6px 8px;border-bottom:1px solid #eee;text-align:center;font-weight:700;color:'+(none?'#16a34a':'#d97706')+'">'+(none?'None':v)+'</td>';});h+='</tr>';});h+='</tbody></table>';
-  // Top values
+  // Top
   h+='<div style="font-size:11px;font-weight:700;color:#2d5a1b;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Soil Nutrient Levels</div><table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:18px"><thead><tr><th '+TH+'>Metric</th><th '+TH+'>Ideal</th>';yrs.forEach(function(y){h+='<th '+THC+'>'+y+'</th>';});h+='</tr></thead><tbody>';
   TOP_FIELDS.forEach(function(m){h+='<tr><td style="padding:6px 8px;border-bottom:1px solid #eee;font-weight:600">'+m.label+'</td><td style="padding:6px 8px;border-bottom:1px solid #eee;color:#999;font-family:monospace;font-size:10px">'+m.min+'–'+m.max+'</td>';cs.forEach(function(s){var n=parseFloat(s[m.key]),clr=isNaN(n)?'#999':(n>=m.min&&n<=m.max?'#16a34a':(n<m.min?'#dc2626':'#d97706'));h+='<td style="padding:6px 8px;border-bottom:1px solid #eee;text-align:center;font-weight:700;color:'+clr+'">'+(s[m.key]!=null?s[m.key]:'—')+'</td>';});h+='</tr>';});h+='</tbody></table>';
   // Lab
@@ -342,8 +344,6 @@ function renderRpt(){
   h+='<div style="margin-top:14px;padding-top:12px;border-top:1px solid #eee;display:flex;justify-content:space-between;font-size:10px;color:#999"><span>🟢 Optimal 🟠 Above 🔴 Below</span><span style="color:#2d5a1b;font-weight:700">Lawns Plants &amp; Pests LLC</span></div></div>';
   out.innerHTML=h;
 }
-
-function closeModal(){document.getElementById('info-modal').classList.remove('open');}
 </script>
 </body>
 </html>
