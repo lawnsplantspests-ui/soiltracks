@@ -130,7 +130,7 @@ function loadAndShow(){
   var t=setTimeout(function(){setApp('<div style="background:#1a0000;border:1px solid #f8717133;border-radius:8px;padding:14px;color:#f87171;font-family:sans-serif">Could not connect.<br><button class="btn-green btn-sm" style="margin-top:10px" onclick="loadAndShow()">↺ Retry</button></div>');},15000);
   gasGet({action:'getData'}).then(function(d){clearTimeout(t);if(!d.success){setApp('<div style="color:#f87171;font-family:sans-serif">'+esc(d.error)+'</div>');return;}customers=d.customers||[];samples=d.samples||[];showPage('dash');}).catch(function(err){clearTimeout(t);setApp('<div style="color:#f87171;font-family:sans-serif">'+esc(err.message)+'<br><button class="btn-green btn-sm" style="margin-top:10px" onclick="loadAndShow()">↺ Retry</button></div>');});
 }
-function showPage(p){navActive(p);if(p==='dash'){activeCust=null;renderDash();}else if(p==='add'){prefill=null;renderScan();}else if(p==='report')renderReportPage();}
+function showPage(p){navActive(p);if(p==='dash'){activeCust=null;renderDash();}else if(p==='add'){activeCust=null;prefill=null;renderScan();}else if(p==='report')renderReportPage();}
 
 // ── Dashboard ──
 function renderDash(){
@@ -198,7 +198,7 @@ function renderScan(){
 function renderSnap(){
   setApp('<button class="back" onclick="renderScan()">&larr; Back</button><div class="page-title">Snap & Copy</div>'
     +'<div class="card"><div class="sec-title">Step 1 — Take Photo</div><div style="font-size:14px;color:#a8a29e;font-family:sans-serif;line-height:1.7;margin-bottom:14px">Photograph the soil report. Make sure the <b>Laboratory Results</b> table at the bottom is clear.</div><button class="btn-green btn-full" onclick="document.getElementById(\'cam-input\').click()" style="margin-top:0">📷 Open Camera</button><img id="snap-photo" class="photo-preview" style="display:none"></div>'
-    +'<div id="snap-step2" class="card" style="display:none"><div class="sec-title">Step 2 — Copy Text</div><div style="font-size:14px;color:#a8a29e;font-family:sans-serif;line-height:1.7"><b>Tap and hold</b> on the photo above. Live Text will highlight it. Tap <b>Select All</b> → <b>Copy</b>.</div><div style="font-size:12px;color:#57534e;font-family:sans-serif;margin-top:8px">💡 If it doesn\'t work, open the photo in Photos app and copy from there.</div></div>'
+    +'<div id="snap-step2" class="card" style="display:none"><div class="sec-title">Step 2 — Copy Text from Photo</div><div style="font-size:14px;color:#a8a29e;font-family:sans-serif;line-height:1.7"><b>Tap and hold</b> on the photo above until text highlights. Then:<br>• Drag the handles to cover ALL text<br>• Tap <b>Copy</b> from the popup menu<br><br>Or open the photo in your <b>Photos app</b> and copy from there.</div></div>'
     +'<div id="snap-step3" class="card" style="display:none"><div class="sec-title">Step 3 — Paste & Extract</div>'+pasteBox()+'</div>');
 }
 
@@ -207,9 +207,9 @@ function renderPaste(){
 }
 
 function pasteBox(){
-  return '<div class="form-group"><label class="form-label">Paste here</label>'
-    +'<div class="paste-bar"><button class="paste-btn" onclick="doPaste()">📋 Paste</button><button class="paste-btn" onclick="doSelectAll()">Select All</button><button class="paste-btn" onclick="doClear()">Clear</button></div>'
-    +'<textarea class="form-input" id="ocr-text" rows="8" style="min-height:140px;font-size:14px" placeholder="Tap Paste button above, or tap here and paste manually..."></textarea></div>'
+  return '<div class="form-group"><label class="form-label">Paste the copied report text here</label>'
+    +'<div class="paste-bar"><button class="paste-btn" onclick="doPaste()">📋 Paste from Clipboard</button><button class="paste-btn" onclick="doCopy()">📄 Copy</button><button class="paste-btn" onclick="doClear()">✕ Clear</button></div>'
+    +'<textarea class="form-input" id="ocr-text" rows="8" style="min-height:140px;font-size:14px" placeholder="Tap Paste button above..."></textarea></div>'
     +'<button class="btn-green btn-full" onclick="doParse()">🤖 Extract Values</button>';
 }
 
@@ -220,7 +220,7 @@ function doPaste(){
     var el=document.getElementById('ocr-text');if(el){el.focus();notify('Tap and hold in the text box, then tap Paste.','inf',3000);}
   });
 }
-function doSelectAll(){var el=document.getElementById('ocr-text');if(el){el.select();el.setSelectionRange(0,el.value.length);notify('All text selected.','ok',1500);}}
+function doCopy(){var el=document.getElementById('ocr-text');if(el&&el.value){navigator.clipboard.writeText(el.value).then(function(){notify('Copied!','ok',1500);}).catch(function(){el.select();document.execCommand('copy');notify('Copied!','ok',1500);});}}
 function doClear(){var el=document.getElementById('ocr-text');if(el)el.value='';}
 
 function doParse(){
