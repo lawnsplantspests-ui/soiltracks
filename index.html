@@ -227,10 +227,7 @@ function doParse(){
   var text=(document.getElementById('ocr-text')||{}).value||'';
   if(text.trim().length<20){notify('Paste the text first.','err');return;}
   setApp('<div class="loading"><div class="spin" style="width:40px;height:40px"></div><p style="margin-top:14px;font-size:17px;font-weight:700;color:#f5f5f4">🤖 Reading Report</p><p style="color:#a8a29e;font-size:14px;margin-top:8px;font-family:sans-serif">3–5 seconds...</p></div>');
-  gasGet({action:'getApiKey'}).then(function(r){
-    if(!r.success){notify('API key error','err');renderPaste();return;}
-    return callAI(r.key,text);
-  }).then(function(res){
+  gasPost({action:'parseReport',text:text}).then(function(res){
     if(!res)return;
     if(res.success&&res.data){
       prefill=res.data;prefill._ai=true;
@@ -244,32 +241,7 @@ function doParse(){
   }).catch(function(e){notify('Error: '+e.message,'err');renderPaste();});
 }
 
-function callAI(key,text){
-  var prompt='You are reading OCR text from a Penn State Extension Soil Test Report. The OCR may be messy.\n\n'
-    +'RETURN ONLY THIS JSON:\n'
-    +'{"CustomerName":"","Field":"","Year":null,"Phosphorus_ppm":null,"Potassium_ppm":null,"LimestoneLbs":null,"RecN":"","RecP":"","RecK":"","pH":null,"P_lbA":null,"Acidity":null,"K_meq":null,"Mg_meq":null,"Ca_meq":null,"CEC":null,"SatK":null,"SatMg":null,"SatCa":null}\n\n'
-    +'TOP OF REPORT:\n'
-    +'• CustomerName = name after "SOIL TEST REPORT FOR:"\n'
-    +'• Field = value after "FIELD ID"\n'
-    +'• Year = 4-digit year from DATE line\n'
-    +'• Phosphorus_ppm = Phosphorus number next to "ppm" in SOIL NUTRIENT LEVELS\n'
-    +'• Potassium_ppm = Potassium number next to "ppm" in SOIL NUTRIENT LEVELS\n\n'
-    +'RECOMMENDATIONS:\n'
-    +'• LimestoneLbs = limestone lb/1000 sq ft. Use 0 if NONE.\n'
-    +'• RecN = nitrogen rec as printed (e.g. "1 to 4"). "NONE" if none.\n'
-    +'• RecP = P2O5 rec. "NONE" if none.\n'
-    +'• RecK = K2O rec. "NONE" if none.\n\n'
-    +'LABORATORY RESULTS TABLE (bottom):\n'
-    +'Columns: 1pH | 2P lb/A | 3Acidity | 2K | 2Mg | 2Ca | 4CEC | K | Mg | Ca\n'
-    +'• pH = 1st (e.g. 6.9)\n• P_lbA = 2nd (e.g. 200)\n• Acidity = 3rd meq/100g (e.g. 0.00)\n'
-    +'• K_meq = 4th meq/100g (e.g. 0.70)\n• Mg_meq = 5th (e.g. 1.99)\n• Ca_meq = 6th (e.g. 9.49)\n'
-    +'• CEC = 7th (e.g. 12.2)\n• SatK = 8th % (e.g. 5.8)\n• SatMg = 9th % (e.g. 16.4)\n• SatCa = 10th % (e.g. 77.9)\n\n'
-    +'Copy numbers exactly. Return ONLY JSON.\n\nOCR TEXT:\n'+text;
-  return fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'x-api-key':key,'anthropic-version':'2023-06-01','content-type':'application/json','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:512,messages:[{role:'user',content:prompt}]})}).then(function(r){
-    if(!r.ok)return r.text().then(function(t){return{success:false,error:'API '+r.status};});
-    return r.json().then(function(j){var t=((j.content||[]).find(function(c){return c.type==='text';})||{}).text||'';var m=t.match(/\{[\s\S]*\}/);try{return{success:true,data:JSON.parse(m?m[0]:t)};}catch(e){return{success:false,error:'Parse error'};}});
-  });
-}
+// AI parsing now handled server-side via gasPost({action:'parseReport'})
 
 // ── Sample Form ──
 function renderForm(p){
