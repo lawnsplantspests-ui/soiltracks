@@ -234,7 +234,12 @@ function doPhotoScan(file){
         prefill=res.data;prefill._ai=true;activeCust=null;
         notify('✅ Values extracted from photo!');renderForm(prefill);
       }else{
-        notify('Scan error: '+(res?res.error:'No response'),'err',8000);renderScan();
+        var errMsg=res?res.error:'No response';
+        if(errMsg.indexOf('rate limit')!==-1){
+          setApp('<div class="card" style="border-color:#fb923c33"><div style="font-size:16px;font-weight:700;color:#fb923c;margin-bottom:10px;font-family:sans-serif">⏳ Google OCR Rate Limit</div><div style="font-size:14px;color:#a8a29e;font-family:sans-serif;line-height:1.7;margin-bottom:14px">Google limits how fast you can scan photos. Wait 30 seconds and try again, or use Paste Text instead.</div><button class="btn-green btn-full" onclick="renderAutoScan()">🔄 Try Again</button><button class="btn-outline btn-full" onclick="renderPaste()">📋 Paste Text Instead</button></div>');
+        }else{
+          notify('Scan error: '+errMsg,'err',8000);renderScan();
+        }
       }
     }).catch(function(err){clearInterval(tick);notify('Error: '+err.message,'err');renderScan();});
   });
