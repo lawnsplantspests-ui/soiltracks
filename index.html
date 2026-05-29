@@ -231,11 +231,7 @@ function doParse(){
     if(!res)return;
     if(res.success&&res.data){
       prefill=res.data;prefill._ai=true;
-      if(!activeCust&&prefill.CustomerName){
-        var n=String(prefill.CustomerName).trim().toLowerCase();
-        var m=customers.find(function(x){return(x.Name||'').toLowerCase()===n||(x.Name||'').toLowerCase().includes(n)||n.includes((x.Name||'').toLowerCase());});
-        if(m)activeCust=m;
-      }
+      activeCust=null;
       notify('✅ Values extracted!');renderForm(prefill);
     }else{notify('Error: '+(res.error||''),'err');renderPaste();}
   }).catch(function(e){notify('Error: '+e.message,'err');renderPaste();});
@@ -246,6 +242,12 @@ function doParse(){
 // ── Sample Form ──
 function renderForm(p){
   var c=activeCust;p=p||{};function gv(k){var v=p[k];return(v!=null&&v!=='')?String(v):'';}
+  // If AI extracted a customer name, always do fresh matching
+  if(p._ai&&gv('CustomerName')){
+    var n=gv('CustomerName').toLowerCase();
+    var m=customers.find(function(x){var h=(x.Name||'').toLowerCase();return h===n||h.includes(n)||n.includes(h);});
+    if(m){activeCust=m;c=m;}else{activeCust=null;c=null;}
+  }
   var html='<button class="back" onclick="renderScan()">&larr; Back</button><div class="page-title">'+(p._ai?'Review Extracted Data':'Enter Sample')+(c?' — '+esc(c.Name):'')+'</div>';
   if(p._ai)html+='<div class="banner-ok">✅ AI extracted — review and save.</div>';
   html+='<div class="card">';
@@ -281,7 +283,8 @@ function doSave(){
   gasPost({action:'saveSample',data:data}).then(function(r){
     if(!r.success){notify('Error: '+(r.error||''),'err');return;}
     data.ID=r.id;data.DateAdded=new Date().toISOString();samples.push(data);
-    notify('✅ Saved!');openCust(activeCust.Name);
+    var savedName=activeCust.Name;
+    notify('✅ Saved!');openCust(savedName);
   }).catch(function(err){notify('Error: '+err.message,'err');});
 }
 
