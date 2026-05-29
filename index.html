@@ -117,10 +117,20 @@ function gasPost(b){return fetch(GAS_URL,{method:'POST',body:JSON.stringify(b)})
 document.addEventListener('DOMContentLoaded',function(){
   document.getElementById('cam-input').addEventListener('change',function(e){
     var file=e.target.files[0];if(!file)return;e.target.value='';
-    var reader=new FileReader();reader.onload=function(ev){
-      var img=document.getElementById('snap-photo');
-      if(img){img.src=ev.target.result;img.style.display='block';document.getElementById('snap-step2').style.display='block';document.getElementById('snap-step3').style.display='block';notify('Photo ready! Tap and hold on the image to use Live Text.','inf',6000);}
-    };reader.readAsDataURL(file);
+    // Check if we're in snap mode (show photo) or scan mode (upload to AI)
+    var snapPhoto=document.getElementById('snap-photo');
+    if(snapPhoto){
+      // Snap & Copy mode — show photo for Live Text
+      var reader=new FileReader();reader.onload=function(ev){
+        snapPhoto.src=ev.target.result;snapPhoto.style.display='block';
+        document.getElementById('snap-step2').style.display='block';
+        document.getElementById('snap-step3').style.display='block';
+        notify('Photo ready! Tap and hold to use Live Text.','inf',6000);
+      };reader.readAsDataURL(file);
+    } else {
+      // Auto Scan mode — compress and send to server
+      doPhotoScan(file);
+    }
   });
   loadAndShow();
 });
@@ -190,9 +200,61 @@ function startSample(){prefill=null;renderScan();}
 function renderScan(){
   var c=activeCust,back=c?'openCust(\''+esc(c.Name)+'\')':'showPage(\'dash\')';
   setApp('<button class="back" onclick="'+back+'">&larr; Back</button><div class="page-title">Add Sample'+(c?' — '+esc(c.Name):'')+'</div><div class="page-sub">Choose how to enter data.</div>'
-    +'<div class="scan-opt primary" onclick="renderSnap()"><div class="si">📸</div><div><div class="st">Snap & Copy</div><div class="sd">Photo → Live Text → Paste. Fastest!</div></div></div>'
+    +'<div class="scan-opt primary" onclick="renderAutoScan()"><div class="si">📷</div><div><div class="st">Scan Report</div><div class="sd">Take a photo — AI reads everything automatically. No copy/paste!</div></div></div>'
+    +'<div class="scan-opt" onclick="renderSnap()"><div class="si">📸</div><div><div class="st">Snap & Copy</div><div class="sd">Photo → Live Text → Paste. Manual fallback.</div></div></div>'
     +'<div class="scan-opt" onclick="renderPaste()"><div class="si">📋</div><div><div class="st">Paste Text</div><div class="sd">Already copied? Paste here.</div></div></div>'
     +'<div class="scan-opt" onclick="renderForm(null)"><div class="si">✏️</div><div><div class="st">Manual Entry</div><div class="sd">Type all values.</div></div></div>');
+}
+
+function renderAutoScan(){
+  setApp('<button class="back" onclick="renderScan()">&larr; Back</button><div class="page-title">Scan Report</div>'
+    +'<div class="card"><div style="font-size:14px;color:#a8a29e;font-family:sans-serif;line-height:1.7;margin-bottom:14px">Take a clear photo of the <b>entire soil report</b>. Make sure the Laboratory Results table at the bottom is readable. AI will extract all values automatically.</div>'
+    +'<button class="btn-green btn-full" onclick="triggerAutoScan()" style="margin-top:0;font-size:17px;padding:16px">📷 Take Photo & Scan</button></div>'
+    +'<div class="card" style="border-color:#333"><div style="font-size:12px;color:#57534e;font-family:sans-serif;line-height:1.6">💡 <b>Tips for best results:</b><br>• Lay the report flat on a table<br>• Good lighting, no shadows<br>• Include the entire page in the frame<br>• Hold camera steady</div></div>');
+}
+
+function triggerAutoScan(){
+  // Remove snap-photo element so camera handler knows we're in scan mode
+  document.getElementById('cam-input').click();
+}
+
+function doPhotoScan(file){
+  setApp('<div class="loading"><div class="spin" style="width:40px;height:40px;border-width:4px"></div>'
+    +'<p style="margin-top:14px;font-size:17px;font-weight:700;color:#f5f5f4">📷 Scanning Report</p>'
+    +'<p id="scan-status" style="color:#a8a29e;font-size:14px;margin-top:8px;font-family:sans-serif">Compressing image...</p>'
+    +'<p style="color:#57534e;font-size:12px;margin-top:4px;font-family:monospace"><span id="scan-timer">0</span>s</p>'
+    +'<div style="margin-top:20px"><button class="btn-outline" onclick="renderPaste()">📋 Paste Text Instead</button></div></div>');
+  var start=Date.now();
+  var tick=setInterval(function(){var el=document.getElementById('scan-timer');if(el)el.textContent=Math.floor((Date.now()-start)/1000);},1000);
+  compressForScan(file,function(b64){
+    var el=document.getElementById('scan-status');if(el)el.textContent='Uploading to server & running OCR...';
+    gasPost({action:'scanPhoto',imageBase64:b64,mimeType:'image/jpeg'}).then(function(res){
+      clearInterval(tick);
+      if(res&&res.success&&res.data){
+        prefill=res.data;prefill._ai=true;activeCust=null;
+        notify('✅ Values extracted from photo!');renderForm(prefill);
+      }else{
+        notify('Scan error: '+(res?res.error:'No response'),'err',8000);renderScan();
+      }
+    }).catch(function(err){clearInterval(tick);notify('Error: '+err.message,'err');renderScan();});
+  });
+}
+
+function compressForScan(file,cb){
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var img=new Image();
+    img.onload=function(){
+      var canvas=document.createElement('canvas');
+      var MAX=1200;var w=img.width,h=img.height;
+      if(w>MAX||h>MAX){if(w>h){h=Math.round(h*MAX/w);w=MAX;}else{w=Math.round(w*MAX/h);h=MAX;}}
+      canvas.width=w;canvas.height=h;
+      canvas.getContext('2d').drawImage(img,0,0,w,h);
+      cb(canvas.toDataURL('image/jpeg',0.7).split(',')[1]);
+    };
+    img.src=e.target.result;
+  };
+  reader.readAsDataURL(file);
 }
 
 function renderSnap(){
