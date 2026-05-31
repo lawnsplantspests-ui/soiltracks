@@ -370,20 +370,400 @@ function renderRpt(){
   var n=(document.getElementById('rpt-c')||{}).value,out=document.getElementById('rpt-out');if(!out||!n){if(out)out.innerHTML='';return;}
   var c=customers.find(function(x){return x.Name===n;}),cs=samples.filter(function(s){return s.CustomerName===n;}).sort(function(a,b){return a.Year-b.Year;});
   if(!c||!cs.length){out.innerHTML='<div style="color:#78716c;font-family:sans-serif;padding:16px">No samples.</div>';return;}
-  var today=new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}),yrs=cs.map(function(s){return s.Year;});
-  var TH='style="background:#f0f7ee;padding:6px 8px;text-align:left;color:#2d5a1b;font-weight:600"',THC='style="background:#f0f7ee;padding:6px 8px;text-align:center;color:#2d5a1b;font-weight:600"';
-  var h='<div style="background:white;color:#1a1a1a;border-radius:12px;padding:24px;font-family:sans-serif">';
-  h+='<div style="display:flex;justify-content:space-between;border-bottom:3px solid #2d5a1b;padding-bottom:14px;margin-bottom:18px;flex-wrap:wrap;gap:10px"><div style="font-size:18px;font-weight:900;color:#2d5a1b;line-height:1.2">LAWNS PLANTS<br>&amp; PESTS LLC<br><span style="font-size:11px;font-weight:400;color:#666">Soil Health Report</span></div><div style="text-align:right"><div style="font-size:16px;font-weight:700;color:#2d5a1b">'+esc(c.Name)+'</div>'+(c.Address?'<div style="font-size:11px;color:#666">'+esc(c.Address)+(c.City?', '+esc(c.City):'')+'</div>':'')+'<div style="font-size:11px;color:#666">'+today+'</div></div></div>';
-  // Recs
-  h+='<div style="font-size:11px;font-weight:700;color:#2d5a1b;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Recommendations</div><table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:18px"><thead><tr><th '+TH+'>Item</th>';yrs.forEach(function(y){h+='<th '+THC+'>'+y+'</th>';});h+='</tr></thead><tbody>';
-  REC_FIELDS.forEach(function(r){h+='<tr><td style="padding:6px 8px;border-bottom:1px solid #eee;font-weight:600">'+r.label+'</td>';cs.forEach(function(s){var v=s[r.key],none=!v||String(v).toLowerCase()==='none'||v==='0'||v===0;h+='<td style="padding:6px 8px;border-bottom:1px solid #eee;text-align:center;font-weight:700;color:'+(none?'#16a34a':'#d97706')+'">'+(none?'None':v)+'</td>';});h+='</tr>';});h+='</tbody></table>';
-  // Top
-  h+='<div style="font-size:11px;font-weight:700;color:#2d5a1b;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Soil Nutrient Levels</div><table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:18px"><thead><tr><th '+TH+'>Metric</th><th '+TH+'>Ideal</th>';yrs.forEach(function(y){h+='<th '+THC+'>'+y+'</th>';});h+='</tr></thead><tbody>';
-  TOP_FIELDS.forEach(function(m){h+='<tr><td style="padding:6px 8px;border-bottom:1px solid #eee;font-weight:600">'+m.label+'</td><td style="padding:6px 8px;border-bottom:1px solid #eee;color:#999;font-family:monospace;font-size:10px">'+m.min+'–'+m.max+'</td>';cs.forEach(function(s){var n=parseFloat(s[m.key]),clr=isNaN(n)?'#999':(n>=m.min&&n<=m.max?'#16a34a':(n<m.min?'#dc2626':'#d97706'));h+='<td style="padding:6px 8px;border-bottom:1px solid #eee;text-align:center;font-weight:700;color:'+clr+'">'+(s[m.key]!=null?s[m.key]:'—')+'</td>';});h+='</tr>';});h+='</tbody></table>';
-  // Lab
-  h+='<div style="font-size:11px;font-weight:700;color:#2d5a1b;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Laboratory Results</div><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr><th '+TH+'>Metric</th><th '+TH+'>Ideal</th>';yrs.forEach(function(y){h+='<th '+THC+'>'+y+'</th>';});h+='</tr></thead><tbody>';
-  LAB_FIELDS.forEach(function(m){h+='<tr><td style="padding:6px 8px;border-bottom:1px solid #eee;font-weight:600">'+m.label+'</td><td style="padding:6px 8px;border-bottom:1px solid #eee;color:#999;font-family:monospace;font-size:10px">'+(m.info?'info':m.min+'–'+m.max)+'</td>';cs.forEach(function(s){var n=parseFloat(s[m.key]),clr=isNaN(n)?'#999':(m.info?'#333':(n>=m.min&&n<=m.max?'#16a34a':(n<m.min?'#dc2626':'#d97706')));h+='<td style="padding:6px 8px;border-bottom:1px solid #eee;text-align:center;font-weight:700;color:'+clr+'">'+(s[m.key]!=null?s[m.key]:'—')+'</td>';});h+='</tr>';});h+='</tbody></table>';
-  h+='<div style="margin-top:14px;padding-top:12px;border-top:1px solid #eee;display:flex;justify-content:space-between;font-size:10px;color:#999"><span>🟢 Optimal 🟠 Above 🔴 Below</span><span style="color:#2d5a1b;font-weight:700">Lawns Plants &amp; Pests LLC</span></div></div>';
+  var today=new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  var latest=cs[cs.length-1];
+  var yrs=cs.map(function(s){return s.Year;});
+
+  // Helper: bar chart showing value position in range
+  function bar(val,min,max,label,isInfo){
+    if(val==null||val===''||isInfo)return'';
+    var n=parseFloat(val);if(isNaN(n))return'';
+    var rangeMax=max*1.5;if(rangeMax<n)rangeMax=n*1.2;
+    var pct=Math.min(Math.max((n/rangeMax)*100,2),100);
+    var idealL=(min/rangeMax)*100,idealR=(max/rangeMax)*100;
+    var clr=n>=min&&n<=max?'#16a34a':(n<min?'#dc2626':'#d97706');
+    var status=n>=min&&n<=max?'Optimal':(n<min?'Below Optimal':'Above Optimal');
+    return '<div style="margin-bottom:2px">'
+      +'<div style="position:relative;height:18px;background:#f0f0f0;border-radius:9px;overflow:hidden">'
+      +'<div style="position:absolute;left:'+idealL+'%;width:'+(idealR-idealL)+'%;height:100%;background:#e8f5e3;border-left:1px solid #4ade80;border-right:1px solid #4ade80"></div>'
+      +'<div style="position:relative;height:100%;width:'+pct+'%;background:'+clr+';border-radius:9px;min-width:4px"></div>'
+      +'</div>'
+      +'<div style="font-size:9px;color:#999;margin-top:1px">'+status+' ('+n+') · Ideal: '+min+'–'+max+'</div></div>';
+  }
+
+  // Helper: year-over-year bars for a metric (larger, more prominent)
+  function yearBars(metric){
+    if(cs.length<1)return'';
+    var vals=cs.map(function(s){return{year:s.Year,val:parseFloat(s[metric.key])};}).filter(function(v){return!isNaN(v.val);});
+    if(!vals.length)return'';
+    if(vals.length===1){
+      // Single year — just show a note, no bar chart needed
+      return'';
+    }
+    var maxVal=Math.max.apply(null,vals.map(function(v){return v.val;}).concat([metric.max*1.3]));
+    var idealTopPct=(metric.max/maxVal)*100;
+    var idealBotPct=(metric.min/maxVal)*100;
+    var h='<div style="margin:10px 0 4px">';
+    h+='<div style="font-size:10px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Year-over-Year Trend</div>';
+    h+='<div style="position:relative;display:flex;align-items:flex-end;gap:8px;height:90px;background:#f7f7f7;border-radius:8px;padding:8px 10px 0;border:1px solid #eee">';
+    // Ideal zone band
+    h+='<div style="position:absolute;left:0;right:0;bottom:'+(idealBotPct)+'%;height:'+(idealTopPct-idealBotPct)+'%;background:#e8f5e3;border-top:1px dashed #4ade80;border-bottom:1px dashed #4ade80;pointer-events:none;border-radius:4px"></div>';
+    vals.forEach(function(v,i){
+      var pct=Math.max((v.val/maxVal)*82,5); // 82% max height to leave label room
+      var clr=v.val>=metric.min&&v.val<=metric.max?'#16a34a':(v.val<metric.min?'#dc2626':'#d97706');
+      var prev=i>0?vals[i-1].val:null;
+      var arrow='';
+      if(prev!==null){var diff=v.val-prev;arrow=diff>0?'<span style="color:#16a34a;font-size:9px">▲</span>':(diff<0?'<span style="color:#dc2626;font-size:9px">▼</span>':'<span style="color:#999;font-size:9px">–</span>');}
+      h+='<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;position:relative;z-index:1">'
+        +'<div style="font-size:10px;font-weight:800;color:'+clr+';margin-bottom:2px">'+arrow+v.val+'</div>'
+        +'<div style="width:100%;background:'+clr+';height:'+pct+'%;border-radius:5px 5px 0 0;min-height:6px;opacity:0.9"></div>'
+        +'<div style="font-size:10px;font-weight:700;color:#444;margin-top:4px;padding-bottom:4px">'+v.year+'</div>'
+        +'</div>';
+    });
+    h+='</div>';
+    h+='<div style="font-size:9px;color:#aaa;margin-top:3px">Shaded band = ideal range ('+metric.min+'–'+metric.max+(metric.unit?' '+metric.unit:'')+')</div>';
+    h+='</div>';
+    return h;
+  }
+
+  // Calculate soil health score
+  var scoreCount=0,scoreGood=0;
+  ALL_METRICS.forEach(function(m){
+    if(m.info)return;
+    var v=parseFloat(latest[m.key]);
+    if(isNaN(v))return;
+    scoreCount++;
+    if(v>=m.min&&v<=m.max)scoreGood++;
+  });
+  var scorePct=scoreCount?Math.round((scoreGood/scoreCount)*100):0;
+  var scoreColor=scorePct>=75?'#16a34a':(scorePct>=50?'#d97706':'#dc2626');
+  var scoreLabel=scorePct>=75?'Good':(scorePct>=50?'Needs Improvement':'Needs Attention');
+
+  var h='<div style="background:white;color:#1a1a1a;border-radius:12px;padding:28px;font-family:sans-serif;line-height:1.5;max-width:800px">';
+
+  // ── Header ──
+  h+='<div style="display:flex;justify-content:space-between;border-bottom:3px solid #2d5a1b;padding-bottom:16px;margin-bottom:20px;flex-wrap:wrap;gap:10px">'
+    +'<div><div style="font-size:22px;font-weight:900;color:#2d5a1b;line-height:1.2">LAWNS PLANTS &amp; PESTS LLC</div><div style="font-size:12px;color:#666;margin-top:4px">Soil Health Report &amp; Improvement Plan</div></div>'
+    +'<div style="text-align:right"><div style="font-size:18px;font-weight:700;color:#2d5a1b">'+esc(c.Name)+'</div>'
+    +(c.Address?'<div style="font-size:11px;color:#666">'+esc(c.Address)+(c.City?', '+esc(c.City):'')+'</div>':'')
+    +'<div style="font-size:11px;color:#666">Report Generated: '+today+'</div>'
+    +'<div style="font-size:11px;color:#666">Seasons Tracked: '+yrs.join(', ')+'</div></div></div>';
+
+  // ── Soil Health Score ──
+  h+='<div style="background:#f8faf7;border:1px solid #e0e8dc;border-radius:10px;padding:18px;margin-bottom:22px;text-align:center">'
+    +'<div style="font-size:11px;font-weight:700;color:#2d5a1b;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px">Overall Soil Health Score</div>'
+    +'<div style="font-size:48px;font-weight:900;color:'+scoreColor+'">'+scorePct+'%</div>'
+    +'<div style="font-size:14px;font-weight:600;color:'+scoreColor+'">'+scoreLabel+'</div>'
+    +'<div style="font-size:11px;color:#888;margin-top:6px">'+scoreGood+' of '+scoreCount+' metrics within optimal range ('+latest.Year+' test)</div></div>';
+
+  // ── How to Read This Report ──
+  h+='<div style="background:#f9f9f9;border-radius:8px;padding:14px;margin-bottom:22px;font-size:12px;color:#555;line-height:1.7">'
+    +'<div style="font-weight:700;color:#2d5a1b;margin-bottom:4px">How to Read This Report</div>'
+    +'Your soil was tested by Penn State Extension\'s Agricultural Analytical Services Laboratory. Each value is compared to ideal ranges for healthy lawn growth. '
+    +'<span style="color:#16a34a;font-weight:700">Green</span> = optimal, '
+    +'<span style="color:#d97706;font-weight:700">Orange</span> = above optimal, '
+    +'<span style="color:#dc2626;font-weight:700">Red</span> = below optimal. '
+    +'The bar charts show your progress over time — the shaded green zone is the ideal range.</div>';
+
+  // ── Improvement Plan (Recommendations) ──
+  h+='<div style="font-size:13px;font-weight:800;color:#2d5a1b;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;border-bottom:2px solid #2d5a1b;padding-bottom:6px">Your Improvement Plan</div>';
+
+  // Limestone
+  var limeVal=latest.LimestoneLbs;
+  var limeNone=!limeVal||String(limeVal).toLowerCase()==='none'||limeVal==='0'||limeVal===0;
+  h+='<div style="margin-bottom:14px;padding:12px;border-radius:8px;border-left:4px solid '+(limeNone?'#16a34a':'#d97706')+';background:#fafafa">'
+    +'<div style="font-weight:700;font-size:13px;color:#1a1a1a">Limestone — '+(limeNone?'None Needed ✅':limeVal+' lb/1,000 sq ft')+'</div>'
+    +'<div style="font-size:11px;color:#555;margin-top:4px">Limestone raises soil pH to the optimal 6.0–7.0 range where nutrients are most available to grass roots. '
+    +(limeNone?'Your pH is in good shape — no lime needed at this time.':'Apply '+limeVal+' lb per 1,000 sq ft. If over 100 lb, split into two applications 4–6 months apart. Aerate before applying for best absorption.')
+    +'</div>';
+  if(cs.length>1){h+='<div style="font-size:10px;color:#888;margin-top:6px">History: ';cs.forEach(function(s,i){var v=s.LimestoneLbs,nn=!v||String(v).toLowerCase()==='none'||v==='0'||v===0;h+=(i?', ':'')+s.Year+': '+(nn?'None':v);});h+='</div>';}
+  h+='</div>';
+
+  // N, P, K recs
+  var recItems=[
+    {key:'RecN',label:'Nitrogen (N)',desc:'Nitrogen drives leaf growth and that deep green color. It cannot be measured by a soil test — recommendations are based on grass type and maintenance level. Apply in 2–4 split applications through the growing season for best results.'},
+    {key:'RecP',label:'Phosphorus (P₂O₅)',desc:'Phosphorus supports root development and energy transfer. Only apply if recommended — excess phosphorus runs off into waterways and contributes to pollution.'},
+    {key:'RecK',label:'Potassium (K₂O)',desc:'Potassium strengthens cell walls, improves drought tolerance and winter hardiness. Essential for preparing your lawn to survive cold months.'}
+  ];
+  recItems.forEach(function(r){
+    var val=latest[r.key];var none=!val||String(val).toLowerCase()==='none';
+    h+='<div style="margin-bottom:14px;padding:12px;border-radius:8px;border-left:4px solid '+(none?'#16a34a':'#d97706')+';background:#fafafa">'
+      +'<div style="font-weight:700;font-size:13px;color:#1a1a1a">'+r.label+' — '+(none?'Not Needed ✅':val+' lb/1,000 sq ft/yr')+'</div>'
+      +'<div style="font-size:11px;color:#555;margin-top:4px">'+r.desc+'</div></div>';
+  });
+
+  // ── Soil Nutrient Levels ──
+  h+='<div style="font-size:13px;font-weight:800;color:#2d5a1b;text-transform:uppercase;letter-spacing:1px;margin:24px 0 10px;border-bottom:2px solid #2d5a1b;padding-bottom:6px">Soil Nutrient Levels</div>'
+    +'<div style="font-size:11px;color:#666;margin-bottom:14px">These values come from the top section of your Penn State soil test and represent the nutrients available in your soil.</div>';
+
+  TOP_FIELDS.forEach(function(m){
+    var val=latest[m.key];var n=parseFloat(val);
+    var status=isNaN(n)?'—':(n>=m.min&&n<=m.max?'✅ Optimal':(n<m.min?'⚠️ Below Optimal':'⚠️ Above Optimal'));
+    h+='<div style="margin-bottom:16px;padding:14px;border-radius:8px;background:#fafafa;border:1px solid #eee">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div style="font-weight:700;font-size:14px;color:#1a1a1a">'+m.label+(m.unit?' ('+m.unit+')':'')+'</div><div style="font-size:13px;font-weight:700;color:'+(isNaN(n)?'#999':(n>=m.min&&n<=m.max?'#16a34a':(n<m.min?'#dc2626':'#d97706')))+'">'+(!isNaN(n)?n:'—')+' '+status+'</div></div>'
+      +bar(val,m.min,m.max)
+      +yearBars(m)
+      +'<div style="font-size:11px;color:#555;margin-top:6px">'+m.about+'</div>'
+      +'<div style="font-size:11px;color:#2d5a1b;font-weight:600;margin-top:4px">'+m.fix+'</div>'
+      +'</div>';
+  });
+
+  // ── Laboratory Results ──
+  h+='<div style="font-size:13px;font-weight:800;color:#2d5a1b;text-transform:uppercase;letter-spacing:1px;margin:24px 0 10px;border-bottom:2px solid #2d5a1b;padding-bottom:6px">Laboratory Results</div>'
+    +'<div style="font-size:11px;color:#666;margin-bottom:14px">These detailed values from the lab analysis provide a deeper look at your soil chemistry. The exchangeable cations and saturation percentages show how nutrients are balanced in your soil.</div>';
+
+  LAB_FIELDS.forEach(function(m){
+    var val=latest[m.key];var n=parseFloat(val);
+    var status=m.info?'ℹ️ Informational':(isNaN(n)?'—':(n>=m.min&&n<=m.max?'✅ Optimal':(n<m.min?'⚠️ Below':'⚠️ Above')));
+    h+='<div style="margin-bottom:16px;padding:14px;border-radius:8px;background:#fafafa;border:1px solid #eee">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div style="font-weight:700;font-size:14px;color:#1a1a1a">'+m.label+(m.unit?' ('+m.unit+')':'')+'</div><div style="font-size:13px;font-weight:700;color:'+(m.info?'#666':(isNaN(n)?'#999':(n>=m.min&&n<=m.max?'#16a34a':(n<m.min?'#dc2626':'#d97706'))))+'">'+(!isNaN(n)?n:'—')+' '+status+'</div></div>'
+      +bar(val,m.min,m.max,m.label,m.info)
+      +yearBars(m)
+      +'<div style="font-size:11px;color:#555;margin-top:6px">'+m.about+'</div>'
+      +'<div style="font-size:11px;color:#2d5a1b;font-weight:600;margin-top:4px">'+m.fix+'</div>'
+      +'</div>';
+  });
+
+  // ── Year-over-Year Summary Table ──
+  if(cs.length>1){
+    h+='<div style="font-size:13px;font-weight:800;color:#2d5a1b;text-transform:uppercase;letter-spacing:1px;margin:24px 0 10px;border-bottom:2px solid #2d5a1b;padding-bottom:6px">Year-over-Year Data</div>';
+    var TH='style="background:#f0f7ee;padding:6px 8px;text-align:left;color:#2d5a1b;font-weight:600;font-size:11px"',THC='style="background:#f0f7ee;padding:6px 8px;text-align:center;color:#2d5a1b;font-weight:600;font-size:11px"';
+    h+='<table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:12px"><thead><tr><th '+TH+'>Metric</th><th '+TH+'>Ideal</th>';
+    yrs.forEach(function(y){h+='<th '+THC+'>'+y+'</th>';});
+    h+='<th '+THC+'>Trend</th></tr></thead><tbody>';
+    ALL_METRICS.forEach(function(m){
+      var vals=cs.map(function(s){return parseFloat(s[m.key]);});
+      var first=vals.find(function(v){return!isNaN(v);}),last=vals.slice().reverse().find(function(v){return!isNaN(v);});
+      var trend='—';
+      if(!isNaN(first)&&!isNaN(last)&&cs.length>1){
+        if(m.info)trend='—';
+        else if(first>=m.min&&first<=m.max&&last>=m.min&&last<=m.max)trend='✅ Stable';
+        else if(last>=m.min&&last<=m.max)trend='📈 Improved';
+        else if(first>=m.min&&first<=m.max)trend='📉 Declined';
+        else trend='⚠️ Monitor';
+      }
+      h+='<tr><td style="padding:5px 8px;border-bottom:1px solid #eee;font-weight:600">'+m.label+'</td><td style="padding:5px 8px;border-bottom:1px solid #eee;color:#999;font-family:monospace;font-size:10px">'+(m.info?'info':m.min+'–'+m.max)+'</td>';
+      cs.forEach(function(s){var v=parseFloat(s[m.key]),clr=isNaN(v)?'#ccc':(m.info?'#333':(v>=m.min&&v<=m.max?'#16a34a':(v<m.min?'#dc2626':'#d97706')));h+='<td style="padding:5px 8px;border-bottom:1px solid #eee;text-align:center;font-weight:700;color:'+clr+'">'+(isNaN(v)?'—':v)+'</td>';});
+      h+='<td style="padding:5px 8px;border-bottom:1px solid #eee;text-align:center;font-size:10px">'+trend+'</td></tr>';
+    });
+    h+='</tbody></table>';
+  }
+
+  // ── What Changed Since Last Year ──
+  if(cs.length>1){
+    var prev=cs[cs.length-2],curr=cs[cs.length-1];
+    var prevYr=prev.Year,currYr=curr.Year;
+
+    // Per-metric plain-English notes based on direction and position
+    var changeNotes={
+      pH:{
+        improvedToOptimal:'Limestone applications are working — your soil is now in the ideal range. Keep following the current plan.',
+        improvedStillLow:'Moving in the right direction, but still below optimal. Continue limestone applications as recommended.',
+        improvedStillHigh:'Coming down toward the ideal range. No lime needed — monitor at next test.',
+        declinedFromOptimal:'pH has slipped below optimal. A limestone application this season should bring it back.',
+        declinedFurtherLow:'pH is continuing to fall. Prioritize a limestone application — this affects nutrient availability for everything else.',
+        declinedFurtherHigh:'pH remains above optimal. Avoid limestone. Elemental sulfur can help lower it over time.',
+        stableOptimal:'pH is holding steady in the ideal range. Nothing to change.',
+        stableOffTarget:'pH is stable but outside the ideal range. Address with lime or sulfur per recommendations.',
+        infoOnly:''
+      },
+      Phosphorus_ppm:{
+        improvedToOptimal:'Phosphorus is now in the ideal range. The current fertilizer program is balanced.',
+        improvedStillLow:'Phosphorus is rising but still low. Continue P₂O₅ applications as recommended.',
+        improvedStillHigh:'Phosphorus is still above optimal despite reduction. Hold off on any P₂O₅ fertilizer this season.',
+        declinedFromOptimal:'Phosphorus has dropped below optimal. A modest P₂O₅ application may be needed.',
+        declinedFurtherLow:'Phosphorus continues to be low. A phosphate fertilizer application is recommended.',
+        declinedFurtherHigh:'Phosphorus remains elevated. Skip P₂O₅ fertilizer — excess phosphorus can run off into waterways.',
+        stableOptimal:'Phosphorus is steady in the ideal range. Current program is working.',
+        stableOffTarget:'Phosphorus is stable but outside the ideal range. Adjust fertilizer per recommendations.',
+        infoOnly:''
+      },
+      Potassium_ppm:{
+        improvedToOptimal:'Potassium is now in the ideal range — good for drought and winter hardiness.',
+        improvedStillLow:'Potassium is improving but still low. Continue K₂O applications.',
+        improvedStillHigh:'Potassium is still elevated. Hold off on additional potash.',
+        declinedFromOptimal:'Potassium has dipped below optimal. Apply K₂O to restore strength and stress resistance.',
+        declinedFurtherLow:'Low potassium is making your lawn more vulnerable to drought and disease. K₂O application is a priority.',
+        declinedFurtherHigh:'Potassium remains high. No additional K₂O needed.',
+        stableOptimal:'Potassium is steady and in a good range.',
+        stableOffTarget:'Potassium is stable but off-target. Adjust per recommendations.',
+        infoOnly:''
+      },
+      P_lbA:{
+        improvedToOptimal:'Lab phosphorus is now in the optimal range.',
+        improvedStillLow:'Lab phosphorus is rising — continue the current fertilizer plan.',
+        improvedStillHigh:'Lab phosphorus is high. Avoid additional P₂O₅ this season.',
+        declinedFromOptimal:'Lab phosphorus has dropped below optimal — a phosphate application may be needed.',
+        declinedFurtherLow:'Lab phosphorus remains low. Phosphate fertilizer is recommended.',
+        declinedFurtherHigh:'Lab phosphorus is still elevated. Skip phosphate fertilizer.',
+        stableOptimal:'Lab phosphorus is holding in the ideal range.',
+        stableOffTarget:'Lab phosphorus is stable but outside the target. Adjust per recommendations.',
+        infoOnly:''
+      },
+      Acidity:{
+        improvedToOptimal:'Buffer acidity is in a good range — limestone needs are manageable.',
+        improvedStillLow:'',
+        improvedStillHigh:'Acidity is high, meaning your soil needs significant limestone to shift pH. Follow the lb recommendation closely.',
+        declinedFromOptimal:'Buffer acidity has increased — more limestone will be needed this cycle.',
+        declinedFurtherLow:'',
+        declinedFurtherHigh:'Acidity remains high. This explains the larger limestone recommendation.',
+        stableOptimal:'Buffer acidity is stable and manageable.',
+        stableOffTarget:'Buffer acidity is elevated — follow limestone recommendations carefully.',
+        infoOnly:''
+      },
+      K_meq:{
+        improvedToOptimal:'Exchangeable potassium is now in the optimal range.',
+        improvedStillLow:'Potassium is rising — continue K₂O applications.',
+        improvedStillHigh:'Potassium is still high relative to ideal. Monitor the K:Mg ratio.',
+        declinedFromOptimal:'Exchangeable K has dropped — a potash application is recommended.',
+        declinedFurtherLow:'Low exchangeable K is limiting nutrient balance. Apply K₂O.',
+        declinedFurtherHigh:'Exchangeable K remains high. No additional potash needed.',
+        stableOptimal:'Exchangeable potassium is holding steady in the ideal range.',
+        stableOffTarget:'Exchangeable potassium is stable but off-target. Adjust per recommendations.',
+        infoOnly:''
+      },
+      Mg_meq:{
+        improvedToOptimal:'Magnesium is now in the ideal range — chlorophyll production should be strong.',
+        improvedStillLow:'Magnesium is rising but still low. Dolomitic limestone or Epsom salt can help.',
+        improvedStillHigh:'Magnesium is still above optimal — no additional Mg applications needed.',
+        declinedFromOptimal:'Magnesium has dipped below optimal. Consider dolomitic limestone at next application.',
+        declinedFurtherLow:'Low magnesium limits photosynthesis. Dolomitic limestone or Epsom salt is recommended.',
+        declinedFurtherHigh:'Magnesium remains high. Avoid additional Mg sources.',
+        stableOptimal:'Magnesium is stable and in the ideal range.',
+        stableOffTarget:'Magnesium is stable but off-target. Adjust per recommendations.',
+        infoOnly:''
+      },
+      Ca_meq:{
+        improvedToOptimal:'Calcium is now in the optimal range — good for cell strength and soil structure.',
+        improvedStillLow:'Calcium is improving but still low. Limestone applications will continue to help.',
+        improvedStillHigh:'Calcium remains elevated. This is usually not a problem but watch pH.',
+        declinedFromOptimal:'Calcium has dropped below optimal — often linked to acidic conditions. Limestone helps.',
+        declinedFurtherLow:'Low calcium is weakening soil structure. Limestone is the primary fix.',
+        declinedFurtherHigh:'Calcium remains high. Monitor pH — high Ca can push pH above optimal.',
+        stableOptimal:'Calcium is holding steady in the ideal range.',
+        stableOffTarget:'Calcium is stable but outside the target. Address with limestone per recommendations.',
+        infoOnly:''
+      },
+      CEC:{
+        improvedToOptimal:'',improvedStillLow:'',improvedStillHigh:'',
+        declinedFromOptimal:'',declinedFurtherLow:'',declinedFurtherHigh:'',
+        stableOptimal:'',stableOffTarget:'',
+        infoOnly:'CEC is a long-term property of your soil. Adding compost and organic matter over many seasons will gradually improve it.'
+      },
+      SatK:{
+        improvedToOptimal:'Potassium saturation is now in the ideal range — good balance with Mg and Ca.',
+        improvedStillLow:'K saturation is rising. Continue potash applications.',
+        improvedStillHigh:'K saturation remains high. Excess K can block magnesium uptake — hold off on additional potash.',
+        declinedFromOptimal:'K saturation has dropped below optimal. A potash application is recommended.',
+        declinedFurtherLow:'Low K saturation limits drought resistance. Apply K₂O.',
+        declinedFurtherHigh:'K saturation is still high. Skip additional potash and watch Mg levels.',
+        stableOptimal:'Potassium saturation is steady in the ideal range.',
+        stableOffTarget:'K saturation is stable but off-target. Adjust per recommendations.',
+        infoOnly:''
+      },
+      SatMg:{
+        improvedToOptimal:'Magnesium saturation is now in the ideal range.',
+        improvedStillLow:'Mg saturation is rising — continue dolomitic limestone or Epsom salt.',
+        improvedStillHigh:'Mg saturation remains elevated. Avoid additional Mg sources.',
+        declinedFromOptimal:'Mg saturation has slipped below optimal — consider dolomitic limestone.',
+        declinedFurtherLow:'Low Mg saturation is limiting photosynthesis. Dolomitic limestone or Epsom salt recommended.',
+        declinedFurtherHigh:'Mg saturation is still high. No additional magnesium needed.',
+        stableOptimal:'Magnesium saturation is holding steady in the ideal range.',
+        stableOffTarget:'Mg saturation is stable but off-target. Adjust per recommendations.',
+        infoOnly:''
+      },
+      SatCa:{
+        improvedToOptimal:'Calcium saturation is now in the ideal range — healthy soil base.',
+        improvedStillLow:'Ca saturation is rising. Limestone applications are helping.',
+        improvedStillHigh:'Ca saturation remains high. Monitor pH to ensure it doesn\'t push above 7.0.',
+        declinedFromOptimal:'Ca saturation has dropped. This often signals acidifying conditions — check limestone schedule.',
+        declinedFurtherLow:'Ca saturation is low, usually a sign of acidic soil. Limestone is the primary fix.',
+        declinedFurtherHigh:'Ca saturation is still above optimal. Watch pH closely.',
+        stableOptimal:'Calcium saturation is steady in the ideal range.',
+        stableOffTarget:'Ca saturation is stable but off-target. Limestone or pH correction recommended.',
+        infoOnly:''
+      }
+    };
+
+    function getNoteKey(m, pv, cv){
+      if(m.info) return 'infoOnly';
+      var prevOk=pv>=m.min&&pv<=m.max, currOk=cv>=m.min&&cv<=m.max;
+      var prevLow=pv<m.min, currLow=cv<m.min;
+      var improved=cv>pv, declined=cv<pv;
+      if(prevOk&&currOk) return 'stableOptimal';
+      if(!prevOk&&!currOk&&Math.abs(cv-pv)<0.01) return 'stableOffTarget';
+      if(!prevOk&&!currOk&&improved&&currLow) return 'improvedStillLow';
+      if(!prevOk&&!currOk&&improved&&!currLow) return 'improvedStillHigh';
+      if(!prevOk&&currOk) return 'improvedToOptimal';
+      if(prevOk&&!currOk&&currLow) return 'declinedFromOptimal';
+      if(!prevOk&&!currOk&&declined&&currLow) return 'declinedFurtherLow';
+      if(!prevOk&&!currOk&&declined&&!currLow) return 'declinedFurtherHigh';
+      if(prevOk&&!currOk&&!currLow) return 'declinedFromOptimal';
+      return 'stableOffTarget';
+    }
+
+    var changeItems=[];
+    ALL_METRICS.forEach(function(m){
+      var pv=parseFloat(prev[m.key]), cv=parseFloat(curr[m.key]);
+      if(isNaN(pv)||isNaN(cv)) return;
+      var diff=cv-pv;
+      var absDiff=Math.abs(diff);
+      if(absDiff<0.001) return; // skip if no meaningful change
+      var arrow=diff>0?'▲':'▼';
+      var arrowClr=diff>0?'#16a34a':'#dc2626';
+      // For informational fields (CEC) direction doesn't carry good/bad meaning
+      if(m.info){arrowClr='#888';}
+      var noteKey=getNoteKey(m,pv,cv);
+      var noteBank=changeNotes[m.key]||{};
+      var note=noteBank[noteKey]||'';
+      // Format diff nicely
+      var diffStr=(diff>0?'+':'')+Math.round(diff*100)/100;
+      changeItems.push({m:m,pv:pv,cv:cv,diff:diff,diffStr:diffStr,arrow:arrow,arrowClr:arrowClr,note:note,noteKey:noteKey});
+    });
+
+    if(changeItems.length){
+      h+='<div style="font-size:13px;font-weight:800;color:#2d5a1b;text-transform:uppercase;letter-spacing:1px;margin:24px 0 10px;border-bottom:2px solid #2d5a1b;padding-bottom:6px">What Changed Since Last Year</div>';
+      h+='<div style="font-size:11px;color:#666;margin-bottom:12px">Comparing '+prevYr+' → '+currYr+' results. Only metrics with measured changes are shown.</div>';
+      h+='<div style="display:flex;flex-direction:column;gap:8px">';
+      changeItems.forEach(function(item){
+        var currOk=item.cv>=item.m.min&&item.cv<=item.m.max;
+        var borderClr=item.m.info?'#bbb':(currOk?'#16a34a':(item.cv<item.m.min?'#dc2626':'#d97706'));
+        h+='<div style="padding:11px 14px;border-radius:8px;border-left:4px solid '+borderClr+';background:#fafafa;border:1px solid #eee;border-left-width:4px">';
+        h+='<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px">';
+        h+='<div style="font-weight:700;font-size:13px;color:#1a1a1a">'+item.m.label+(item.m.unit?' ('+item.m.unit+')':'')+'</div>';
+        h+='<div style="font-size:13px;font-family:monospace;font-weight:700">'
+          +'<span style="color:#888">'+item.pv+'</span>'
+          +' <span style="color:'+item.arrowClr+'">'+item.arrow+' '+item.diffStr+'</span>'
+          +' <span style="color:'+borderClr+'">→ '+item.cv+'</span>'
+          +'</div>';
+        h+='</div>';
+        if(item.note){
+          h+='<div style="font-size:11px;color:#444;margin-top:5px;line-height:1.6">'+item.note+'</div>';
+        }
+        h+='</div>';
+      });
+      h+='</div>';
+    }
+  }
+
+  // ── Next Steps ──
+  h+='<div style="background:#f0f7ee;border-radius:8px;padding:16px;margin-top:20px">'
+    +'<div style="font-weight:700;color:#2d5a1b;margin-bottom:6px;font-size:13px">Recommended Next Steps</div>'
+    +'<div style="font-size:12px;color:#555;line-height:1.7">'
+    +'• Follow the improvement plan recommendations above<br>'
+    +'• Retest soil in 2–3 years to track progress<br>'
+    +'• Apply treatments at recommended rates — more is not better<br>'
+    +'• Aerate before limestone application for best results<br>'
+    +'• Split nitrogen applications through the growing season<br>'
+    +'• Contact us with questions about your soil improvement plan'
+    +'</div></div>';
+
+  // ── Footer ──
+  h+='<div style="margin-top:20px;padding-top:14px;border-top:2px solid #2d5a1b;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">'
+    +'<div><div style="font-weight:900;color:#2d5a1b;font-size:14px">Lawns Plants &amp; Pests LLC</div><div style="font-size:10px;color:#888">3506 High St · Harrisburg, PA 17109 · 717-379-3248</div></div>'
+    +'<div style="text-align:right;font-size:9px;color:#aaa">Report generated by SoilTracks<br>Data source: Penn State Extension Soil Test<br>🟢 Optimal 🟠 Above 🔴 Below</div>'
+    +'</div></div>';
+
   out.innerHTML=h;
 }
 </script>
