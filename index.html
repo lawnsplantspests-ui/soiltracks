@@ -111,8 +111,8 @@ function bdg(m,v){if(!m||m.info||v==null||v==='')return'<span class="b-gray">—
 function setApp(h){document.getElementById('app').innerHTML=h;}
 function notify(msg,type,ms){var el=document.getElementById('notif');el.textContent=msg;el.className='notif '+(type||'ok');el.style.display='block';clearTimeout(el._t);el._t=setTimeout(function(){el.style.display='none';},ms||4000);}
 function navActive(id){['nb-dash','nb-add','nb-report'].forEach(function(n){var el=document.getElementById(n);if(el)el.classList.remove('active');});var t=document.getElementById('nb-'+id);if(t)t.classList.add('active');}
-function gasGet(p){var qs=Object.keys(p).map(function(k){return encodeURIComponent(k)+'='+encodeURIComponent(p[k]);}).join('&');return fetch(GAS_URL+'?'+qs).then(function(r){return r.json();});}
-function gasPost(b){return fetch(GAS_URL,{method:'POST',body:JSON.stringify(b)}).then(function(r){return r.json();});}
+function gasGet(p){p._cb=Date.now();var qs=Object.keys(p).map(function(k){return encodeURIComponent(k)+'='+encodeURIComponent(p[k]);}).join('&');return fetch(GAS_URL+'?'+qs,{cache:'no-store'}).then(function(r){return r.json();});}
+function gasPost(b){return fetch(GAS_URL,{method:'POST',cache:'no-store',body:JSON.stringify(b)}).then(function(r){return r.json();});}
 
 document.addEventListener('DOMContentLoaded',function(){
   document.getElementById('cam-input').addEventListener('change',function(e){
@@ -138,22 +138,114 @@ document.addEventListener('DOMContentLoaded',function(){
 function loadAndShow(){
   setApp('<div class="loading"><div class="spin"></div><p style="margin-top:14px">Loading...</p></div>');
   var t=setTimeout(function(){setApp('<div style="background:#1a0000;border:1px solid #f8717133;border-radius:8px;padding:14px;color:#f87171;font-family:sans-serif">Could not connect.<br><button class="btn-green btn-sm" style="margin-top:10px" onclick="loadAndShow()">↺ Retry</button></div>');},15000);
-  gasGet({action:'getData'}).then(function(d){clearTimeout(t);if(!d.success){setApp('<div style="color:#f87171;font-family:sans-serif">'+esc(d.error)+'</div>');return;}customers=d.customers||[];samples=d.samples||[];showPage('dash');}).catch(function(err){clearTimeout(t);setApp('<div style="color:#f87171;font-family:sans-serif">'+esc(err.message)+'<br><button class="btn-green btn-sm" style="margin-top:10px" onclick="loadAndShow()">↺ Retry</button></div>');});
+  gasGet({action:'getData'}).then(function(d){clearTimeout(t);if(!d.success){setApp('<div style="color:#f87171;font-family:sans-serif">'+esc(d.error)+'</div>');return;}customers=(d.customers||[]).sort(function(a,b){return(a.Name||'').localeCompare(b.Name||'');});samples=d.samples||[];showPage('dash');}).catch(function(err){clearTimeout(t);setApp('<div style="color:#f87171;font-family:sans-serif">'+esc(err.message)+'<br><button class="btn-green btn-sm" style="margin-top:10px" onclick="loadAndShow()">↺ Retry</button></div>');});
 }
 function showPage(p){navActive(p);if(p==='dash'){activeCust=null;renderDash();}else if(p==='add'){activeCust=null;prefill=null;renderScan();}else if(p==='report')renderReportPage();}
 
 // ── Dashboard ──
 function renderDash(){
   var yrs={};samples.forEach(function(s){if(s.Year)yrs[s.Year]=true;});
-  var html='<div class="page-title">Soil Data Overview</div><div class="page-sub">'+customers.length+' customers · '+samples.length+' samples · '+Object.keys(yrs).length+' seasons</div>';
-  html+='<div class="stats-grid"><div class="stat-card"><div class="stat-icon">👨‍🌾</div><div class="stat-val">'+customers.length+'</div><div class="stat-label">Customers</div></div><div class="stat-card"><div class="stat-icon">🧪</div><div class="stat-val">'+samples.length+'</div><div class="stat-label">Samples</div></div><div class="stat-card"><div class="stat-icon">📅</div><div class="stat-val">'+Object.keys(yrs).length+'</div><div class="stat-label">Seasons</div></div></div>';
-  html+='<div class="card no-print"><div class="sec-title">Customers</div><div class="search-bar"><span style="color:#57534e">🔍</span><input id="csearch" placeholder="Search..." oninput="filterCust()"></div><div id="clist">'+buildCL(customers)+'</div></div>';
+  var html='<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:4px"><div class="page-title">Soil Data Overview</div><button class="btn-outline btn-sm no-print" onclick="refreshData()" title="Reload from Google Sheets">↺ Refresh</button></div>';
+  html+='<div class="page-sub">'+customers.filter(function(c){return!c.Archived;}).length+' active customers · '+samples.length+' samples · '+Object.keys(yrs).length+' seasons</div>';
+  html+='<div class="stats-grid"><div class="stat-card"><div class="stat-icon">👨‍🌾</div><div class="stat-val">'+customers.filter(function(c){return!c.Archived;}).length+'</div><div class="stat-label">Active Customers</div></div><div class="stat-card"><div class="stat-icon">🧪</div><div class="stat-val">'+samples.length+'</div><div class="stat-label">Samples</div></div><div class="stat-card"><div class="stat-icon">📅</div><div class="stat-val">'+Object.keys(yrs).length+'</div><div class="stat-label">Seasons</div></div></div>';
+  html+='<div class="card no-print"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><div class="sec-title" style="margin:0">Customers</div><button class="btn-green btn-sm" onclick="toggleAddCust()">+ Add Customer</button></div>';
+  html+='<div id="add-cust-panel" style="display:none;background:#1a1a1a;border:1px solid #333;border-radius:10px;padding:16px;margin-bottom:14px">';
+  html+='<div style="font-size:13px;font-weight:700;color:#4ade80;margin-bottom:10px;font-family:sans-serif">New Customer</div>';
+  html+='<div style="font-size:12px;color:#78716c;font-family:sans-serif;margin-bottom:10px;line-height:1.5">Enter the name now — they\'ll be added to the sheet when you save their first soil sample.</div>';
+  html+='<div style="display:flex;gap:8px;align-items:center"><input class="form-input" id="new-cust-name" placeholder="Customer name..." style="flex:1;min-height:40px;font-size:14px" onkeydown="if(event.key===\'Enter\')doAddCust()"><button class="btn-green btn-sm" onclick="doAddCust()">Add</button><button class="btn-outline btn-sm" onclick="toggleAddCust()">Cancel</button></div>';
+  html+='</div>';
+  html+='<div class="search-bar"><span style="color:#57534e">🔍</span><input id="csearch" placeholder="Search..." oninput="filterCust()"></div>';
+  html+='<div id="clist">'+buildCL(customers)+'</div>';
+  // Archived section
+  var archived=customers.filter(function(c){return c.Archived;});
+  if(archived.length){html+='<div style="margin-top:16px"><div class="sec-title" style="cursor:pointer" onclick="toggleArchived()">📦 Archived ('+archived.length+') <span id="arch-arrow">▼</span></div><div id="arch-list" style="display:none">'+buildCL(archived,true)+'</div></div>';}
+  html+='</div>';
   setApp(html);
 }
-function buildCL(list){
-  if(!list.length)return'<div class="empty"><div style="font-size:40px;margin-bottom:10px">🌱</div><div style="font-size:15px;font-weight:700;color:#f5f5f4">No customers</div></div>';
-  return list.map(function(c){var cs=samples.filter(function(s){return s.CustomerName===c.Name;});var yrs=[...new Set(cs.map(function(s){return s.Year;}).filter(Boolean))].sort().join(', ');return'<div class="cust-row" onclick="openCust(\''+esc(c.Name)+'\')"><div><div class="cust-name">'+esc(c.Name)+'</div><div class="cust-sub">'+(c.Field?esc(c.Field)+' · ':'')+cs.length+' sample'+(cs.length!==1?'s':'')+(yrs?' · '+yrs:'')+'</div></div><span style="color:#57534e;font-size:20px">›</span></div>';}).join('');
+
+function toggleArchived(){
+  var el=document.getElementById('arch-list'),ar=document.getElementById('arch-arrow');
+  if(!el)return;
+  var open=el.style.display!=='none';
+  el.style.display=open?'none':'block';
+  if(ar)ar.textContent=open?'▼':'▲';
 }
+
+function toggleAddCust(){
+  var p=document.getElementById('add-cust-panel');if(!p)return;
+  var open=p.style.display!=='none';
+  p.style.display=open?'none':'block';
+  if(!open){setTimeout(function(){var el=document.getElementById('new-cust-name');if(el)el.focus();},50);}
+}
+
+function doAddCust(){
+  var inp=document.getElementById('new-cust-name');if(!inp)return;
+  var name=inp.value.trim();
+  if(!name){notify('Enter a customer name.','err');return;}
+  // Check duplicate
+  var dupe=customers.find(function(c){return(c.Name||'').toLowerCase()===name.toLowerCase();});
+  if(dupe){notify('"'+name+'" is already in the list.','err');return;}
+  // Add locally — will be written to sheet on first sample save
+  var newCust={Name:name,_pending:true};
+  customers.push(newCust);
+  customers.sort(function(a,b){return(a.Name||'').localeCompare(b.Name||'');});
+  notify('✅ "'+name+'" added — open them to enter a sample.','ok');
+  activeCust=newCust;
+  openCust(name);
+}
+
+function refreshData(){
+  notify('Reloading from Google Sheets...','inf',3000);
+  loadAndShow();
+}
+
+function buildCL(list,isArchived){
+  var active=isArchived?list:list.filter(function(c){return!c.Archived;});
+  if(!active.length)return'<div class="empty"><div style="font-size:40px;margin-bottom:10px">🌱</div><div style="font-size:15px;font-weight:700;color:#f5f5f4">No customers</div></div>';
+  return active.map(function(c){
+    var cs=samples.filter(function(s){return s.CustomerName===c.Name;});
+    var yrs=[...new Set(cs.map(function(s){return s.Year;}).filter(Boolean))].sort().join(', ');
+    var pendingTag=c._pending?'<span style="font-size:10px;color:#fb923c;font-family:sans-serif;margin-left:6px">new</span>':'';
+    return '<div class="cust-row" style="'+(c.Archived?'opacity:.6':'')+'"><div style="flex:1;cursor:pointer;padding:2px 0" onclick="openCust(\''+esc(c.Name)+'\')"><div class="cust-name">'+esc(c.Name)+pendingTag+'</div><div class="cust-sub">'+(c.Field?esc(c.Field)+' · ':'')+cs.length+' sample'+(cs.length!==1?'s':'')+(yrs?' · '+yrs:'')+'</div></div>'
+      +'<div style="display:flex;gap:6px;align-items:center;flex-shrink:0">'
+      +'<button title="Rename" onclick="event.stopPropagation();inlineRename(\''+esc(c.Name)+'\')" style="background:none;border:none;cursor:pointer;font-size:16px;padding:4px" title="Rename">✏️</button>'
+      +(c.Archived
+        ?'<button title="Restore" onclick="event.stopPropagation();doArchive(\''+esc(c.Name)+'\',false)" style="background:none;border:none;cursor:pointer;font-size:16px;padding:4px">♻️</button>'
+        :'<button title="Archive" onclick="event.stopPropagation();doArchive(\''+esc(c.Name)+'\',true)" style="background:none;border:none;cursor:pointer;font-size:16px;padding:4px">📦</button>')
+      +'<span style="color:#57534e;font-size:20px;cursor:pointer" onclick="openCust(\''+esc(c.Name)+'\')">›</span>'
+      +'</div></div>';
+  }).join('');
+}
+
+function inlineRename(oldName){
+  var newName=prompt('Rename "'+oldName+'" to:',oldName);
+  if(!newName||newName.trim()===''||newName.trim()===oldName)return;
+  newName=newName.trim();
+  var dupe=customers.find(function(c){return(c.Name||'').toLowerCase()===newName.toLowerCase()&&c.Name!==oldName;});
+  if(dupe){notify('"'+newName+'" already exists.','err');return;}
+  gasPost({action:'renameCustomer',oldName:oldName,newName:newName}).then(function(r){
+    if(!r.success){notify('Rename failed: '+(r.error||''),'err');return;}
+    // Update local data
+    customers.forEach(function(c){if(c.Name===oldName)c.Name=newName;});
+    samples.forEach(function(s){if(s.CustomerName===oldName)s.CustomerName=newName;});
+    customers.sort(function(a,b){return(a.Name||'').localeCompare(b.Name||'');});
+    notify('✅ Renamed to "'+newName+'"');
+    renderDash();
+  }).catch(function(e){notify('Error: '+e.message,'err');});
+}
+
+function doArchive(name,archive){
+  var verb=archive?'Archive':'Restore';
+  if(!confirm(verb+' "'+name+'"?'))return;
+  gasPost({action:'archiveCustomer',name:name,archived:archive}).then(function(r){
+    if(!r.success){notify('Error: '+(r.error||''),'err');return;}
+    var c=customers.find(function(x){return x.Name===name;});
+    if(c)c.Archived=archive;
+    notify(archive?'📦 Archived "'+name+'"':'♻️ Restored "'+name+'"');
+    renderDash();
+  }).catch(function(e){notify('Error: '+e.message,'err');});
+}
+
 function filterCust(){var q=(document.getElementById('csearch').value||'').toLowerCase();var list=q?customers.filter(function(c){return(c.Name||'').toLowerCase().includes(q)||(c.City||'').toLowerCase().includes(q);}):customers;document.getElementById('clist').innerHTML=buildCL(list);}
 
 // ── Customer Detail (with metric explanations) ──
@@ -161,7 +253,7 @@ function openCust(name){
   activeCust=customers.find(function(c){return c.Name===name;});if(!activeCust)return;navActive('');
   var c=activeCust,cs=samples.filter(function(s){return s.CustomerName===c.Name;}).sort(function(a,b){return b.Year-a.Year;});
   var html='<button class="back no-print" onclick="showPage(\'dash\')">&larr; Back</button>';
-  html+='<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:6px"><div class="page-title">'+esc(c.Name)+'</div><div class="btn-row no-print" style="margin:0"><button class="btn-green btn-sm" onclick="startSample()">+ Sample</button></div></div>';
+  html+='<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:6px"><div style="display:flex;align-items:center;gap:8px"><div class="page-title">'+esc(c.Name)+'</div><button title="Rename customer" onclick="inlineRename(\''+esc(c.Name)+'\')" style="background:none;border:none;cursor:pointer;font-size:18px;padding:2px 4px;color:#78716c" class="no-print">✏️</button></div><div class="btn-row no-print" style="margin:0"><button class="btn-green btn-sm" onclick="startSample()">+ Sample</button></div></div>';
   var info=[];if(c.Field)info.push(esc(c.Field));if(c.Address)info.push(esc(c.Address)+(c.City?', '+esc(c.City):''));if(c.Phone)info.push(esc(c.Phone));
   if(info.length)html+='<div class="page-sub">'+info.join(' · ')+'</div>';
   if(!cs.length){html+='<div class="empty"><div style="font-size:40px;margin-bottom:10px">🧪</div><div style="font-size:15px;font-weight:700;color:#f5f5f4">No samples yet</div><button class="btn-green btn-full no-print" onclick="startSample()">+ Add Sample</button></div>';setApp(html);return;}
@@ -321,10 +413,15 @@ function renderForm(p){
   if(!c){
     html+='<div class="sub-head">Customer</div>';
     var presel='';if(gv('CustomerName')){var n=gv('CustomerName').toLowerCase();var m=customers.find(function(x){var h=(x.Name||'').toLowerCase();return h===n||h.includes(n)||n.includes(h);});if(m){presel=m.Name;activeCust=m;}}
-    html+='<div class="form-group"><label class="form-label">Select customer</label><select class="form-input" id="sf-cust" onchange="sfCC(this.value)"><option value="">— Select —</option>';
-    customers.forEach(function(x){html+='<option value="'+esc(x.Name)+'"'+(presel===x.Name?' selected':'')+'>'+esc(x.Name)+'</option>';});
-    html+='</select></div>';
-    if(!presel&&gv('CustomerName'))html+='<div style="font-size:12px;color:#fb923c;font-family:sans-serif;margin-bottom:8px">AI found: "'+esc(gv('CustomerName'))+'" — not in master list.</div>';
+    // Editable text input with datalist (autocomplete from existing, but accepts new names too)
+    html+='<div class="form-group"><label class="form-label">Customer name <span style="color:#78716c;font-weight:400">(type to search, or enter a new name)</span></label>';
+    html+='<input class="form-input" id="sf-cust" list="sf-cust-list" value="'+esc(presel||gv('CustomerName'))+'" placeholder="Type customer name..." autocomplete="off" oninput="sfCustInput(this.value)" onchange="sfCustInput(this.value)">';
+    html+='<datalist id="sf-cust-list">';
+    customers.filter(function(x){return!x.Archived;}).forEach(function(x){html+='<option value="'+esc(x.Name)+'">'+esc(x.Name)+'</option>';});
+    html+='</datalist>';
+    html+='<div id="sf-cust-status" style="font-size:12px;margin-top:5px;font-family:sans-serif;color:#78716c"></div>';
+    html+='</div>';
+    if(!presel&&gv('CustomerName'))html+='<div style="font-size:12px;color:#fb923c;font-family:sans-serif;margin-bottom:8px">AI found: "'+esc(gv('CustomerName'))+'" — not in master list. Correct the name above or it will be created new.</div>';
   }
   html+='<div class="form-group"><label class="form-label">Year *</label><input class="form-input" id="sf-Year" type="number" value="'+(gv('Year')||new Date().getFullYear())+'"></div>';
   html+='<div class="sub-head">Soil Nutrient Levels</div><div class="grid-3">';
@@ -337,12 +434,37 @@ function renderForm(p){
   html+='</div><button class="btn-green btn-full" onclick="doSave()">💾 Save to Google Sheets</button></div>';
   setApp(html);
 }
+function sfCustInput(val){
+  val=(val||'').trim();
+  var statusEl=document.getElementById('sf-cust-status');
+  if(!val){activeCust=null;if(statusEl)statusEl.textContent='';return;}
+  var exact=customers.find(function(c){return(c.Name||'').toLowerCase()===val.toLowerCase();});
+  if(exact){activeCust=exact;if(statusEl){statusEl.textContent='✅ Existing customer';statusEl.style.color='#4ade80';}}
+  else{activeCust=null;if(statusEl){statusEl.textContent='✨ Will be created as new customer: "'+val+'"';statusEl.style.color='#fb923c';}}
+}
 function sfCC(v){if(v){activeCust=customers.find(function(c){return c.Name===v;});}else{activeCust=null;}}
 
 function doSave(){
   var year=parseInt((document.getElementById('sf-Year')||{}).value,10);if(!year||year<1990){notify('Enter a valid year.','err');return;}
-  if(!activeCust){var sel=document.getElementById('sf-cust');if(sel&&sel.value)activeCust=customers.find(function(c){return c.Name===sel.value;});}
-  if(!activeCust){notify('Select a customer.','err');return;}
+  // Resolve customer — activeCust set by sfCustInput, or from text field for new customers
+  if(!activeCust){
+    var custInput=document.getElementById('sf-cust');
+    var custVal=custInput?custInput.value.trim():'';
+    if(custVal){
+      // Check again in case they typed an exact match without triggering onchange
+      var exact=customers.find(function(c){return(c.Name||'').toLowerCase()===custVal.toLowerCase();});
+      if(exact){activeCust=exact;}
+      else{
+        // New customer — add locally and will be auto-created via saveSample on server
+        if(!confirm('Create new customer "'+custVal+'"?'))return;
+        var newCust={Name:custVal,_pending:true};
+        customers.push(newCust);
+        customers.sort(function(a,b){return(a.Name||'').localeCompare(b.Name||'');});
+        activeCust=newCust;
+      }
+    }
+  }
+  if(!activeCust){notify('Enter a customer name.','err');return;}
   var data={CustomerName:activeCust.Name,Field:activeCust.Field||'',Year:year};
   TOP_FIELDS.concat(LAB_FIELDS).forEach(function(m){var v=((document.getElementById('sf-'+m.key)||{}).value||'').trim();if(v!=='')data[m.key]=parseFloat(v);});
   data.LimestoneLbs=((document.getElementById('sf-LimestoneLbs')||{}).value||'').trim()||'0';
@@ -350,6 +472,9 @@ function doSave(){
   gasPost({action:'saveSample',data:data}).then(function(r){
     if(!r.success){notify('Error: '+(r.error||''),'err');return;}
     data.ID=r.id;data.DateAdded=new Date().toISOString();samples.push(data);
+    // Clear pending flag now that sample saved
+    var lc=customers.find(function(c){return c.Name===activeCust.Name;});
+    if(lc)delete lc._pending;
     var savedName=activeCust.Name;
     notify('✅ Saved!');openCust(savedName);
   }).catch(function(err){notify('Error: '+err.message,'err');});
@@ -362,7 +487,7 @@ function doDelete(id,yr){if(!confirm('Delete '+yr+' sample?'))return;var n=activ
 function renderReportPage(){
   var html='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px" class="no-print"><div class="page-title">Reports</div><button class="btn-green btn-sm" onclick="window.print()">🖨️ Print</button></div>'
     +'<div class="card no-print"><div class="sec-title">Select Customer</div><select class="form-input" id="rpt-c" onchange="renderRpt()"><option value="">— Select —</option>';
-  customers.forEach(function(c){html+='<option value="'+esc(c.Name)+'">'+esc(c.Name)+'</option>';});
+  customers.filter(function(c){return!c.Archived;}).forEach(function(c){html+='<option value="'+esc(c.Name)+'">'+esc(c.Name)+'</option>';});
   html+='</select></div><div id="rpt-out"></div>';setApp(html);
 }
 function openReport(n){showPage('report');setTimeout(function(){var el=document.getElementById('rpt-c');if(el){el.value=n;renderRpt();}},80);}
